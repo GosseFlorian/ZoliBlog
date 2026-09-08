@@ -1,4 +1,9 @@
 # Raccourcis DevOps — Blog Java
+ifeq ($(OS),Windows_NT)
+    MVNW = mvnw.cmd
+else
+    MVNW = ./mvnw
+endif
 .PHONY: help setup env db-init db-test lint format test ci backend admin site
 
 help:
@@ -38,15 +43,15 @@ format:
 	cd site && npm run format
 
 test:
-	./mvnw test
+	$(MVNW) test
 
 ci:
-	./mvnw -B test
+	$(MVNW) -B test
 	cd admin && npm ci && npm run lint && npm run test && npm run build
 	cd site && npm ci && npm run lint && npm run test && npm run build
 
 backend:
-	./mvnw spring-boot:run
+	$(MVNW) spring-boot:run
 
 admin:
 	cd admin && npm run dev
