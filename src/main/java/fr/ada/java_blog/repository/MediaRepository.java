@@ -1,6 +1,7 @@
 package fr.ada.java_blog.repository;
 
 import fr.ada.java_blog.model.Media;
+import fr.ada.java_blog.model.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ public class MediaRepository {
 
     private static final RowMapper<Media> RowMapper = (rs, rowNum) -> new Media(
             rs.getInt("id"),
-            rs.getString("type"),
+            MediaType.valueOf(rs.getString("type")),
             rs.getString("url"));
 
     private final JdbcTemplate jdbcTemplate;
@@ -54,7 +55,7 @@ public class MediaRepository {
                         RETURNING id
                         """,
                 Integer.class,
-                media.getType(),
+                media.getType().name(),
                 media.getUrl());
         media.setId(id);
         return media;
