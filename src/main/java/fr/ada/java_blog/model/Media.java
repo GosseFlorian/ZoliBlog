@@ -3,10 +3,10 @@ package fr.ada.java_blog.model;
 public class Media {
 
     private Integer id;
-    private String type;
+    private MediaType type;
     private String url;
 
-    public Media(Integer id, String type, String url) {
+    public Media(Integer id, MediaType type, String url) {
         this.id = id;
         this.type = type;
         this.url = url;
@@ -20,11 +20,11 @@ public class Media {
         this.id = id;
     }
 
-    public String getType() {
+    public MediaType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MediaType type) {
         this.type = type;
     }
 
