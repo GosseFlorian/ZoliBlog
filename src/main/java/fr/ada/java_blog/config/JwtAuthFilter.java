@@ -53,12 +53,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.parseToken(token);
             String userId = claims.getSubject();
+            String role = claims.get("role", String.class);
+            if (role == null) {
+                role = "USER";
+            }
 
             // Objet « utilisateur connecté » pour Spring Security
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userId,
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                    List.of(new SimpleGrantedAuthority(role)));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

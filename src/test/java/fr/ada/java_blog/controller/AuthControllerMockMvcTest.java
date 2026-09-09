@@ -32,7 +32,36 @@ class AuthControllerMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.pseudo").value("alice_dev"))
-                .andExpect(jsonPath("$.userId").value(1));
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.role").value("ADMIN"));
+    }
+
+    @Test
+    void login_adminContext_avecRoleUser_retourne403() throws Exception {
+        String body = """
+                {"mail":"bob@example.com","mdp":"demo1234"}
+                """;
+
+        mockMvc.perform(post("/auth/login")
+                .header("X-Login-Context", "admin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Acces reserve aux administrateurs."));
+    }
+
+    @Test
+    void login_adminContext_avecRoleAdmin_retourneToken() throws Exception {
+        String body = """
+                {"mail":"alice@example.com","mdp":"demo1234"}
+                """;
+
+        mockMvc.perform(post("/auth/login")
+                .header("X-Login-Context", "admin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("ADMIN"));
     }
 
     @Test

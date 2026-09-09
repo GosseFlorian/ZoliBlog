@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { getToken, logout, isLoggedIn, getAuthHeaders } from '../../api/auth';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { getToken, logout, isLoggedIn, getAuthHeaders, login } from '../../api/auth';
 
 describe('auth.ts', () => {
   beforeEach(() => {
@@ -8,6 +8,20 @@ describe('auth.ts', () => {
 
   it('isLoggedIn retourne false sans token', () => {
     expect(isLoggedIn()).toBe(false);
+  });
+
+  it('isLoggedIn retourne false si le token existe mais le role nest pas ADMIN', () => {
+    localStorage.setItem('java_blog_token', 'fake-jwt');
+    localStorage.setItem('java_blog_role', 'USER');
+
+    expect(isLoggedIn()).toBe(false);
+  });
+
+  it('isLoggedIn retourne true pour un admin', () => {
+    localStorage.setItem('java_blog_token', 'fake-jwt');
+    localStorage.setItem('java_blog_role', 'ADMIN');
+
+    expect(isLoggedIn()).toBe(true);
   });
 
   it('getAuthHeaders retourne Authorization si token présent', () => {
@@ -20,9 +34,30 @@ describe('auth.ts', () => {
 
   it('logout efface le token', () => {
     localStorage.setItem('java_blog_token', 'x');
+    localStorage.setItem('java_blog_role', 'ADMIN');
 
     logout();
 
     expect(getToken()).toBeNull();
+    expect(localStorage.getItem('java_blog_role')).toBeNull();
+  });
+
+  it('login refuse un utilisateur non admin', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+      }),
+    );
+
+    await expect(
+      login({ mail: 'bob@example.com', mdp: 'demo1234' }),
+    ).rejects.toThrow('Acces reserve aux administrateurs.');
+
+    expect(getToken()).toBeNull();
+    expect(isLoggedIn()).toBe(false);
+
+    vi.unstubAllGlobals();
   });
 });

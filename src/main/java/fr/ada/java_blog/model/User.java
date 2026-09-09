@@ -5,12 +5,14 @@ public class User {
     private String pseudo;
     private String mail;
     private String mdp;
+    private UserRole role;
 
-    public User(Integer id, String pseudo, String mail, String mdp) {
+    public User(Integer id, String pseudo, String mail, String mdp, UserRole role) {
         this.id = id;
         this.pseudo = pseudo;
         this.mail = mail;
         this.mdp = mdp;
+        this.role = role != null ? role : UserRole.USER;
     }
 
     public Integer getId() {
@@ -43,5 +45,13 @@ public class User {
 
     public void setMdp(String mdp) {
         this.mdp = mdp;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

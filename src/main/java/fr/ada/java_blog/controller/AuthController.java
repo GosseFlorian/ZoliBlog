@@ -4,6 +4,7 @@ import fr.ada.java_blog.dto.LoginRequest;
 import fr.ada.java_blog.dto.LoginResponse;
 import fr.ada.java_blog.dto.RegisterRequest;
 import fr.ada.java_blog.model.User;
+import fr.ada.java_blog.model.UserRole;
 import fr.ada.java_blog.repository.UserRepository;
 import fr.ada.java_blog.service.JwtService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,7 +40,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest body) {
+    public LoginResponse login(
+            @Valid @RequestBody LoginRequest body,
+            @RequestHeader(value = "X-Login-Context", required = false) String loginContext) {
         User user = userRepository.findByMail(body.mail())
                 // Échec login (user inconnu ou mauvais mot de passe) :
                 .orElseThrow(() -> {
@@ -51,9 +55,31 @@ public class AuthController {
             throw unauthorized();
         }
 
-        log.info("Login reussi (userId={}, mail={})", user.getId(), LogSanitizer.maskEmail(body.mail()));
+        boolean adminLogin = "admin".equalsIgnoreCase(loginContext);
+        if (adminLogin && user.getRole() != UserRole.ADMIN) {
+            log.warn(
+                    "Echec login admin - role insuffisant (userId={}, mail={}, role={})",
+                    user.getId(),
+                    LogSanitizer.maskEmail(body.mail()),
+                    user.getRole());
+            throw forbiddenAdmin();
+        }
+
+        if (adminLogin) {
+            log.info(
+                    "Login admin reussi (userId={}, mail={})",
+                    user.getId(),
+                    LogSanitizer.maskEmail(body.mail()));
+        } else {
+            log.info(
+                    "Login reussi (userId={}, mail={}, role={})",
+                    user.getId(),
+                    LogSanitizer.maskEmail(body.mail()),
+                    user.getRole());
+        }
+
         String token = jwtService.generateToken(user);
-        return new LoginResponse(token, user.getPseudo(), user.getId());
+        return new LoginResponse(token, user.getPseudo(), user.getId(), user.getRole().name());
     }
 
     /**
@@ -71,19 +97,25 @@ public class AuthController {
         }
 
         String hash = passwordEncoder.encode(body.mdp());
-        User user = new User(null, body.pseudo(), body.mail(), hash);
+        User user = new User(null, body.pseudo(), body.mail(), hash, UserRole.USER);
         User sauve = userRepository.save(user);
 
         log.info("Inscription reussie (userId={}, mail={})", sauve.getId(), LogSanitizer.maskEmail(body.mail()));
         String token = jwtService.generateToken(sauve);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new LoginResponse(token, sauve.getPseudo(), sauve.getId()));
+                .body(new LoginResponse(token, sauve.getPseudo(), sauve.getId(), sauve.getRole().name()));
     }
 
     private static ResponseStatusException unauthorized() {
         return new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
                 "Identifiants invalides");
+    }
+
+    private static ResponseStatusException forbiddenAdmin() {
+        return new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Acces reserve aux administrateurs.");
     }
 }

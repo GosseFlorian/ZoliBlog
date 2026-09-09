@@ -10,7 +10,7 @@ help:
 	@echo "Commandes :"
 	@echo "  make setup     - .env + npm install (admin + site)"
 	@echo "  make env       - cp .env.example .env"
-	@echo "  make db-init   - blog.sql + upgrade BCrypt Alice"
+	@echo "  make db-init   - blog.sql"
 	@echo "  make db-test   - crée java_blog_test"
 	@echo "  make lint      - ESLint admin + site"
 	@echo "  make format    - Prettier admin + site"
@@ -29,7 +29,6 @@ env:
 
 db-init:
 	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d java_blog -f doc/sql/blog.sql
-	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d java_blog -f doc/sql/upgrade-05-01-bcrypt-alice.sql
 
 db-test:
 	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d postgres -f doc/sql/upgrade-06-01-create-java-blog-test.sql

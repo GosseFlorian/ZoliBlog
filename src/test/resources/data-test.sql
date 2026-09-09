@@ -1,6 +1,7 @@
 -- Hash BCrypt de "demo1234" (même qu'en partie 05)
-INSERT INTO users (id, pseudo, mail, mdp) VALUES
-(1, 'alice_dev', 'alice@example.com', '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6');
+INSERT INTO users (id, pseudo, mail, mdp, role) VALUES
+(1, 'alice_dev', 'alice@example.com', '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'ADMIN'),
+(2, 'bob_martin', 'bob@example.com', '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER');
 
 INSERT INTO articles (id, titre, contenu, statut, date, "update", user_id) VALUES
 (1, 'Article test CI', 'Contenu pour JUnit', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),

@@ -35,6 +35,7 @@ public class JwtService {
                 .subject(String.valueOf(user.getId()))
                 .claim("pseudo", user.getPseudo())
                 .claim("mail", user.getMail())
+                .claim("role", user.getRole().name())
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey)

@@ -48,6 +48,32 @@ class AdminArticleSecurityMockMvcTest {
     }
 
     @Test
+    void postAdmin_avecTokenUtilisateurOrdinaire_retourne403() throws Exception {
+        String registerBody = """
+                {"pseudo":"visiteur","mail":"visiteur@example.com","mdp":"motdepasse"}
+                """;
+
+        MvcResult registered = mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(registerBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        JsonNode registeredJson = objectMapper.readTree(registered.getResponse().getContentAsString());
+        String userToken = registeredJson.get("token").asText();
+
+        String body = """
+                {"titre":"Hack","contenu":"Sans role admin","userId":1}
+                """;
+
+        mockMvc.perform(post("/admin/articles")
+                .header("Authorization", "Bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void postAdmin_sansToken_retourne401() throws Exception {
         String body = """
                 {"titre":"Hack","contenu":"Sans auth","userId":1}

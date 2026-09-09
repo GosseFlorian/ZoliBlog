@@ -19,7 +19,13 @@ DROP TABLE IF EXISTS "médias" CASCADE;
 DROP TABLE IF EXISTS "commentaires" CASCADE;
 DROP TABLE IF EXISTS "articles" CASCADE;
 DROP TABLE IF EXISTS "users" CASCADE;
+DROP TYPE IF EXISTS user_role CASCADE;
 DROP TYPE IF EXISTS "type";
+
+CREATE TYPE user_role AS ENUM (
+    'USER',
+    'ADMIN'
+);
 
 CREATE TYPE "type" AS ENUM (
     'image',
@@ -33,6 +39,7 @@ CREATE TABLE IF NOT EXISTS "users" (
     "pseudo" VARCHAR(255),
     "mail" VARCHAR(255),
     "mdp" VARCHAR(255),
+    "role" user_role NOT NULL DEFAULT 'USER',
     PRIMARY KEY("id")
 );
 
@@ -131,18 +138,18 @@ ALTER TABLE "articles_medias"
 -- ne jamais stocker de mdp en clair.
 -- =========================================================
 
--- 10 utilisateurs
-INSERT INTO "users" ("id", "pseudo", "mail", "mdp") VALUES
-(1, 'alice_dev',    'alice@example.com',    '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6'),
-(2, 'bob_martin',   'bob@example.com',      'hash_placeholder_2'),
-(3, 'clara_lyon',   'clara@example.com',    'hash_placeholder_3'),
-(4, 'david_k',      'david@example.com',    'hash_placeholder_4'),
-(5, 'elsa_p',       'elsa@example.com',     'hash_placeholder_5'),
-(6, 'fabien_r',     'fabien@example.com',   'hash_placeholder_6'),
-(7, 'gaelle_t',     'gaelle@example.com',   'hash_placeholder_7'),
-(8, 'hugo_b',       'hugo@example.com',     'hash_placeholder_8'),
-(9, 'ines_m',       'ines@example.com',     'hash_placeholder_9'),
-(10,'julien_v',     'julien@example.com',   'hash_placeholder_10');
+-- 10 utilisateurs (alice_dev = seul compte ADMIN)
+INSERT INTO "users" ("id", "pseudo", "mail", "mdp", "role") VALUES
+(1, 'alice_dev',    'alice@example.com',    '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'ADMIN'),
+(2, 'bob_martin',   'bob@example.com',      '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(3, 'clara_lyon',   'clara@example.com',    '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(4, 'david_k',      'david@example.com',    '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(5, 'elsa_p',       'elsa@example.com',     '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(6, 'fabien_r',     'fabien@example.com',   '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(7, 'gaelle_t',     'gaelle@example.com',   '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(8, 'hugo_b',       'hugo@example.com',     '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(9, 'ines_m',       'ines@example.com',     '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER'),
+(10,'julien_v',     'julien@example.com',   '$2y$10$dogkYyhsfVKlpjKpyhRUkecSPVCJA3D5yUSvj4L050OGVolNJUuG6', 'USER');
 
 -- 12 articles répartis entre les users (contenus de longueurs variées pour tester l'affichage)
 INSERT INTO "articles" ("id", "titre", "contenu", "date", "statut", "update", "user_id") VALUES

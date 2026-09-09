@@ -69,8 +69,8 @@ public class SecurityConfig {
                                 "/ping",
                                 "/db/**")
                         .permitAll()
-                        // Back-office — token obligatoire
-                        .requestMatchers("/admin/**").authenticated()
+                        // Back-office — rôle ADMIN obligatoire
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().permitAll())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -79,6 +79,13 @@ public class SecurityConfig {
                                     request.getMethod(),
                                     LogSanitizer.sanitizePath(request.getRequestURI()));
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Non authentifie");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            log.warn(
+                                    "Acces refuse - role insuffisant ({} {})",
+                                    request.getMethod(),
+                                    LogSanitizer.sanitizePath(request.getRequestURI()));
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acces refuse");
                         }))
                 // Bloquer l'abus le plus tôt possible
                 .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
