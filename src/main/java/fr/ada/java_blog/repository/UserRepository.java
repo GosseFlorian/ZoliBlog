@@ -1,6 +1,7 @@
 package fr.ada.java_blog.repository;
 
 import fr.ada.java_blog.model.User;
+import fr.ada.java_blog.model.UserRole;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,8 @@ public class UserRepository {
             rs.getInt("id"),
             rs.getString("pseudo"),
             rs.getString("mail"),
-            rs.getString("mdp"));
+            rs.getString("mdp"),
+            UserRole.valueOf(rs.getString("role")));
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -26,7 +28,7 @@ public class UserRepository {
     public Optional<User> findById(int id) {
         List<User> user = jdbcTemplate.query(
                 """
-                        SELECT id, pseudo, mail, mdp
+                        SELECT id, pseudo, mail, mdp, role
                         FROM users
                         WHERE id = ?
                         """,
@@ -38,7 +40,7 @@ public class UserRepository {
     public List<User> findAll() {
         return jdbcTemplate.query(
                 """
-                        SELECT id, pseudo, mail, mdp
+                        SELECT id, pseudo, mail, mdp, role
                         FROM users
                         ORDER BY pseudo ASC
                         """,
@@ -48,14 +50,15 @@ public class UserRepository {
     public User save(User user) {
         Integer id = jdbcTemplate.queryForObject(
                 """
-                        INSERT INTO users (pseudo, mail, mdp)
-                        VALUES (?, ?, ?)
+                        INSERT INTO users (pseudo, mail, mdp, role)
+                        VALUES (?, ?, ?, ?::user_role)
                         RETURNING id
                         """,
                 Integer.class,
                 user.getPseudo(),
                 user.getMail(),
-                user.getMdp());
+                user.getMdp(),
+                user.getRole().name());
         user.setId(id);
         return user;
     }
@@ -91,7 +94,7 @@ public class UserRepository {
      */
     public Optional<User> findByMail(String mail) {
         String sql = """
-                SELECT id, pseudo, mail, mdp
+                SELECT id, pseudo, mail, mdp, role
                 FROM "users"
                 WHERE mail = ?
                 """;

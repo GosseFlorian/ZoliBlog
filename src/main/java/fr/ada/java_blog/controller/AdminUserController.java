@@ -5,6 +5,7 @@ import fr.ada.java_blog.dto.UserResponse;
 import fr.ada.java_blog.dto.UserUpdateRequest;
 import fr.ada.java_blog.mapper.UserMapper;
 import fr.ada.java_blog.model.User;
+import fr.ada.java_blog.model.UserRole;
 import fr.ada.java_blog.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class AdminUserController {
     @PostMapping
     public ResponseEntity<UserResponse> create(@RequestBody UserCreateRequest body) {
         String hash = passwordEncoder.encode(body.mdp());
-        User user = new User(null, body.pseudo(), body.mail(), hash);
+        User user = new User(null, body.pseudo(), body.mail(), hash, UserRole.USER);
         User sauve = userRepository.save(user);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

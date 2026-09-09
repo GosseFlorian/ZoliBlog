@@ -5,12 +5,16 @@ DROP TABLE IF EXISTS "médias" CASCADE;
 DROP TABLE IF EXISTS "catégories" CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TYPE IF EXISTS user_role CASCADE;
+
+CREATE TYPE user_role AS ENUM ('USER', 'ADMIN');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(255),
     mail VARCHAR(255),
-    mdp VARCHAR(255)
+    mdp VARCHAR(255),
+    role user_role NOT NULL DEFAULT 'USER'
 );
 
 CREATE TABLE articles (

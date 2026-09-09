@@ -1,6 +1,7 @@
 package fr.ada.java_blog.service;
 
 import fr.ada.java_blog.model.User;
+import fr.ada.java_blog.model.UserRole;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,13 +22,14 @@ class JwtServiceTest {
 
     @Test
     void generateTokenPuisParseToken_retourneUserId() {
-        User user = new User(1, "alice_dev", "alice@example.com", "hash");
+        User user = new User(1, "alice_dev", "alice@example.com", "hash", UserRole.ADMIN);
 
         String token = jwtService.generateToken(user);
         Claims claims = jwtService.parseToken(token);
 
         assertEquals("1", claims.getSubject());
         assertEquals("alice_dev", claims.get("pseudo", String.class));
+        assertEquals("ADMIN", claims.get("role", String.class));
         assertEquals(1, jwtService.extractUserId(claims));
     }
 
