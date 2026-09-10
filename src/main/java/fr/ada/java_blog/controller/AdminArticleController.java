@@ -6,11 +6,14 @@ import fr.ada.java_blog.dto.ArticleMediaLinkRequest;
 import fr.ada.java_blog.dto.ArticleResponse;
 import fr.ada.java_blog.dto.ArticleUpdateRequest;
 import fr.ada.java_blog.dto.CategorieResponse;
+import fr.ada.java_blog.dto.CommentaireResponse;
 import fr.ada.java_blog.mapper.ArticleMapper;
 import fr.ada.java_blog.mapper.CategorieMapper;
+import fr.ada.java_blog.mapper.CommentaireMapper;
 import fr.ada.java_blog.model.Article;
 import fr.ada.java_blog.repository.ArticleRepository;
 import fr.ada.java_blog.repository.CategorieRepository;
+import fr.ada.java_blog.repository.CommentaireRepository;
 import fr.ada.java_blog.repository.MediaRepository;
 
 import org.springframework.http.HttpStatus;
@@ -35,14 +38,17 @@ public class AdminArticleController {
     private final ArticleRepository articleRepository;
     private final CategorieRepository categorieRepository;
     private final MediaRepository mediaRepository;
+    private final CommentaireRepository commentaireRepository;
 
     public AdminArticleController(
             ArticleRepository articleRepository,
             CategorieRepository categorieRepository,
-            MediaRepository mediaRepository) {
+            MediaRepository mediaRepository,
+            CommentaireRepository commentaireRepository) {
         this.articleRepository = articleRepository;
         this.categorieRepository = categorieRepository;
         this.mediaRepository = mediaRepository;
+        this.commentaireRepository = commentaireRepository;
     }
 
     @GetMapping
@@ -120,6 +126,16 @@ public class AdminArticleController {
         }
         return categorieRepository.findByArticleId(id).stream()
                 .map(CategorieMapper::toResponse)
+                .toList();
+    }
+
+    @GetMapping("/{id}/commentaires")
+    public List<CommentaireResponse> commentaires(@PathVariable int id) {
+        if (articleRepository.findByIdAdmin(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article introuvable");
+        }
+        return commentaireRepository.findByArticleId(id).stream()
+                .map(CommentaireMapper::toResponse)
                 .toList();
     }
 
