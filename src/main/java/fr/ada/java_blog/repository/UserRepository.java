@@ -5,6 +5,7 @@ import fr.ada.java_blog.model.UserRole;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class UserRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ArticleRepository articleRepository;
 
     private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(
             rs.getInt("id"),
@@ -21,8 +23,9 @@ public class UserRepository {
             rs.getString("mdp"),
             UserRole.valueOf(rs.getString("role")));
 
-    public UserRepository(JdbcTemplate jdbcTemplate) {
+    public UserRepository(JdbcTemplate jdbcTemplate, ArticleRepository articleRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.articleRepository = articleRepository;
     }
 
     public Optional<User> findById(int id) {
@@ -77,7 +80,17 @@ public class UserRepository {
         return rows > 0;
     }
 
+    @Transactional
     public boolean deleteById(int id) {
+        List<Integer> articleIds = jdbcTemplate.queryForList(
+                "SELECT id FROM articles WHERE user_id = ?",
+                Integer.class,
+                id);
+        for (Integer articleId : articleIds) {
+            articleRepository.deleteById(articleId);
+        }
+        jdbcTemplate.update("DELETE FROM commentaires WHERE user_id = ?", id);
+
         int rows = jdbcTemplate.update(
                 """
                         DELETE FROM users

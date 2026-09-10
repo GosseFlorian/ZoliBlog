@@ -116,11 +116,19 @@ public class CategorieRepository {
         return rows > 0;
     }
 
+    @Transactional
     public boolean deleteById(int id) {
+        jdbcTemplate.update(
+                """
+                        DELETE FROM articles_categories
+                        WHERE categorie_id = ?
+                        """,
+                id);
         int rows = jdbcTemplate.update(
                 """
                         DELETE FROM categories
-                        WHERE id = ?""",
+                        WHERE id = ?
+                        """,
                 id);
         return rows > 0;
     }
