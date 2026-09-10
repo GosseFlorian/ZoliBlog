@@ -1,9 +1,9 @@
 .article-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-xl);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: var(--color-card);
@@ -11,34 +11,34 @@
 
 .article-form h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-sm);
 }
 
 .article-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .article-form input[type='text'],
 .article-form textarea,
 .article-form input[type='number'] {
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-sm) var(--space-md);
   font: inherit;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  min-height: 44px;
+  min-height: var(--size-touch);
 }
 
 .article-form textarea {
   min-height: 9rem;
   resize: vertical;
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
@@ -51,7 +51,7 @@
 .publish-toggle-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .toggle-switch {
@@ -75,11 +75,11 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 1rem;
-  height: 1rem;
-  background: #ffffff;
+  width: var(--space-lg);
+  height: var(--space-lg);
+  background: var(--color-white);
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.15s;
 }
 
@@ -90,8 +90,8 @@
 .admin-form .checkbox-label {
   flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 400;
+  gap: var(--space-sm);
+  font-weight: var(--font-weight-normal);
   color: var(--color-muted-foreground);
   cursor: pointer;
 }
@@ -99,33 +99,33 @@
 .admin-form .checkbox-label input:checked + span,
 .admin-form .checkbox-label:has(input:checked) {
   color: var(--color-primary);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .form-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
 }
 
 .category-fieldset {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 1rem;
+  padding: var(--space-lg);
   margin: 0;
 }
 
 .category-fieldset legend {
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: 0 var(--space-xs);
 }
 
 .category-checkboxes {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 @media (max-width: 640px) {
@@ -135,40 +135,40 @@
 }
 
 .category-checkboxes .checkbox-label input[type='checkbox'] {
-  width: 1rem;
-  height: 1rem;
+  width: var(--space-lg);
+  height: var(--space-lg);
   accent-color: var(--color-primary);
 }
 
 .categorie-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: var(--color-card);
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-xl);
 }
 
 .categorie-form h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-sm);
 }
 
 .categorie-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .categorie-form input,
 .categorie-form textarea {
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-sm) var(--space-md);
   font: inherit;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);

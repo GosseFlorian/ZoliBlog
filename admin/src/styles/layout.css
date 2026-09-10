@@ -6,31 +6,31 @@
 
 .admin-top-bar {
   background: var(--color-admin-top);
-  padding: 0.875rem 2rem;
+  padding: var(--space-md) var(--space-2xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-lg);
   flex-wrap: wrap;
 }
 
 .admin-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .admin-brand-title {
   font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
   margin: 0;
 }
 
 .admin-brand-subtitle {
   font-family: var(--font-display);
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   font-style: italic;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -38,28 +38,28 @@
 .header-auth {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
   margin: 0;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .header-auth strong {
-  color: #ffffff;
-  font-weight: 500;
+  color: var(--color-white);
+  font-weight: var(--font-weight-medium);
 }
 
 .header-auth .btn-logout {
   font: inherit;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 0.375rem 0.75rem;
+  font-size: var(--font-size-xs);
+  padding: var(--space-xs) var(--space-md);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-md);
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  min-height: 36px;
+  min-height: var(--size-touch-small);
   transition:
     border-color 0.15s,
     color 0.15s;
@@ -67,7 +67,7 @@
 
 .header-auth .btn-logout:hover {
   border-color: rgba(255, 255, 255, 0.5);
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .admin-nav {
@@ -75,21 +75,21 @@
   gap: 0;
   background: var(--color-admin-nav);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 2rem;
+  padding: 0 var(--space-2xl);
 }
 
 .admin-nav-link {
   border: none;
   background: transparent;
-  padding: 0.75rem 1.25rem;
+  padding: var(--space-md) var(--space-xl);
   cursor: pointer;
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: rgba(255, 255, 255, 0.5);
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  min-height: 44px;
+  min-height: var(--size-touch);
   transition:
     color 0.15s,
     border-color 0.15s;
@@ -100,7 +100,7 @@
 }
 
 .admin-nav-link.active {
-  color: #ffffff;
+  color: var(--color-white);
   border-bottom-color: var(--color-admin-nav-active);
 }
 
@@ -109,7 +109,7 @@
   width: 100%;
   max-width: 56rem;
   margin: 0 auto;
-  padding: 1.5rem 2rem;
+  padding: var(--space-xl) var(--space-2xl);
   box-sizing: border-box;
 }
 
@@ -117,27 +117,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 .page-header-row h1 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .back-button {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-lg);
   padding: 0;
   cursor: pointer;
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   background: transparent;
   border: none;
   color: var(--color-muted-foreground);
-  min-height: 44px;
+  min-height: var(--size-touch);
   display: inline-flex;
   align-items: center;
 }
@@ -154,11 +154,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .feedback-success {
@@ -169,18 +169,18 @@
 
 .feedback-error {
   background: var(--color-error-bg);
-  border: 1px solid #ea4335;
-  color: #5f2120;
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
 }
 
 .feedback-close {
   border: none;
   background: transparent;
-  font-size: 1.25rem;
+  font-size: var(--font-size-lg);
   cursor: pointer;
   line-height: 1;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: var(--size-touch);
+  min-width: var(--size-touch);
 }
 
 /* ─── Login (non authentifié) ─── */
@@ -191,15 +191,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
+  padding: var(--space-2xl) var(--space-lg);
   background: var(--color-background);
 }
 
 .admin-login-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
 }
 
 .admin-login-brand .admin-brand-title {
@@ -213,10 +213,10 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-lg);
   width: 100%;
   max-width: 24rem;
-  padding: 2rem;
+  padding: var(--space-2xl);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: var(--color-card);
@@ -225,25 +225,25 @@
 
 .login-form h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .login-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .login-form input {
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-sm) var(--space-md);
   font: inherit;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  min-height: 44px;
+  min-height: var(--size-touch);
 }
 
 .login-form input:focus {
@@ -257,14 +257,14 @@
 
 .login-hint {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--color-muted-foreground);
   margin: 0;
 }
 
 .login-hint strong {
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .loading-message {
@@ -275,7 +275,7 @@
 .error-message {
   color: var(--color-error);
   background: var(--color-error-bg);
-  padding: 0.75rem;
+  padding: var(--space-md);
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
