@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +38,13 @@ class AdminCommentaireMockMvcTest {
     @BeforeEach
     void loginAndGetToken() throws Exception {
         bearerToken = JwtTestHelper.loginAndGetToken(mockMvc, objectMapper);
+    }
+
+    @Test
+    void getCommentairesBrouillon_avecTokenAdmin_retourne200() throws Exception {
+        mockMvc.perform(get("/admin/articles/2/commentaires")
+                .header("Authorization", "Bearer " + bearerToken))
+                .andExpect(status().isOk());
     }
 
     @Test

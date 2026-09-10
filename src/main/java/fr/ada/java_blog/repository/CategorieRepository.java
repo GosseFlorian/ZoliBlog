@@ -45,7 +45,7 @@ public class CategorieRepository {
         return jdbcTemplate.query(
                 """
                         SELECT id, nom, description
-                        FROM catégories
+                        FROM categories
                         ORDER BY nom ASC
                         """,
                 RowMapper);
@@ -55,7 +55,7 @@ public class CategorieRepository {
         List<Categorie> categories = jdbcTemplate.query(
                 """
                         SELECT id, nom, description
-                            FROM catégories
+                            FROM categories
                             WHERE id = ?
                             """,
                 RowMapper,
@@ -67,7 +67,7 @@ public class CategorieRepository {
         return jdbcTemplate.query(
                 """
                         SELECT c.id, c.nom, c.description
-                        FROM catégories c
+                        FROM categories c
                         JOIN articles_categories ac ON ac.categorie_id = c.id
                         WHERE ac.article_id = ?
                         ORDER BY c.nom ASC
@@ -92,7 +92,7 @@ public class CategorieRepository {
     public Categorie save(Categorie categorie) {
         Integer id = jdbcTemplate.queryForObject(
                 """
-                        INSERT INTO catégories (nom, description)
+                        INSERT INTO categories (nom, description)
                         VALUES (?, ?)
                         RETURNING id
                         """,
@@ -106,7 +106,7 @@ public class CategorieRepository {
     public boolean updateById(int id, Categorie categorie) {
         int rows = jdbcTemplate.update(
                 """
-                        UPDATE catégories
+                        UPDATE categories
                         SET nom = ?, description = ?
                         WHERE id = ?
                         """,
@@ -116,11 +116,19 @@ public class CategorieRepository {
         return rows > 0;
     }
 
+    @Transactional
     public boolean deleteById(int id) {
+        jdbcTemplate.update(
+                """
+                        DELETE FROM articles_categories
+                        WHERE categorie_id = ?
+                        """,
+                id);
         int rows = jdbcTemplate.update(
                 """
-                        DELETE FROM catégories
-                        WHERE id = ?""",
+                        DELETE FROM categories
+                        WHERE id = ?
+                        """,
                 id);
         return rows > 0;
     }

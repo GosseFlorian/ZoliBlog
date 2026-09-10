@@ -9,7 +9,13 @@ export interface Commentaire {
 }
 
 export async function fetchComments(articleId: number): Promise<Commentaire[]> {
-  const response = await fetch(`${API_URL}/articles/${articleId}/commentaires`);
+  const response = await fetch(`${API_URL}/admin/articles/${articleId}/commentaires`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (response.status === 401) {
+    throw new Error('Session expirée — reconnecte-toi.');
+  }
   if (!response.ok) {
     throw new Error('Erreur lors du chargement des commentaires.');
   }

@@ -5,17 +5,21 @@ INSERT INTO users (id, pseudo, mail, mdp, role) VALUES
 
 INSERT INTO articles (id, titre, contenu, statut, date, "update", user_id) VALUES
 (1, 'Article test CI', 'Contenu pour JUnit', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
-(2, 'Brouillon test', 'Non publié', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
+(2, 'Brouillon test', 'Non publié', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
+(3, 'Article de Bob', 'Contenu Bob', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2);
 
 INSERT INTO commentaires (contenu, user_id, article_id, date) VALUES
-('Commentaire test', 1, 1, CURRENT_TIMESTAMP);
+('Commentaire test', 1, 1, CURRENT_TIMESTAMP),
+('Commentaire de Bob', 2, 1, CURRENT_TIMESTAMP),
+('Commentaire sur article Bob', 1, 3, CURRENT_TIMESTAMP);
 
-INSERT INTO "catégories" (id, nom, description) VALUES
+INSERT INTO categories (id, nom, description) VALUES
 (1, 'Java', 'Articles sur Java');
 
 INSERT INTO articles_categories (article_id, categorie_id) VALUES
-(1, 1);
+(1, 1),
+(3, 1);
 
 SELECT setval(pg_get_serial_sequence('users', 'id'), (SELECT MAX(id) FROM users));
 SELECT setval(pg_get_serial_sequence('articles', 'id'), (SELECT MAX(id) FROM articles));
-SELECT setval(pg_get_serial_sequence('"catégories"', 'id'), (SELECT MAX(id) FROM "catégories"));
+SELECT setval(pg_get_serial_sequence('categories', 'id'), (SELECT MAX(id) FROM categories));
