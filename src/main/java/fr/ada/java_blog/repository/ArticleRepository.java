@@ -177,10 +177,6 @@ public class ArticleRepository {
                 "DELETE FROM articles_categories WHERE article_id = ?", id);
         executeIfTableExists("articles_medias",
                 "DELETE FROM articles_medias WHERE article_id = ?", id);
-        executeIfTableExists("médias",
-                "UPDATE \"médias\" SET articles_id = NULL WHERE articles_id = ?", id);
-        executeIfTableExists("catégories",
-                "UPDATE \"catégories\" SET article_id = NULL WHERE article_id = ?", id);
     }
 
     private void executeIfTableExists(String tableName, String sql, Object... args) {

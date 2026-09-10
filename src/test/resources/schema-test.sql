@@ -1,13 +1,15 @@
 DROP TABLE IF EXISTS articles_categories CASCADE;
 DROP TABLE IF EXISTS articles_medias CASCADE;
 DROP TABLE IF EXISTS commentaires CASCADE;
-DROP TABLE IF EXISTS "médias" CASCADE;
-DROP TABLE IF EXISTS "catégories" CASCADE;
+DROP TABLE IF EXISTS medias CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS user_role CASCADE;
+DROP TYPE IF EXISTS "type" CASCADE;
 
 CREATE TYPE user_role AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "type" AS ENUM ('image', 'video', 'gif', 'musique');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -35,11 +37,16 @@ CREATE TABLE commentaires (
     date TIMESTAMP
 );
 
-CREATE TABLE "catégories" (
+CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(255),
-    description TEXT,
-    article_id INT
+    description TEXT
+);
+
+CREATE TABLE medias (
+    id SERIAL PRIMARY KEY,
+    "type" "type",
+    url VARCHAR(255)
 );
 
 CREATE TABLE articles_categories (

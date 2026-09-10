@@ -10,7 +10,7 @@ INSERT INTO articles (id, titre, contenu, statut, date, "update", user_id) VALUE
 INSERT INTO commentaires (contenu, user_id, article_id, date) VALUES
 ('Commentaire test', 1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO "catégories" (id, nom, description) VALUES
+INSERT INTO categories (id, nom, description) VALUES
 (1, 'Java', 'Articles sur Java');
 
 INSERT INTO articles_categories (article_id, categorie_id) VALUES
@@ -18,4 +18,4 @@ INSERT INTO articles_categories (article_id, categorie_id) VALUES
 
 SELECT setval(pg_get_serial_sequence('users', 'id'), (SELECT MAX(id) FROM users));
 SELECT setval(pg_get_serial_sequence('articles', 'id'), (SELECT MAX(id) FROM articles));
-SELECT setval(pg_get_serial_sequence('"catégories"', 'id'), (SELECT MAX(id) FROM "catégories"));
+SELECT setval(pg_get_serial_sequence('categories', 'id'), (SELECT MAX(id) FROM categories));
