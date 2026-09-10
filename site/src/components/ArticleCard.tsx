@@ -10,17 +10,17 @@ interface ArticleCardProps {
 function ArticleCard({ article }: ArticleCardProps) {
   return (
     <article className="article-card">
-      <h2>{article.titre}</h2>
       <CategoryTags categories={article.categories} />
+      <h2>{article.titre}</h2>
       <blockquote className="article-excerpt">
         <p>{excerpt(article.contenu)}</p>
       </blockquote>
-      <p className="article-date">
-        Posté le {formatArticleDate(article.date)}{' '}
+      <footer className="article-card-footer">
+        <span className="article-date">Posté le {formatArticleDate(article.date)}</span>
         <Link to={`/articles/${article.id}`} className="article-link">
-          lire la suite ➧
+          Lire la suite →
         </Link>
-      </p>
+      </footer>
     </article>
   );
 }

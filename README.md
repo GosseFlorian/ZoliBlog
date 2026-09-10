@@ -1,4 +1,4 @@
-# Blog Java — Spring Boot + React
+# ZoliBlog — Spring Boot + React
 
 API REST, back-office admin et site public pour un blog (formation ADA).
 

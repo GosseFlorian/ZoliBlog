@@ -69,8 +69,8 @@ function ArticlePage() {
       </Link>
 
       <article>
-        <h1>{article.titre}</h1>
         <CategoryTags categories={article.categories} />
+        <h1>{article.titre}</h1>
         <time className="article-date" dateTime={article.date}>
           {formatArticleDate(article.date)}
         </time>
@@ -82,7 +82,9 @@ function ArticlePage() {
       </article>
 
       <section className="comments-section">
-        <h2>Commentaires</h2>
+        <h2>
+          Commentaires{!commentsLoading && !commentsError ? ` (${comments.length})` : ''}
+        </h2>
 
         {commentsLoading && <p className="loading-message">Chargement des commentaires…</p>}
         {commentsError && <p className="error-message">{commentsError}</p>}

@@ -1,54 +1,175 @@
 .article-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #fff;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-xl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-card);
+}
+
+.article-form h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-sm);
 }
 
 .article-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.9rem;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .article-form input[type='text'],
 .article-form textarea,
 .article-form input[type='number'] {
-  padding: 0.4rem;
+  padding: var(--space-sm) var(--space-md);
   font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  min-height: var(--size-touch);
+}
+
+.article-form textarea {
+  min-height: 9rem;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.article-form input:focus,
+.article-form textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+.publish-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 2.5rem;
+  height: 1.25rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-border);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.toggle-switch[aria-checked='true'] {
+  background: var(--color-primary);
+}
+
+.toggle-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: var(--space-lg);
+  height: var(--space-lg);
+  background: var(--color-white);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s;
+}
+
+.toggle-switch[aria-checked='true'] .toggle-switch-thumb {
+  transform: translateX(1.25rem);
 }
 
 .admin-form .checkbox-label {
   flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+}
+
+.admin-form .checkbox-label input:checked + span,
+.admin-form .checkbox-label:has(input:checked) {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
 }
 
 .form-actions {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
 }
 
 .category-fieldset {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
   margin: 0;
 }
 
 .category-fieldset legend {
-  font-size: 0.9rem;
-  padding: 0 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: 0 var(--space-xs);
 }
 
 .category-checkboxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 640px) {
+  .category-checkboxes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.category-checkboxes .checkbox-label input[type='checkbox'] {
+  width: var(--space-lg);
+  height: var(--space-lg);
+  accent-color: var(--color-primary);
+}
+
+.categorie-form {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-card);
+  margin-bottom: var(--space-xl);
+}
+
+.categorie-form h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-sm);
+}
+
+.categorie-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.categorie-form input,
+.categorie-form textarea {
+  padding: var(--space-sm) var(--space-md);
+  font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 }

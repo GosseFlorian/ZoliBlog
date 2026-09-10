@@ -39,7 +39,8 @@ function CommentList({
         return (
           <li key={comment.id} className="comment-item">
             <p className="comment-meta">
-              <strong>{comment.pseudo}</strong> — {formatArticleDate(comment.date)}
+              <span className="comment-author">{comment.pseudo}</span>
+              <span className="comment-date">{formatArticleDate(comment.date)}</span>
             </p>
 
             {isEditing ? (

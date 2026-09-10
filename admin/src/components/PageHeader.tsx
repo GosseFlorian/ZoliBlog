@@ -1,19 +1,21 @@
 interface PageHeaderProps {
-  title: string;
   pseudo?: string | null;
   onLogout?: () => void;
 }
 
-function PageHeader({ title, pseudo, onLogout }: PageHeaderProps) {
+function PageHeader({ pseudo, onLogout }: PageHeaderProps) {
   return (
-    <header className="page-header">
-      <h1>{title}</h1>
+    <header className="admin-top-bar">
+      <div className="admin-brand">
+        <h1 className="admin-brand-title">Back-office</h1>
+        <span className="admin-brand-subtitle">ZoliBlog</span>
+      </div>
       {pseudo != null && onLogout && (
         <p className="header-auth">
           <span>
             Connecté : <strong>{pseudo}</strong>
           </span>
-          <button type="button" onClick={onLogout}>
+          <button type="button" className="btn-logout" onClick={onLogout}>
             Déconnexion
           </button>
         </p>

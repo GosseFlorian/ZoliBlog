@@ -40,7 +40,7 @@ function CategorieForm({
         </button>
       )}
 
-      <form className="article-form admin-form" onSubmit={handleSubmit}>
+      <form className="categorie-form admin-form" onSubmit={handleSubmit}>
         <h2>{isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie'}</h2>
 
         <label>
@@ -59,8 +59,10 @@ function CategorieForm({
         </label>
 
         <div className="form-actions">
-          <button type="submit">{submitLabel}</button>
-          <button type="button" onClick={onCancel}>
+          <button type="submit" className="btn btn-primary">
+            {submitLabel}
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={onCancel}>
             Annuler
           </button>
         </div>

@@ -1,140 +1,145 @@
 /* ─── Commentaires ─── */
 
 .comments-section {
-  margin-top: 48px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
-
-.comments-section h2 {
-  text-align: left;
-  margin-bottom: 16px;
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-2xl);
+  border-top: 1px solid var(--color-border);
 }
 
 .comment-list {
   list-style: none;
-  margin: 0 0 32px;
+  margin: 0 0 var(--space-2xl);
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .comment-item {
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--code-bg);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
 }
 
 .comment-meta {
-  font-size: 13px;
-  color: var(--text);
-  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.comment-author {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.comment-date {
+  font-family: var(--font-mono);
+  color: var(--color-muted-foreground);
 }
 
 .comment-contenu {
-  color: var(--text-h);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
 .comment-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 8px;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
 }
 
 .comment-actions button {
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-xs);
   padding: 0;
   border: none;
   background: none;
-  color: var(--accent);
   cursor: pointer;
+  min-height: var(--size-touch);
+  display: inline-flex;
+  align-items: center;
 }
 
-.comment-actions button:hover {
+.comment-actions button:first-child {
+  color: var(--color-muted-foreground);
+}
+
+.comment-actions button:first-child:hover {
+  color: var(--color-primary);
+}
+
+.comment-actions button:last-child {
+  color: var(--color-accent);
+}
+
+.comment-actions button:last-child:hover {
   text-decoration: underline;
 }
 
 .comment-edit-form {
-  margin-top: 8px;
+  margin-top: var(--space-sm);
 }
 
 .comment-form-actions {
   display: flex;
-  gap: 12px;
-}
-
-.comment-form-actions button {
-  align-self: auto;
-  font-size: 14px;
-  padding: 6px 14px;
-}
-
-.comment-form-actions button[type='button'] {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text);
+  gap: var(--space-md);
 }
 
 .comment-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 480px;
+  gap: var(--space-md);
 }
 
 .comment-form h3 {
   margin: 0;
-  text-align: left;
-  font-size: 18px;
-  color: var(--text-h);
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
 }
 
 .comment-form label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text);
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
 }
 
-.comment-form input,
 .comment-form textarea {
   font: inherit;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
-  color: var(--text-h);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  resize: vertical;
+  min-height: 6rem;
 }
 
-.comment-form button {
+.comment-form textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+.comment-form .btn-primary {
   align-self: flex-start;
-  font-size: 15px;
-  padding: 8px 16px;
-  border-radius: 5px;
-  border: 2px solid transparent;
-  color: var(--accent);
-  background: var(--accent-bg);
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.comment-form button:hover {
-  border-color: var(--accent-border);
-}
-
-.comment-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .comment-form-locked {
-  color: var(--text);
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
 }
 
 .comment-form-locked a {
-  color: var(--accent);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
 }

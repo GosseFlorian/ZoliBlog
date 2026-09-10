@@ -1,12 +1,14 @@
 .comments-section {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #ddd;
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
 }
 
 .comments-section h2 {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-lg);
 }
 
 .comment-list {
@@ -15,37 +17,40 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .comment-item {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.75rem;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-card);
 }
 
 .comment-meta {
-  font-size: 0.8rem;
-  color: #666;
-  margin: 0 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-sm);
 }
 
 .comment-contenu {
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-sm);
 }
 
 .comment-delete {
   cursor: pointer;
-  padding: 0.25rem 0.6rem;
+  padding: var(--space-xs) var(--space-md);
   font: inherit;
-  font-size: 0.85rem;
-  color: #b00020;
-  background: #ffeaea;
-  border: 1px solid #ea4335;
-  border-radius: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  min-height: var(--size-touch-small);
 }
 
 .comment-delete:hover {
-  background: #fdd;
+  background: var(--color-danger-hover-bg);
 }

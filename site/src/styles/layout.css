@@ -1,56 +1,73 @@
 .site {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  min-height: 100vh;
 }
 
 .site-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
+  padding: var(--space-lg) var(--space-2xl);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-card);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-lg);
   flex-wrap: wrap;
 }
 
 .site-title {
-  font-family: var(--heading);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text-h);
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
   text-decoration: none;
 }
 
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 15px;
+  gap: var(--space-lg);
+  font-size: var(--font-size-sm);
 }
 
 .site-nav a {
-  color: var(--accent);
+  color: var(--color-primary);
   text-decoration: none;
+  font-weight: var(--font-weight-medium);
 }
 
 .site-nav a:hover {
   text-decoration: underline;
 }
 
+.site-nav a.btn-primary {
+  color: var(--color-primary-foreground);
+  background: var(--color-primary);
+}
+
+.site-nav a.btn-primary:hover {
+  background: var(--color-primary-hover);
+  text-decoration: none;
+}
+
 .nav-pseudo {
-  color: var(--text);
+  color: var(--color-muted-foreground);
+}
+
+.nav-pseudo strong {
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
 }
 
 .nav-link-button {
   font: inherit;
-  color: var(--accent);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  text-decoration: none;
+  min-height: var(--size-touch);
 }
 
 .nav-link-button:hover {
@@ -61,55 +78,75 @@
 .article-page {
   flex-grow: 1;
   width: 100%;
-  max-width: 900px;
+  max-width: 48rem;
   margin: 0 auto;
-  padding: 32px;
+  padding: var(--space-2xl);
   text-align: left;
   box-sizing: border-box;
+}
 
-  @media (max-width: 1024px) {
-    padding: 24px 20px;
+@media (max-width: 1024px) {
+  .site-header {
+    padding: var(--space-lg) var(--space-xl);
+  }
+
+  .home-page,
+  .article-page {
+    padding: var(--space-xl) var(--space-xl);
   }
 }
 
-/* ─── Navigation catégories (inspirée coeurdurugby.com/news) ─── */
+/* ─── Navigation catégories ─── */
+
+.category-nav-bar {
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+}
 
 .category-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-2xl);
+}
+
+@media (max-width: 1024px) {
+  .category-nav {
+    padding: var(--space-sm) var(--space-xl);
+  }
 }
 
 .category-nav-link {
   font: inherit;
-  font-size: 14px;
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
-  color: var(--text-h);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-muted-foreground);
   cursor: pointer;
   transition:
     background 0.15s,
-    border-color 0.15s;
+    color 0.15s;
+  min-height: var(--size-touch);
 }
 
 .category-nav-link:hover {
-  border-color: var(--accent-border);
-  background: var(--accent-bg);
+  background: var(--color-secondary);
+  color: var(--color-primary);
 }
 
 .category-nav-link.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
 }
 
 .category-nav-loading {
-  font-size: 14px;
-  color: var(--text);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
   align-self: center;
 }

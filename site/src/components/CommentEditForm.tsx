@@ -36,10 +36,10 @@ function CommentEditForm({
       </label>
 
       <div className="comment-form-actions">
-        <button type="submit" disabled={isSubmitting}>
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
           {isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
         </button>
-        <button type="button" onClick={onCancel} disabled={isSubmitting}>
+        <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={isSubmitting}>
           Annuler
         </button>
       </div>

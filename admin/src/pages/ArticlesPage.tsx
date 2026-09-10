@@ -15,7 +15,6 @@ function ArticlesPage() {
   const editingArticle = useAdminStore((s) => s.editingArticle);
   const editingArticleCategoryIds = useAdminStore((s) => s.editingArticleCategoryIds);
   const viewingArticleId = useAdminStore((s) => s.viewingArticleId);
-  const showCreate = useAdminStore((s) => s.showCreate);
   const showList = useAdminStore((s) => s.showList);
   const handleEditArticle = useAdminStore((s) => s.handleEditArticle);
   const handleDeleteArticle = useAdminStore((s) => s.handleDeleteArticle);
@@ -26,14 +25,6 @@ function ArticlesPage() {
 
   return (
     <>
-      {mode === 'list' && (
-        <div className="toolbar">
-          <button type="button" onClick={showCreate}>
-            + Nouvel article
-          </button>
-        </div>
-      )}
-
       {mode === 'create' && userId != null && (
         <ArticleForm
           key="create-article"

@@ -1,4 +1,4 @@
-# CI — Blog Java / Spring Boot + React admin
+# CI — ZoliBlog / Spring Boot + React admin
 # Déclenché à chaque push et pull request
 
 name: CI

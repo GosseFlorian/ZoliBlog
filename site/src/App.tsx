@@ -14,13 +14,15 @@ function App() {
     <div className="site">
       <header className="site-header">
         <Link to="/" className="site-title">
-          Blog Java
+          ZoliBlog
         </Link>
 
         <nav className="site-nav">
           {pseudo ? (
             <>
-              <span className="nav-pseudo">Bonjour, {pseudo}</span>
+              <span className="nav-pseudo">
+                Bonjour, <strong>{pseudo}</strong>
+              </span>
               <button type="button" className="nav-link-button" onClick={logout}>
                 Déconnexion
               </button>
@@ -28,7 +30,9 @@ function App() {
           ) : (
             <>
               <Link to="/connexion">Connexion</Link>
-              <Link to="/inscription">Créer un compte</Link>
+              <Link to="/inscription" className="btn btn-primary">
+                Créer un compte
+              </Link>
             </>
           )}
         </nav>

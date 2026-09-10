@@ -1,13 +1,6 @@
 import { useState, type SubmitEvent } from 'react';
 import type { LoginCredentials } from '../api/auth.ts';
 
-/**
- * LoginForm — connexion admin.
- * Props :
- *   - onSubmit : (credentials) => void — parent appelle login()
- *   - errorMessage : string | null — message d'erreur affiché
- *   - isSubmitting : boolean — désactive le bouton pendant l'appel API
- */
 interface LoginFormProps {
   onSubmit: (credentials: LoginCredentials) => void;
   errorMessage: string | null;
@@ -42,6 +35,7 @@ function LoginForm({ onSubmit, errorMessage, isSubmitting }: LoginFormProps) {
           type="email"
           value={mail}
           onChange={(e) => setMail(e.target.value)}
+          placeholder="alice@example.com"
           required
           autoComplete="username"
         />
@@ -53,12 +47,13 @@ function LoginForm({ onSubmit, errorMessage, isSubmitting }: LoginFormProps) {
           type="password"
           value={mdp}
           onChange={(e) => setMdp(e.target.value)}
+          placeholder="••••••••"
           required
           autoComplete="current-password"
         />
       </label>
 
-      <button type="submit" disabled={isSubmitting}>
+      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
         {isSubmitting ? 'Connexion…' : 'Se connecter'}
       </button>
     </form>
