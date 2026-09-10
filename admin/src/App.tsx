@@ -10,16 +10,24 @@ import { useAuthStore } from './store/authStore.ts';
 import { useAdminStore } from './store/adminStore.ts';
 import './App.css';
 
+const SECTION_TITLES = {
+  articles: 'Articles',
+  categories: 'Catégories',
+  users: 'Utilisateurs',
+} as const;
+
 function App() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const pseudo = useAuthStore((s) => s.pseudo);
   const logout = useAuthStore((s) => s.logout);
   const section = useAdminStore((s) => s.section);
+  const mode = useAdminStore((s) => s.mode);
   const feedback = useAdminStore((s) => s.feedback);
   const setSection = useAdminStore((s) => s.setSection);
   const loadCurrentSection = useAdminStore((s) => s.loadCurrentSection);
   const clearFeedback = useAdminStore((s) => s.clearFeedback);
   const reset = useAdminStore((s) => s.reset);
+  const showCreate = useAdminStore((s) => s.showCreate);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -37,18 +45,33 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <PageHeader title="Back-office — Blog Java" pseudo={pseudo} onLogout={handleLogout} />
-
+    <div className="admin-shell">
+      <PageHeader pseudo={pseudo} onLogout={handleLogout} />
       <AdminNav active={section} onChange={setSection} />
 
-      <main>
+      <main className="admin-main">
         {feedback && (
           <FeedbackMessage
             type={feedback.type}
             message={feedback.message}
             onClose={clearFeedback}
           />
+        )}
+
+        {mode === 'list' && (
+          <div className="page-header-row">
+            <h1>{SECTION_TITLES[section]}</h1>
+            {section === 'articles' && (
+              <button type="button" className="btn btn-primary btn-small" onClick={showCreate}>
+                + Nouvel article
+              </button>
+            )}
+            {section === 'categories' && (
+              <button type="button" className="btn btn-primary btn-small" onClick={showCreate}>
+                + Nouvelle catégorie
+              </button>
+            )}
+          </div>
         )}
 
         {section === 'articles' && <ArticlesPage />}

@@ -1,4 +1,3 @@
-import PageHeader from '../components/PageHeader.tsx';
 import LoginForm from '../components/LoginForm.tsx';
 import { useAuthStore } from '../store/authStore.ts';
 
@@ -8,11 +7,12 @@ function LoginPage() {
   const isLoggingIn = useAuthStore((s) => s.isLoggingIn);
 
   return (
-    <div className="app">
-      <PageHeader title="Back-office — Blog Java" />
-      <main>
-        <LoginForm onSubmit={login} errorMessage={loginError} isSubmitting={isLoggingIn} />
-      </main>
+    <div className="admin-login-shell">
+      <div className="admin-login-brand">
+        <h1 className="admin-brand-title">Back-office</h1>
+        <span className="admin-brand-subtitle">ZoliBlog</span>
+      </div>
+      <LoginForm onSubmit={login} errorMessage={loginError} isSubmitting={isLoggingIn} />
     </div>
   );
 }

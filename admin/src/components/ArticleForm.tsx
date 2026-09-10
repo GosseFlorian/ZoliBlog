@@ -78,7 +78,13 @@ function ArticleForm({
 
         <label>
           Titre
-          <input type="text" value={titre} onChange={(e) => setTitre(e.target.value)} required />
+          <input
+            type="text"
+            value={titre}
+            onChange={(e) => setTitre(e.target.value)}
+            placeholder="Titre de l'article"
+            required
+          />
         </label>
 
         <label>
@@ -86,16 +92,26 @@ function ArticleForm({
           <textarea
             value={contenu}
             onChange={(e) => setContenu(e.target.value)}
-            rows={5}
+            rows={8}
             required
           />
         </label>
 
         {isEdit && (
-          <label className="checkbox-label">
-            <input type="checkbox" checked={publie} onChange={(e) => setPublie(e.target.checked)} />
-            Publié
-          </label>
+          <div className="publish-toggle-row">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={publie}
+              className="toggle-switch"
+              onClick={() => setPublie((prev) => !prev)}
+            >
+              <span className="toggle-switch-thumb" />
+            </button>
+            <span className={`badge ${publie ? 'badge-success' : 'badge-draft'}`}>
+              {publie ? 'Publié' : 'Brouillon'}
+            </span>
+          </div>
         )}
 
         {allCategories.length > 0 && (
@@ -117,8 +133,10 @@ function ArticleForm({
         )}
 
         <div className="form-actions">
-          <button type="submit">{submitLabel}</button>
-          <button type="button" onClick={onCancel}>
+          <button type="submit" className="btn btn-primary">
+            {submitLabel}
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={onCancel}>
             Annuler
           </button>
         </div>

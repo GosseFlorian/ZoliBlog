@@ -1,11 +1,13 @@
 .comments-section {
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--color-border);
 }
 
 .comments-section h2 {
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
@@ -19,33 +21,36 @@
 }
 
 .comment-item {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.75rem;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  background: var(--color-card);
 }
 
 .comment-meta {
-  font-size: 0.8rem;
-  color: #666;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
   margin: 0 0 0.35rem;
 }
 
 .comment-contenu {
   margin: 0 0 0.5rem;
+  font-size: 0.875rem;
 }
 
 .comment-delete {
   cursor: pointer;
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.75rem;
   font: inherit;
-  font-size: 0.85rem;
-  color: #b00020;
-  background: #ffeaea;
-  border: 1px solid #ea4335;
-  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  min-height: 36px;
 }
 
 .comment-delete:hover {
-  background: #fdd;
+  background: #fddccc;
 }

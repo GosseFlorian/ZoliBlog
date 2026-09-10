@@ -8,11 +8,6 @@ interface CommentFormProps {
   error: string | null;
 }
 
-/**
- * Le userId n'est plus demandé dans le formulaire : il vient de la session
- * connectée (useAuthStore). Si personne n'est connecté, on affiche un lien
- * vers la page de connexion à la place du formulaire.
- */
 function CommentForm({ onSubmit, isSubmitting, error }: CommentFormProps) {
   const [contenu, setContenu] = useState('');
   const [success, setSuccess] = useState(false);
@@ -48,14 +43,18 @@ function CommentForm({ onSubmit, isSubmitting, error }: CommentFormProps) {
           {error}
         </p>
       )}
-      {success && <p className="success-message">Commentaire envoyé.</p>}
+      {success && (
+        <p className="success-message" role="status">
+          ✓ Commentaire envoyé avec succès.
+        </p>
+      )}
 
       <label>
         Votre message
         <textarea value={contenu} onChange={(e) => setContenu(e.target.value)} rows={4} required />
       </label>
 
-      <button type="submit" disabled={isSubmitting}>
+      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
         {isSubmitting ? 'Envoi…' : 'Publier le commentaire'}
       </button>
     </form>

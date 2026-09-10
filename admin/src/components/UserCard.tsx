@@ -9,11 +9,11 @@ function UserCard({ user, onDelete }: UserCardProps) {
   const { id, pseudo, mail } = user;
 
   return (
-    <article className="article-card user-card">
+    <article className="user-card">
       <h2>{pseudo}</h2>
-      <p className="article-contenu">{mail}</p>
+      <p>{mail}</p>
       <div className="article-actions">
-        <button type="button" onClick={() => onDelete(id)}>
+        <button type="button" className="btn btn-danger btn-small" onClick={() => onDelete(id)}>
           Supprimer
         </button>
       </div>

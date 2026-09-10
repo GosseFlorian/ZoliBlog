@@ -21,48 +21,52 @@ function LoginPage() {
 
   return (
     <main className="auth-page">
-      <h1>Connexion</h1>
-      <p className="login-hint">
-        Compte démo : <strong>alice@example.com</strong> / <strong>demo1234</strong>
-      </p>
-
-      {error && (
-        <p className="error-message" role="alert">
-          {error}
+      <div className="auth-card">
+        <h1>Connexion</h1>
+        <p className="login-hint">
+          Compte démo : <strong>alice@example.com</strong> / <strong>demo1234</strong>
         </p>
-      )}
 
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <label>
-          Adresse mail
-          <input
-            type="email"
-            value={mail}
-            onChange={(e) => setMail(e.target.value)}
-            required
-            autoComplete="username"
-          />
-        </label>
+        {error && (
+          <p className="error-message" role="alert">
+            {error}
+          </p>
+        )}
 
-        <label>
-          Mot de passe
-          <input
-            type="password"
-            value={mdp}
-            onChange={(e) => setMdp(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
-        </label>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            Adresse mail
+            <input
+              type="email"
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
+              placeholder="alice@example.com"
+              required
+              autoComplete="username"
+            />
+          </label>
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Connexion…' : 'Se connecter'}
-        </button>
-      </form>
+          <label>
+            Mot de passe
+            <input
+              type="password"
+              value={mdp}
+              onChange={(e) => setMdp(e.target.value)}
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+            />
+          </label>
 
-      <p className="auth-switch">
-        Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
-      </p>
+          <button type="submit" className="btn btn-primary" disabled={submitting}>
+            {submitting ? 'Connexion…' : 'Se connecter'}
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
+        </p>
+      </div>
     </main>
   );
 }

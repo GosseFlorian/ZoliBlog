@@ -9,7 +9,6 @@ function CategoriesPage() {
   const isLoading = useAdminStore((s) => s.isLoading);
   const error = useAdminStore((s) => s.error);
   const editingCategorie = useAdminStore((s) => s.editingCategorie);
-  const showCreate = useAdminStore((s) => s.showCreate);
   const showList = useAdminStore((s) => s.showList);
   const handleEditCategorie = useAdminStore((s) => s.handleEditCategorie);
   const handleDeleteCategorie = useAdminStore((s) => s.handleDeleteCategorie);
@@ -18,14 +17,6 @@ function CategoriesPage() {
 
   return (
     <>
-      {mode === 'list' && (
-        <div className="toolbar">
-          <button type="button" onClick={showCreate}>
-            + Nouvelle catégorie
-          </button>
-        </div>
-      )}
-
       {mode === 'create' && (
         <CategorieForm
           key="create-categorie"

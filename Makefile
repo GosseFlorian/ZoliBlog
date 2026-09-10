@@ -1,4 +1,4 @@
-# Raccourcis DevOps — Blog Java
+# Raccourcis DevOps — ZoliBlog
 ifeq ($(OS),Windows_NT)
     MVNW = mvnw.cmd
 else

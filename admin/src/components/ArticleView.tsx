@@ -89,7 +89,9 @@ function ArticleView({ articleId, onBack, onSessionExpired }: ArticleViewProps) 
         <CategoryTags categories={article.categories} />
         <p className="article-date">
           Posté le {formatArticleDate(article.date)}{' '}
-          <span className="article-statut">— {statutLabel}</span>
+          <span className={`badge ${article.publie ? 'badge-success' : 'badge-draft'}`}>
+            {statutLabel}
+          </span>
         </p>
         <div className="article-contenu">
           {article.contenu.split('\n').map((paragraphe, index) => (
