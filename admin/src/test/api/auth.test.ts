@@ -42,6 +42,45 @@ describe('auth.ts', () => {
     expect(localStorage.getItem('java_blog_role')).toBeNull();
   });
 
+  it('login réussit pour un admin', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            token: 'jwt',
+            pseudo: 'alice',
+            userId: 1,
+            role: 'ADMIN',
+          }),
+      }),
+    );
+
+    const result = await login({ mail: 'alice@example.com', mdp: 'demo1234' });
+
+    expect(result.role).toBe('ADMIN');
+    expect(isLoggedIn()).toBe(true);
+
+    vi.unstubAllGlobals();
+  });
+
+  it('login lance une erreur si identifiants invalides', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+      }),
+    );
+
+    await expect(login({ mail: 'alice@example.com', mdp: 'wrong' })).rejects.toThrow(
+      'Identifiants invalides',
+    );
+
+    vi.unstubAllGlobals();
+  });
+
   it('login refuse un utilisateur non admin', async () => {
     vi.stubGlobal(
       'fetch',

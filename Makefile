@@ -4,7 +4,7 @@ ifeq ($(OS),Windows_NT)
 else
     MVNW = ./mvnw
 endif
-.PHONY: help setup env db-init db-test lint format test ci backend admin site
+.PHONY: help setup env db-init db-test lint format test test-coverage ci backend admin site
 
 help:
 	@echo "Commandes :"
@@ -14,8 +14,9 @@ help:
 	@echo "  make db-test   - crée java_blog_test"
 	@echo "  make lint      - ESLint admin + site"
 	@echo "  make format    - Prettier admin + site"
-	@echo "  make test      - ./mvnw test"
-	@echo "  make ci        - tests + lint + build admin + build site"
+	@echo "  make test           - tests (backend + admin + site)"
+	@echo "  make test-coverage  - tests + rapports de couverture (JaCoCo + Vitest)"
+	@echo "  make ci             - tests + lint + build admin + build site"
 	@echo "  make backend   - API port 8080"
 	@echo "  make admin     - Vite port 5173"
 	@echo "  make site      - Vite port 5174"
@@ -43,6 +44,13 @@ format:
 
 test:
 	$(MVNW) test
+	cd admin && npm run test
+	cd site && npm run test
+
+test-coverage:
+	$(MVNW) test
+	cd admin && npm run test:coverage
+	cd site && npm run test:coverage
 
 ci:
 	$(MVNW) -B test

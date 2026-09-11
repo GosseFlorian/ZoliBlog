@@ -7,6 +7,16 @@ export default defineConfig({
   plugins: [react()],
   server: { port: 5174 },
   test: {
-    environment: "node",
+    environment: "jsdom",
+    coverage: {
+      provider: "v8",
+      include: ["src/api/**", "src/store/**", "src/utils/**"],
+      thresholds: {
+        lines: 70,
+        functions: 70,
+        statements: 70,
+        branches: 50,
+      },
+    },
   },
 });

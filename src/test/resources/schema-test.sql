@@ -54,3 +54,9 @@ CREATE TABLE articles_categories (
     article_id INT,
     categorie_id INT
 );
+
+CREATE TABLE articles_medias (
+    id SERIAL PRIMARY KEY,
+    media_id INT,
+    article_id INT
+);

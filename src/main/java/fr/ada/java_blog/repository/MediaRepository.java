@@ -67,7 +67,7 @@ public class MediaRepository {
         jdbcTemplate.update(
                 """
                         DELETE FROM articles_medias
-                        WHERE medias_id = ?
+                        WHERE media_id = ?
                         """,
                 id);
         int rows = jdbcTemplate.update(
