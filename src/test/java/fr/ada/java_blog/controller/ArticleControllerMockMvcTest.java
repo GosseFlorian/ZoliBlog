@@ -51,6 +51,21 @@ class ArticleControllerMockMvcTest {
     @Test
     void ping_retourne200() throws Exception {
         mockMvc.perform(get("/ping"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string("pong"));
+    }
+
+    @Test
+    void listArticles_retourne200() throws Exception {
+        mockMvc.perform(get("/articles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void getCategories_retourne200() throws Exception {
+        mockMvc.perform(get("/articles/1/categories"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
     }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { excerpt, formatArticleDate } from '../../utils/formatUtils';
+import { excerpt, formatArticleDate, formatCategoryList } from '../../utils/formatUtils';
 
 describe('excerpt', () => {
   it('returns full text when shorter than limit', () => {
@@ -17,5 +17,16 @@ describe('formatArticleDate', () => {
     const result = formatArticleDate('2024-01-15T10:30:00');
     expect(result).toMatch(/15/);
     expect(result).toMatch(/2024/);
+  });
+});
+
+describe('formatCategoryList', () => {
+  it('returns null for empty or undefined', () => {
+    expect(formatCategoryList([])).toBeNull();
+    expect(formatCategoryList(undefined)).toBeNull();
+  });
+
+  it('joins category names', () => {
+    expect(formatCategoryList([{ nom: 'Java' }, { nom: 'Spring' }])).toBe('Java, Spring');
   });
 });

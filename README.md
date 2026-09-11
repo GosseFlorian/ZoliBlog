@@ -95,14 +95,38 @@ make site       # Site public — http://localhost:5174
 ## Commandes utiles
 
 ```bash
-make help       # liste toutes les cibles du Makefile
-make lint       # ESLint (admin + site)
-make format     # Prettier (admin + site)
-make test       # tests backend (JUnit)
-make ci         # pipeline locale (tests + build des 2 fronts)
+make help            # liste toutes les cibles du Makefile
+make lint            # ESLint (admin + site)
+make format          # Prettier (admin + site)
+make test            # tests uniquement (backend + admin + site)
+make test-coverage   # rapports de couverture (JaCoCo + Vitest)
+make ci              # pipeline locale (tests + lint + build des 2 fronts)
 ```
 
-Scripts npm dans chaque front (`admin/`, `site/`) : `dev`, `build`, `lint`, `lint:fix`, `format`, `test`.
+Scripts npm dans chaque front (`admin/`, `site/`) : `dev`, `build`, `lint`, `lint:fix`, `format`, `test`, `test:coverage`.
+
+### Tests vs couverture
+
+| Commande             | Backend       | Fronts (admin + site)   |
+| -------------------- | ------------- | ----------------------- |
+| `make test`          | `./mvnw test` | `npm run test`          |
+| `make test-coverage` | `./mvnw test` | `npm run test:coverage` |
+
+Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils. Côté **backend**, `./mvnw test` produit déjà le rapport JaCoCo à la fin des tests (plugin Maven).
+
+Après `make test-coverage` (ou un `./mvnw test` seul pour le backend), ouvre les rapports HTML dans le navigateur :
+
+| Partie  | Rapport HTML                    |
+| ------- | ------------------------------- |
+| Backend | `target/site/jacoco/index.html` |
+| Admin   | `admin/coverage/index.html`     |
+| Site    | `site/coverage/index.html`      |
+
+Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'est pas. Les fronts mesurent surtout `src/api/`, `src/store/` et `src/utils/` (pas les composants React).
+
+### `-B` dans `make ci`
+
+La cible `ci` appelle `./mvnw -B test` : **`-B`** (*batch mode*) désactive le mode interactif de Maven (pas de téléchargement de plugins avec confirmation). C'est la convention en CI et dans les scripts automatisés.
 
 ---
 

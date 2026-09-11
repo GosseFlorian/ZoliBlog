@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from '../../store/authStore';
+import * as authApi from '../../api/auth';
+
+vi.mock('../../api/auth');
 
 describe('authStore', () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.clearAllMocks();
     useAuthStore.setState({
       pseudo: null,
       userId: null,
@@ -21,5 +25,30 @@ describe('authStore', () => {
     useAuthStore.setState({ loginError: 'Erreur test' });
     useAuthStore.getState().clearLoginError();
     expect(useAuthStore.getState().loginError).toBeNull();
+  });
+
+  it('login réussit et met à jour le state', async () => {
+    vi.mocked(authApi.login).mockResolvedValue({
+      token: 'jwt',
+      pseudo: 'alice',
+      userId: 1,
+      role: 'ADMIN',
+    });
+
+    await useAuthStore.getState().login({ mail: 'a@example.com', mdp: 'demo1234' });
+
+    expect(useAuthStore.getState().isAuthenticated).toBe(true);
+    expect(useAuthStore.getState().pseudo).toBe('alice');
+  });
+
+  it('logout remet isAuthenticated à false', () => {
+    useAuthStore.setState({
+      isAuthenticated: true,
+      pseudo: 'alice',
+      userId: 1,
+    });
+    useAuthStore.getState().logout();
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    expect(useAuthStore.getState().pseudo).toBeNull();
   });
 });
