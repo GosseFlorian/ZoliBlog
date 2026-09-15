@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageHeader from './components/PageHeader.tsx';
 import AdminNav from './components/AdminNav.tsx';
 import FeedbackMessage from './components/FeedbackMessage.tsx';
@@ -10,30 +10,14 @@ import { useAuthStore } from './store/authStore.ts';
 import { useAdminStore } from './store/adminStore.ts';
 import './App.css';
 
-const SECTION_TITLES = {
-  articles: 'Articles',
-  categories: 'Catégories',
-  users: 'Utilisateurs',
-} as const;
-
 function App() {
+  const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const pseudo = useAuthStore((s) => s.pseudo);
   const logout = useAuthStore((s) => s.logout);
-  const section = useAdminStore((s) => s.section);
-  const mode = useAdminStore((s) => s.mode);
   const feedback = useAdminStore((s) => s.feedback);
-  const setSection = useAdminStore((s) => s.setSection);
-  const loadCurrentSection = useAdminStore((s) => s.loadCurrentSection);
   const clearFeedback = useAdminStore((s) => s.clearFeedback);
   const reset = useAdminStore((s) => s.reset);
-  const showCreate = useAdminStore((s) => s.showCreate);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadCurrentSection();
-    }
-  }, [isAuthenticated, section, loadCurrentSection]);
 
   function handleLogout() {
     logout();
@@ -41,13 +25,18 @@ function App() {
   }
 
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<Navigate to="/login" state={{ from: location }} replace />} />
+      </Routes>
+    );
   }
 
   return (
     <div className="admin-shell">
       <PageHeader pseudo={pseudo} onLogout={handleLogout} />
-      <AdminNav active={section} onChange={setSection} />
+      <AdminNav />
 
       <main className="admin-main">
         {feedback && (
@@ -58,25 +47,14 @@ function App() {
           />
         )}
 
-        {mode === 'list' && (
-          <div className="page-header-row">
-            <h1>{SECTION_TITLES[section]}</h1>
-            {section === 'articles' && (
-              <button type="button" className="btn btn-primary btn-small" onClick={showCreate}>
-                + Nouvel article
-              </button>
-            )}
-            {section === 'categories' && (
-              <button type="button" className="btn btn-primary btn-small" onClick={showCreate}>
-                + Nouvelle catégorie
-              </button>
-            )}
-          </div>
-        )}
-
-        {section === 'articles' && <ArticlesPage />}
-        {section === 'categories' && <CategoriesPage />}
-        {section === 'users' && <UsersPage />}
+        <Routes>
+          <Route path="/login" element={<Navigate to="/articles" replace />} />
+          <Route path="/" element={<Navigate to="/articles" replace />} />
+          <Route path="/articles/*" element={<ArticlesPage />} />
+          <Route path="/categories/*" element={<CategoriesPage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="*" element={<Navigate to="/articles" replace />} />
+        </Routes>
       </main>
     </div>
   );

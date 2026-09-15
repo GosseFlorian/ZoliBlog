@@ -1,29 +1,25 @@
-export type AdminSection = 'articles' | 'categories' | 'users';
+import { NavLink } from 'react-router-dom';
 
-interface AdminNavProps {
-  active: AdminSection;
-  onChange: (section: AdminSection) => void;
-}
+const links = [
+  { to: '/articles', label: 'Articles' },
+  { to: '/categories', label: 'Catégories' },
+  { to: '/users', label: 'Utilisateurs' },
+] as const;
 
-function AdminNav({ active, onChange }: AdminNavProps) {
-  const links: { id: AdminSection; label: string }[] = [
-    { id: 'articles', label: 'Articles' },
-    { id: 'categories', label: 'Catégories' },
-    { id: 'users', label: 'Utilisateurs' },
-  ];
-
+function AdminNav() {
   return (
     <nav className="admin-nav" aria-label="Sections du back-office">
-      {links.map(({ id, label }) => (
-        <button
-          key={id}
-          type="button"
-          className={active === id ? 'admin-nav-link active' : 'admin-nav-link'}
-          aria-current={active === id ? 'page' : undefined}
-          onClick={() => onChange(id)}
+      {links.map(({ to, label }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={to === '/users'}
+          className={({ isActive }) =>
+            isActive ? 'admin-nav-link active' : 'admin-nav-link'
+          }
         >
           {label}
-        </button>
+        </NavLink>
       ))}
     </nav>
   );

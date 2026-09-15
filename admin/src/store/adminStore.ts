@@ -1,14 +1,12 @@
 import { create } from 'zustand';
-import type { AdminSection } from '../components/AdminNav.tsx';
 import type { FeedbackType } from '../components/FeedbackMessage.tsx';
 import {
   fetchAllArticles,
   createArticle,
   updateArticle,
   deleteArticle,
-  fetchArticleCategories,
-  updateArticleCategories,
   enrichArticlesWithCategories,
+  updateArticleCategories,
 } from '../api/articles.ts';
 import { fetchCategories } from '../api/categories.ts';
 import type { CreateArticlePayload, UpdateArticlePayload } from '../api/articles.ts';
@@ -23,69 +21,51 @@ import type { User } from '../api/users.ts';
 import type { Article } from '../types/article.ts';
 import { useAuthStore } from './authStore.ts';
 
-type Mode = 'list' | 'create' | 'edit' | 'view';
-
 interface Feedback {
   type: FeedbackType;
   message: string;
 }
 
 interface AdminState {
-  section: AdminSection;
-  mode: Mode;
   feedback: Feedback | null;
   articles: Article[];
   categories: Categorie[];
   users: User[];
   isLoading: boolean;
   error: string | null;
-  editingArticle: Article | null;
-  editingArticleCategoryIds: number[];
-  editingCategorie: Categorie | null;
-  viewingArticleId: number | null;
 
-  setSection: (section: AdminSection) => void;
-  loadCurrentSection: () => Promise<void>;
+  loadArticles: () => Promise<void>;
+  loadCategories: () => Promise<void>;
+  loadUsers: () => Promise<void>;
   reset: () => void;
   clearFeedback: () => void;
-  showList: () => void;
-  showCreate: () => void;
-  handleViewArticle: (id: number) => void;
-  handleEditArticle: (id: number) => Promise<void>;
-  handleEditCategorie: (id: number) => void;
   handleCreateArticleSubmit: (
     payload: CreateArticlePayload | (UpdateArticlePayload & { id: number }),
     categorieIds?: number[]
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   handleEditArticleSubmit: (
     payload: CreateArticlePayload | (UpdateArticlePayload & { id: number }),
     categorieIds?: number[]
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   handleDeleteArticle: (id: number) => Promise<void>;
   handleCreateCategorieSubmit: (
     payload: CreateCategoriePayload | (UpdateCategoriePayload & { id: number })
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   handleEditCategorieSubmit: (
     payload: CreateCategoriePayload | (UpdateCategoriePayload & { id: number })
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   handleDeleteCategorie: (id: number) => Promise<void>;
   handleDeleteUser: (id: number) => Promise<void>;
   handleSessionExpired: (message: string) => void;
 }
 
 const initialState = {
-  section: 'articles' as AdminSection,
-  mode: 'list' as Mode,
   feedback: null as Feedback | null,
   articles: [] as Article[],
   categories: [] as Categorie[],
   users: [] as User[],
   isLoading: false,
   error: null as string | null,
-  editingArticle: null as Article | null,
-  editingArticleCategoryIds: [] as number[],
-  editingCategorie: null as Categorie | null,
-  viewingArticleId: null as number | null,
 };
 
 async function loadArticles(set: (partial: Partial<AdminState>) => void) {
@@ -128,90 +108,24 @@ async function loadUsers(set: (partial: Partial<AdminState>) => void) {
 export const useAdminStore = create<AdminState>((set, get) => ({
   ...initialState,
 
-  setSection: (section) => {
-    set({
-      section,
-      mode: 'list',
-      editingArticle: null,
-      editingCategorie: null,
-      viewingArticleId: null,
-      feedback: null,
-      error: null,
-    });
+  loadArticles: async () => {
+    await loadArticles(set);
+    fetchCategories()
+      .then((data) => set({ categories: data }))
+      .catch((err) => console.error(err));
   },
 
-  loadCurrentSection: async () => {
-    const { section } = get();
-    set({
-      mode: 'list',
-      editingArticle: null,
-      editingCategorie: null,
-    });
+  loadCategories: async () => {
+    await loadCategories(set);
+  },
 
-    if (section === 'articles') {
-      await loadArticles(set);
-      fetchCategories()
-        .then((data) => set({ categories: data }))
-        .catch((err) => console.error(err));
-    } else if (section === 'categories') {
-      await loadCategories(set);
-    } else {
-      await loadUsers(set);
-    }
+  loadUsers: async () => {
+    await loadUsers(set);
   },
 
   reset: () => set({ ...initialState }),
 
   clearFeedback: () => set({ feedback: null }),
-
-  showList: () =>
-    set({
-      mode: 'list',
-      editingArticle: null,
-      editingCategorie: null,
-      viewingArticleId: null,
-    }),
-
-  showCreate: () => {
-    get().clearFeedback();
-    set({
-      mode: 'create',
-      editingArticle: null,
-      editingCategorie: null,
-    });
-  },
-
-  handleViewArticle: (id) => {
-    get().clearFeedback();
-    set({ viewingArticleId: id, mode: 'view' });
-  },
-
-  handleEditArticle: async (id) => {
-    get().clearFeedback();
-    const article = get().articles.find((a) => a.id === id);
-    if (!article) return;
-
-    try {
-      const articleCategories = await fetchArticleCategories(id);
-      set({
-        editingArticleCategoryIds: articleCategories.map((c) => c.id),
-        editingArticle: article,
-        mode: 'edit',
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Impossible de charger les catégories.';
-      get().handleSessionExpired(message);
-      set({ feedback: { type: 'error', message } });
-    }
-  },
-
-  handleEditCategorie: (id) => {
-    get().clearFeedback();
-    const categorie = get().categories.find((c) => c.id === id);
-    if (categorie) {
-      set({ editingCategorie: categorie, mode: 'edit' });
-    }
-  },
 
   handleCreateArticleSubmit: async (payload, categorieIds) => {
     try {
@@ -221,11 +135,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       }
       await loadArticles(set);
       set({ feedback: { type: 'success', message: 'Article créé.' } });
-      get().showList();
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur à la création.';
       get().handleSessionExpired(message);
       set({ feedback: { type: 'error', message } });
+      return false;
     }
   },
 
@@ -242,11 +157,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       }
       await loadArticles(set);
       set({ feedback: { type: 'success', message: 'Article enregistré.' } });
-      get().showList();
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur à la modification.';
       get().handleSessionExpired(message);
       set({ feedback: { type: 'error', message } });
+      return false;
     }
   },
 
@@ -275,11 +191,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       await createCategory(payload as CreateCategoriePayload);
       await loadCategories(set);
       set({ feedback: { type: 'success', message: 'Catégorie créée.' } });
-      get().showList();
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur à la création.';
       get().handleSessionExpired(message);
       set({ feedback: { type: 'error', message } });
+      return false;
     }
   },
 
@@ -292,11 +209,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       });
       await loadCategories(set);
       set({ feedback: { type: 'success', message: 'Catégorie enregistrée.' } });
-      get().showList();
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur à la modification.';
       get().handleSessionExpired(message);
       set({ feedback: { type: 'error', message } });
+      return false;
     }
   },
 
