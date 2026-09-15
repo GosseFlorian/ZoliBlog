@@ -79,6 +79,8 @@
 }
 
 .admin-nav-link {
+  display: inline-block;
+  text-decoration: none;
   border: none;
   background: transparent;
   padding: var(--space-md) var(--space-xl);
