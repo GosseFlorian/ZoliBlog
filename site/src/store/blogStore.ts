@@ -15,6 +15,7 @@ import {
   deleteComment as apiDeleteComment,
 } from '../api/commentaires';
 import type { Commentaire, CommentairePayload } from '../api/commentaires';
+import { requestConfirm } from './confirmStore';
 
 interface BlogState {
   articles: Article[];
@@ -194,6 +195,10 @@ export const useBlogStore = create<BlogState>((set, get) => ({
     }
   },
   async deleteComment(id: number) {
+    if (!(await requestConfirm('Supprimer ce commentaire ?\n\nCette action est définitive.'))) {
+      return false;
+    }
+
     set({ commentDeleting: true, commentActionError: null });
     try {
       await apiDeleteComment(id);

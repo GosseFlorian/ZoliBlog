@@ -7,6 +7,7 @@ import {
   getUserId,
 } from '../api/auth.ts';
 import type { LoginCredentials } from '../api/auth.ts';
+import { useConfirmStore } from './confirmStore.ts';
 
 interface AuthState {
   pseudo: string | null;
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
+    useConfirmStore.getState().reset();
     apiLogout();
     set({
       isAuthenticated: false,

@@ -55,11 +55,28 @@ describe('auth.ts', () => {
     );
   });
 
-  it('register lance une erreur si 409', async () => {
-    mockFetch({ ok: false, status: 409 });
+  it('register propage le message du backend si 409 mail', async () => {
+    mockFetch({
+      ok: false,
+      status: 409,
+      json: () =>
+        Promise.resolve({ message: 'Un compte existe deja avec cette adresse mail' }),
+    });
 
     await expect(
       register({ pseudo: 'new', mail: 'a@example.com', mdp: 'demo1234' }),
-    ).rejects.toThrow('Un compte existe déjà avec cette adresse mail.');
+    ).rejects.toThrow('Un compte existe deja avec cette adresse mail');
+  });
+
+  it('register propage le message du backend si 409 pseudo', async () => {
+    mockFetch({
+      ok: false,
+      status: 409,
+      json: () => Promise.resolve({ message: 'Ce pseudo est deja utilise' }),
+    });
+
+    await expect(
+      register({ pseudo: 'alice_dev', mail: 'new@example.com', mdp: 'demo1234' }),
+    ).rejects.toThrow('Ce pseudo est deja utilise');
   });
 });

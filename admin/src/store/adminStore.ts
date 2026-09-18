@@ -20,6 +20,7 @@ import { fetchUsers, deleteUser } from '../api/users.ts';
 import type { User } from '../api/users.ts';
 import type { Article } from '../types/article.ts';
 import { useAuthStore } from './authStore.ts';
+import { requestConfirm } from './confirmStore.ts';
 
 interface Feedback {
   type: FeedbackType;
@@ -171,7 +172,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const article = get().articles.find((a) => a.id === id);
     const titre = article?.titre ?? `#${id}`;
 
-    if (!window.confirm(`Supprimer l'article « ${titre} » ?\n\nCette action est définitive.`)) {
+    if (!(await requestConfirm(`Supprimer l'article « ${titre} » ?\n\nCette action est définitive.`))) {
       return;
     }
 
@@ -223,7 +224,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const categorie = get().categories.find((c) => c.id === id);
     const nom = categorie?.nom ?? `#${id}`;
 
-    if (!window.confirm(`Supprimer la catégorie « ${nom} » ?\n\nCette action est définitive.`)) {
+    if (!(await requestConfirm(`Supprimer la catégorie « ${nom} » ?\n\nCette action est définitive.`))) {
       return;
     }
 
@@ -243,7 +244,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const user = get().users.find((u) => u.id === id);
     const label = user?.pseudo ?? `#${id}`;
 
-    if (!window.confirm(`Supprimer l'utilisateur « ${label} » ?\n\nCette action est définitive.`)) {
+    if (!(await requestConfirm(`Supprimer l'utilisateur « ${label} » ?\n\nCette action est définitive.`))) {
       return;
     }
 

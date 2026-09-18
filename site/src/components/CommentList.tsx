@@ -67,16 +67,7 @@ function CommentList({
                     </button>
                     <button
                       type="button"
-                      onClick={async () => {
-                        if (
-                          !window.confirm(
-                            'Supprimer ce commentaire ?\n\nCette action est définitive.'
-                          )
-                        ) {
-                          return;
-                        }
-                        await onDelete(comment.id);
-                      }}
+                      onClick={() => onDelete(comment.id)}
                       disabled={isDeleting}
                     >
                       Supprimer

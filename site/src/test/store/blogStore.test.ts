@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useBlogStore } from '../../store/blogStore';
+import { useConfirmStore } from '../../store/confirmStore';
 import * as articlesApi from '../../api/articles';
 import * as commentairesApi from '../../api/commentaires';
 
@@ -28,6 +29,7 @@ describe('blogStore', () => {
       commentDeleting: false,
       commentActionError: null,
     });
+    useConfirmStore.getState().reset();
     vi.clearAllMocks();
   });
 
@@ -91,10 +93,32 @@ describe('blogStore', () => {
     });
     vi.mocked(commentairesApi.deleteComment).mockResolvedValue(undefined);
 
-    const ok = await useBlogStore.getState().deleteComment(1);
+    const deletePromise = useBlogStore.getState().deleteComment(1);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(true);
+    const ok = await deletePromise;
 
     expect(ok).toBe(true);
     expect(useBlogStore.getState().comments).toHaveLength(0);
+  });
+
+  it('deleteComment ne fait rien si confirm annulé', async () => {
+    useBlogStore.setState({
+      comments: [{ id: 1, contenu: 'X', userId: 1, pseudo: 'a', date: '2024-01-01' }],
+    });
+
+    const deletePromise = useBlogStore.getState().deleteComment(1);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(false);
+    const ok = await deletePromise;
+
+    expect(ok).toBe(false);
+    expect(commentairesApi.deleteComment).not.toHaveBeenCalled();
+    expect(useBlogStore.getState().comments).toHaveLength(1);
   });
 
   it('updateComment remplace le commentaire', async () => {
