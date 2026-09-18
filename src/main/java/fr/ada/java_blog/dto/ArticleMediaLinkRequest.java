@@ -1,4 +1,7 @@
 package fr.ada.java_blog.dto;
 
-public record ArticleMediaLinkRequest(Integer mediaId) {
+import jakarta.validation.constraints.NotNull;
+
+public record ArticleMediaLinkRequest(
+        @NotNull(message = "Le mediaId est obligatoire") Integer mediaId) {
 }

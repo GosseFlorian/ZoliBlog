@@ -114,4 +114,41 @@ public class UserRepository {
 
         return jdbcTemplate.query(sql, USER_ROW_MAPPER, mail).stream().findFirst();
     }
+
+    public Optional<User> findByPseudo(String pseudo) {
+        return jdbcTemplate.query(
+                """
+                        SELECT id, pseudo, mail, mdp, role
+                        FROM users
+                        WHERE pseudo = ?
+                        """,
+                USER_ROW_MAPPER,
+                pseudo).stream().findFirst();
+    }
+
+    public boolean existsByMailForOtherUser(String mail, int excludeId) {
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                        SELECT COUNT(*)
+                        FROM users
+                        WHERE mail = ? AND id <> ?
+                        """,
+                Integer.class,
+                mail,
+                excludeId);
+        return count != null && count > 0;
+    }
+
+    public boolean existsByPseudoForOtherUser(String pseudo, int excludeId) {
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                        SELECT COUNT(*)
+                        FROM users
+                        WHERE pseudo = ? AND id <> ?
+                        """,
+                Integer.class,
+                pseudo,
+                excludeId);
+        return count != null && count > 0;
+    }
 }

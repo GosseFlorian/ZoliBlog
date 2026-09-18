@@ -90,6 +90,11 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterRequest body) {
+        if (userRepository.findByPseudo(body.pseudo()).isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ce pseudo est deja utilise");
+        }
         if (userRepository.findByMail(body.mail()).isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,

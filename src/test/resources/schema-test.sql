@@ -13,50 +13,52 @@ CREATE TYPE "type" AS ENUM ('image', 'video', 'gif', 'musique');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    pseudo VARCHAR(255),
-    mail VARCHAR(255),
-    mdp VARCHAR(255),
+    pseudo VARCHAR(255) UNIQUE NOT NULL,
+    mail VARCHAR(255) UNIQUE NOT NULL,
+    mdp VARCHAR(255) NOT NULL,
     role user_role NOT NULL DEFAULT 'USER'
 );
 
 CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
-    titre VARCHAR(255),
-    contenu TEXT,
-    statut BOOLEAN,
-    date TIMESTAMP,
-    "update" TIMESTAMP,
-    user_id INT
+    titre VARCHAR(255) NOT NULL,
+    contenu TEXT NOT NULL,
+    statut BOOLEAN NOT NULL,
+    date TIMESTAMP NOT NULL,
+    "update" TIMESTAMP NOT NULL,
+    user_id INT NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE commentaires (
     id SERIAL PRIMARY KEY,
-    contenu TEXT,
-    user_id INT,
-    article_id INT,
-    date TIMESTAMP
+    contenu TEXT NOT NULL,
+    user_id INT NOT NULL REFERENCES users(id),
+    article_id INT NOT NULL REFERENCES articles(id),
+    date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    nom VARCHAR(255),
+    nom VARCHAR(255) NOT NULL,
     description TEXT
 );
 
 CREATE TABLE medias (
     id SERIAL PRIMARY KEY,
-    "type" "type",
-    url VARCHAR(255)
+    "type" "type" NOT NULL,
+    url VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE articles_categories (
     id SERIAL PRIMARY KEY,
-    article_id INT,
-    categorie_id INT
+    article_id INT NOT NULL REFERENCES articles(id),
+    categorie_id INT NOT NULL REFERENCES categories(id),
+    CONSTRAINT articles_categories_unique UNIQUE (article_id, categorie_id)
 );
 
 CREATE TABLE articles_medias (
     id SERIAL PRIMARY KEY,
-    media_id INT,
-    article_id INT
+    media_id INT NOT NULL REFERENCES medias(id),
+    article_id INT NOT NULL REFERENCES articles(id),
+    CONSTRAINT articles_medias_unique UNIQUE (article_id, media_id)
 );

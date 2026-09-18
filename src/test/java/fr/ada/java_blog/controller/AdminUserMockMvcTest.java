@@ -13,8 +13,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.http.MediaType;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -58,5 +62,19 @@ class AdminUserMockMvcTest {
         mockMvc.perform(delete("/admin/users/99999")
                 .header("Authorization", "Bearer " + bearerToken))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createUser_mailDejaUtilise_retourne409() throws Exception {
+        String body = """
+                {"pseudo":"nouveau_user","mail":"alice@example.com","mdp":"motdepasse"}
+                """;
+
+        mockMvc.perform(post("/admin/users")
+                .header("Authorization", "Bearer " + bearerToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Un compte existe deja avec cette adresse mail"));
     }
 }

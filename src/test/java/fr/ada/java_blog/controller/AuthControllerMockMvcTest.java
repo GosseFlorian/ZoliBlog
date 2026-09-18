@@ -100,6 +100,33 @@ class AuthControllerMockMvcTest {
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Un compte existe deja avec cette adresse mail"));
+    }
+
+    @Test
+    void register_pseudoDejaUtilise_retourne409() throws Exception {
+        String body = """
+                {"pseudo":"alice_dev","mail":"autre@example.com","mdp":"motdepasse"}
+                """;
+
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Ce pseudo est deja utilise"));
+    }
+
+    @Test
+    void register_pseudoEtMailDejaUtilises_retourne409Pseudo() throws Exception {
+        String body = """
+                {"pseudo":"alice_dev","mail":"alice@example.com","mdp":"motdepasse"}
+                """;
+
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Ce pseudo est deja utilise"));
     }
 }
