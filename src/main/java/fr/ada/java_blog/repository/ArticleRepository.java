@@ -163,35 +163,7 @@ public class ArticleRepository {
 
     @Transactional
     public boolean deleteById(int id) {
-        deleteRelatedRows(id);
-
-        int rows = jdbcTemplate.update("DELETE FROM articles WHERE id = ?", id);
-        return rows > 0;
-    }
-
-    /** Supprime ou détache les lignes liées avant DELETE articles (FK blog.sql). */
-    private void deleteRelatedRows(int id) {
-        executeIfTableExists("commentaires",
-                "DELETE FROM commentaires WHERE article_id = ?", id);
-        executeIfTableExists("articles_categories",
-                "DELETE FROM articles_categories WHERE article_id = ?", id);
-        executeIfTableExists("articles_medias",
-                "DELETE FROM articles_medias WHERE article_id = ?", id);
-    }
-
-    private void executeIfTableExists(String tableName, String sql, Object... args) {
-        String regclass = tableName.matches("^[a-z_]+$")
-                ? "public." + tableName
-                : "public.\"" + tableName + "\"";
-
-        Boolean exists = jdbcTemplate.queryForObject(
-                "SELECT to_regclass(?) IS NOT NULL",
-                Boolean.class,
-                regclass);
-
-        if (Boolean.TRUE.equals(exists)) {
-            jdbcTemplate.update(sql, args);
-        }
+        return jdbcTemplate.update("DELETE FROM articles WHERE id = ?", id) > 0;
     }
 
     private static Timestamp toTimestamp(LocalDateTime value) {

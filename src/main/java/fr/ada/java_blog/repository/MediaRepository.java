@@ -64,18 +64,7 @@ public class MediaRepository {
 
     @Transactional
     public boolean deleteById(int id) {
-        jdbcTemplate.update(
-                """
-                        DELETE FROM articles_medias
-                        WHERE media_id = ?
-                        """,
-                id);
-        int rows = jdbcTemplate.update(
-                """
-                        DELETE FROM medias
-                        WHERE id = ?
-                        """, id);
-        return rows > 0;
+        return jdbcTemplate.update("DELETE FROM medias WHERE id = ?", id) > 0;
     }
 
     public boolean existsArticleMediaLink(int articleId, int mediaId) {
