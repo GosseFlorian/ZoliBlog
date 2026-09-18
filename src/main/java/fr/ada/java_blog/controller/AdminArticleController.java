@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class AdminArticleController {
     }
 
     @PostMapping
-    public ResponseEntity<ArticleResponse> creer(@RequestBody ArticleCreateRequest body) {
+    public ResponseEntity<ArticleResponse> creer(@Valid @RequestBody ArticleCreateRequest body) {
         LocalDateTime maintenant = LocalDateTime.now();
         Article article = new Article(
                 null, body.titre(), body.contenu(),
@@ -79,7 +81,7 @@ public class AdminArticleController {
     }
 
     @PutMapping("/{id}")
-    public ArticleResponse modifier(@PathVariable int id, @RequestBody ArticleUpdateRequest body) {
+    public ArticleResponse modifier(@PathVariable int id, @Valid @RequestBody ArticleUpdateRequest body) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Article introuvable"));
@@ -150,7 +152,19 @@ public class AdminArticleController {
     @PostMapping("/{id}/medias")
     public ResponseEntity<Void> lierMedia(
             @PathVariable int id,
-            @RequestBody ArticleMediaLinkRequest body) {
+            @Valid @RequestBody ArticleMediaLinkRequest body) {
+        if (articleRepository.findByIdAdmin(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article introuvable");
+        }
+        if (mediaRepository.findById(body.mediaId()).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Média introuvable");
+        }
+        if (mediaRepository.existsArticleMediaLink(id, body.mediaId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ce media est deja lie a cet article");
+        }
+
         mediaRepository.lierArticle(id, body.mediaId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -43,7 +45,18 @@ public class AdminUserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@RequestBody UserCreateRequest body) {
+    public ResponseEntity<UserResponse> create(@Valid @RequestBody UserCreateRequest body) {
+        if (userRepository.findByPseudo(body.pseudo()).isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ce pseudo est deja utilise");
+        }
+        if (userRepository.findByMail(body.mail()).isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Un compte existe deja avec cette adresse mail");
+        }
+
         String hash = passwordEncoder.encode(body.mdp());
         User user = new User(null, body.pseudo(), body.mail(), hash, UserRole.USER);
         User sauve = userRepository.save(user);
@@ -53,10 +66,21 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    public UserResponse update(@PathVariable int id, @RequestBody UserUpdateRequest body) {
+    public UserResponse update(@PathVariable int id, @Valid @RequestBody UserUpdateRequest body) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
+
+        if (userRepository.existsByMailForOtherUser(body.mail(), id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Un compte existe deja avec cette adresse mail");
+        }
+        if (userRepository.existsByPseudoForOtherUser(body.pseudo(), id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ce pseudo est deja utilise");
+        }
 
         user.setPseudo(body.pseudo());
         user.setMail(body.mail());
