@@ -14,7 +14,6 @@ import java.util.Optional;
 public class UserRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private final ArticleRepository articleRepository;
 
     private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(
             rs.getInt("id"),
@@ -23,9 +22,8 @@ public class UserRepository {
             rs.getString("mdp"),
             UserRole.valueOf(rs.getString("role")));
 
-    public UserRepository(JdbcTemplate jdbcTemplate, ArticleRepository articleRepository) {
+    public UserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.articleRepository = articleRepository;
     }
 
     public Optional<User> findById(int id) {
@@ -82,22 +80,7 @@ public class UserRepository {
 
     @Transactional
     public boolean deleteById(int id) {
-        List<Integer> articleIds = jdbcTemplate.queryForList(
-                "SELECT id FROM articles WHERE user_id = ?",
-                Integer.class,
-                id);
-        for (Integer articleId : articleIds) {
-            articleRepository.deleteById(articleId);
-        }
-        jdbcTemplate.update("DELETE FROM commentaires WHERE user_id = ?", id);
-
-        int rows = jdbcTemplate.update(
-                """
-                        DELETE FROM users
-                        WHERE id = ?
-                        """,
-                id);
-        return rows > 0;
+        return jdbcTemplate.update("DELETE FROM users WHERE id = ?", id) > 0;
     }
 
     /**

@@ -26,14 +26,14 @@ CREATE TABLE articles (
     statut BOOLEAN NOT NULL,
     date TIMESTAMP NOT NULL,
     "update" TIMESTAMP NOT NULL,
-    user_id INT NOT NULL REFERENCES users(id)
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE commentaires (
     id SERIAL PRIMARY KEY,
     contenu TEXT NOT NULL,
-    user_id INT NOT NULL REFERENCES users(id),
-    article_id INT NOT NULL REFERENCES articles(id),
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    article_id INT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
     date TIMESTAMP NOT NULL
 );
 
@@ -51,14 +51,14 @@ CREATE TABLE medias (
 
 CREATE TABLE articles_categories (
     id SERIAL PRIMARY KEY,
-    article_id INT NOT NULL REFERENCES articles(id),
-    categorie_id INT NOT NULL REFERENCES categories(id),
+    article_id INT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    categorie_id INT NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
     CONSTRAINT articles_categories_unique UNIQUE (article_id, categorie_id)
 );
 
 CREATE TABLE articles_medias (
     id SERIAL PRIMARY KEY,
-    media_id INT NOT NULL REFERENCES medias(id),
-    article_id INT NOT NULL REFERENCES articles(id),
+    media_id INT NOT NULL REFERENCES medias(id) ON DELETE CASCADE,
+    article_id INT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
     CONSTRAINT articles_medias_unique UNIQUE (article_id, media_id)
 );
