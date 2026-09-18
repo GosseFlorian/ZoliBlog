@@ -141,13 +141,11 @@ public class CategorieRepository {
                         WHERE article_id = ?
                         """,
                 articleId);
-        for (Integer categorieId : categorieIds) {
-            jdbcTemplate.update(
-                    """
-                            INSERT INTO articles_categories (article_id, categorie_id)
-                            VALUES (?, ?)
-                            """,
-                    articleId, categorieId);
-        }
+        categorieIds.stream().distinct().forEach(categorieId -> jdbcTemplate.update(
+                """
+                        INSERT INTO articles_categories (article_id, categorie_id)
+                        VALUES (?, ?)
+                        """,
+                articleId, categorieId));
     }
 }

@@ -70,6 +70,18 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   return res.json();
 }
 
+async function readErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const body = (await res.json()) as { message?: string };
+    if (body.message?.trim()) {
+      return body.message;
+    }
+  } catch {
+    // corps absent ou non JSON
+  }
+  return fallback;
+}
+
 /** POST /auth/register — public, renvoie directement un token (connexion auto). */
 export async function register(payload: RegisterPayload): Promise<AuthResponse> {
   const res = await fetch(`${API_URL}/auth/register`, {
@@ -79,7 +91,9 @@ export async function register(payload: RegisterPayload): Promise<AuthResponse> 
   });
 
   if (res.status === 409) {
-    throw new Error('Un compte existe déjà avec cette adresse mail.');
+    throw new Error(
+      await readErrorMessage(res, 'Conflit lors de la création du compte.'),
+    );
   }
   if (!res.ok) {
     throw new Error('Erreur lors de la création du compte.');

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/admin/categories")
 public class AdminCategorieController {
@@ -22,7 +24,7 @@ public class AdminCategorieController {
     }
 
     @PostMapping
-    public ResponseEntity<CategorieResponse> create(@RequestBody CategorieCreateRequest body) {
+    public ResponseEntity<CategorieResponse> create(@Valid @RequestBody CategorieCreateRequest body) {
         Categorie categorie = new Categorie(null, body.nom(), body.description());
         Categorie save = categorieRepository.save(categorie);
         return ResponseEntity
@@ -31,7 +33,7 @@ public class AdminCategorieController {
     }
 
     @PutMapping("/{id}")
-    public CategorieResponse update(@PathVariable int id, @RequestBody CategorieUpdateRequest body) {
+    public CategorieResponse update(@PathVariable int id, @Valid @RequestBody CategorieUpdateRequest body) {
         Categorie categorie = categorieRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Catégorie introuvable"));

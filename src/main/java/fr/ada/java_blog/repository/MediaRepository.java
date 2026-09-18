@@ -78,6 +78,19 @@ public class MediaRepository {
         return rows > 0;
     }
 
+    public boolean existsArticleMediaLink(int articleId, int mediaId) {
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                        SELECT COUNT(*)
+                        FROM articles_medias
+                        WHERE article_id = ? AND media_id = ?
+                        """,
+                Integer.class,
+                articleId,
+                mediaId);
+        return count != null && count > 0;
+    }
+
     public void lierArticle(int articleId, int mediaId) {
         jdbcTemplate.update(
                 """

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/admin/medias")
 public class AdminMediaController {
@@ -21,7 +23,7 @@ public class AdminMediaController {
     }
 
     @PostMapping
-    public ResponseEntity<MediaResponse> create(@RequestBody MediaCreateRequest body) {
+    public ResponseEntity<MediaResponse> create(@Valid @RequestBody MediaCreateRequest body) {
         Media media = new Media(null, body.type(), body.url());
         Media sauve = mediaRepository.save(media);
         return ResponseEntity

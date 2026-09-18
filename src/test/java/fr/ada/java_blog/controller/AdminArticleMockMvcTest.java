@@ -150,4 +150,36 @@ class AdminArticleMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
+
+    @Test
+    void lierMedia_deuxFois_retourne409() throws Exception {
+        MvcResult mediaResult = mockMvc.perform(post("/admin/medias")
+                .header("Authorization", "Bearer " + bearerToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"type":"image","url":"https://example.com/dup.png"}
+                        """))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        int mediaId = objectMapper.readTree(mediaResult.getResponse().getContentAsString())
+                .get("id").asInt();
+
+        String body = """
+                {"mediaId":%d}
+                """.formatted(mediaId);
+
+        mockMvc.perform(post("/admin/articles/1/medias")
+                .header("Authorization", "Bearer " + bearerToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/admin/articles/1/medias")
+                .header("Authorization", "Bearer " + bearerToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Ce media est deja lie a cet article"));
+    }
 }
