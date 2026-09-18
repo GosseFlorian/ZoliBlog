@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAdminStore } from '../../store/adminStore';
+import { useConfirmStore } from '../../store/confirmStore';
 import * as articlesApi from '../../api/articles';
 import * as categoriesApi from '../../api/categories';
 import * as usersApi from '../../api/users';
@@ -11,6 +12,7 @@ vi.mock('../../api/users.ts');
 describe('adminStore', () => {
   beforeEach(() => {
     useAdminStore.getState().reset();
+    useConfirmStore.getState().reset();
     vi.clearAllMocks();
   });
 
@@ -51,12 +53,16 @@ describe('adminStore', () => {
   });
 
   it('handleDeleteUser ne fait rien si confirm annulé', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
     useAdminStore.setState({
       users: [{ id: 2, pseudo: 'bob', mail: 'b@example.com' }],
     });
 
-    await useAdminStore.getState().handleDeleteUser(2);
+    const deletePromise = useAdminStore.getState().handleDeleteUser(2);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(false);
+    await deletePromise;
 
     expect(usersApi.deleteUser).not.toHaveBeenCalled();
   });
@@ -88,7 +94,6 @@ describe('adminStore', () => {
   });
 
   it('handleDeleteArticle supprime si confirmé', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     vi.mocked(articlesApi.deleteArticle).mockResolvedValue(undefined);
     vi.mocked(articlesApi.fetchAllArticles).mockResolvedValue([]);
     vi.mocked(articlesApi.enrichArticlesWithCategories).mockResolvedValue([]);
@@ -96,7 +101,12 @@ describe('adminStore', () => {
       articles: [{ id: 1, titre: 'A', contenu: 'C', publie: true, date: '2024-01-01' }],
     });
 
-    await useAdminStore.getState().handleDeleteArticle(1);
+    const deletePromise = useAdminStore.getState().handleDeleteArticle(1);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(true);
+    await deletePromise;
 
     expect(articlesApi.deleteArticle).toHaveBeenCalledWith(1);
     expect(useAdminStore.getState().feedback?.type).toBe('success');
@@ -143,14 +153,18 @@ describe('adminStore', () => {
   });
 
   it('handleDeleteUser supprime si confirmé', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     vi.mocked(usersApi.deleteUser).mockResolvedValue(undefined);
     vi.mocked(usersApi.fetchUsers).mockResolvedValue([]);
     useAdminStore.setState({
       users: [{ id: 2, pseudo: 'bob', mail: 'b@example.com' }],
     });
 
-    await useAdminStore.getState().handleDeleteUser(2);
+    const deletePromise = useAdminStore.getState().handleDeleteUser(2);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(true);
+    await deletePromise;
 
     expect(usersApi.deleteUser).toHaveBeenCalledWith(2);
   });

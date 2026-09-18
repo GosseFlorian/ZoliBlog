@@ -7,6 +7,7 @@ import {
   register as apiRegister,
 } from '../api/auth';
 import type { LoginPayload, RegisterPayload } from '../api/auth';
+import { useConfirmStore } from './confirmStore';
 
 /**
  * Store zustand — session du visiteur (token JWT, userId, pseudo).
@@ -78,6 +79,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout() {
+    useConfirmStore.getState().reset();
     clearAuth();
     set({ token: null, userId: null, pseudo: null, authError: null });
   },

@@ -177,6 +177,16 @@ p {
   background: var(--color-secondary);
 }
 
+.btn-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-accent);
+  border-color: var(--color-danger-border);
+}
+
+.btn-danger:hover {
+  background: #fddccc;
+}
+
 /* ─── Badges ─── */
 
 .badge {

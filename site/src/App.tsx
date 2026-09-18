@@ -4,6 +4,7 @@ import ArticlePage from './pages/ArticlePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { useAuthStore } from './store/authStore';
+import ConfirmDialog from './components/ConfirmDialog';
 import './App.css';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
 
   return (
     <div className="site">
+      <ConfirmDialog />
       <header className="site-header">
         <Link to="/" className="site-title">
           ZoliBlog

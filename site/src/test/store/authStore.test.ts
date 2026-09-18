@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from '../../store/authStore';
+import { useConfirmStore } from '../../store/confirmStore';
 import * as authApi from '../../api/auth';
 
 vi.mock('../../api/auth');
@@ -56,5 +57,18 @@ describe('authStore', () => {
 
     expect(useAuthStore.getState().token).toBeNull();
     expect(authApi.clearAuth).toHaveBeenCalled();
+  });
+
+  it('logout ferme une confirmation en cours', async () => {
+    let resolved: boolean | undefined;
+    void useConfirmStore.getState().requestConfirm('Test ?').then((ok) => {
+      resolved = ok;
+    });
+
+    useAuthStore.getState().logout();
+
+    expect(useConfirmStore.getState().confirmRequest).toBeNull();
+    await Promise.resolve();
+    expect(resolved).toBe(false);
   });
 });

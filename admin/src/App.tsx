@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageHeader from './components/PageHeader.tsx';
 import AdminNav from './components/AdminNav.tsx';
+import ConfirmDialog from './components/ConfirmDialog.tsx';
 import FeedbackMessage from './components/FeedbackMessage.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import ArticlesPage from './pages/ArticlesPage.tsx';
@@ -35,6 +36,7 @@ function App() {
 
   return (
     <div className="admin-shell">
+      <ConfirmDialog />
       <PageHeader pseudo={pseudo} onLogout={handleLogout} />
       <AdminNav />
 

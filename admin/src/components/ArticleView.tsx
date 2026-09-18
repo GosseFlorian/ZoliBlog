@@ -6,6 +6,7 @@ import type { Commentaire } from '../api/commentaires.ts';
 import { formatArticleDate } from '../utils/formatUtils.ts';
 import CategoryTags from './CategoryTags.tsx';
 import LoadingMessage from './LoadingMessage.tsx';
+import { requestConfirm } from '../store/confirmStore.ts';
 
 interface ArticleViewProps {
   articleId: number;
@@ -47,7 +48,7 @@ function ArticleView({ articleId, onBack, onSessionExpired }: ArticleViewProps) 
   }, [articleId]);
 
   async function handleDeleteComment(commentId: number) {
-    if (!window.confirm('Supprimer ce commentaire ?\n\nCette action est définitive.')) {
+    if (!(await requestConfirm('Supprimer ce commentaire ?\n\nCette action est définitive.'))) {
       return;
     }
 
