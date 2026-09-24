@@ -82,9 +82,7 @@ function ArticlePage() {
       </article>
 
       <section className="comments-section">
-        <h2>
-          Commentaires{!commentsLoading && !commentsError ? ` (${comments.length})` : ''}
-        </h2>
+        <h2>Commentaires{!commentsLoading && !commentsError ? ` (${comments.length})` : ''}</h2>
 
         {commentsLoading && <p className="loading-message">Chargement des commentaires…</p>}
         {commentsError && <p className="error-message">{commentsError}</p>}

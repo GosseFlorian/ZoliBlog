@@ -1,11 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_URL } from '../../api/articles';
-import {
-  createComment,
-  deleteComment,
-  fetchComments,
-  updateComment,
-} from '../../api/commentaires';
+import { createComment, deleteComment, fetchComments, updateComment } from '../../api/commentaires';
 
 function mockFetch(response: Partial<Response>) {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
@@ -29,7 +24,7 @@ describe('commentaires.ts', () => {
 
   it('createComment exige un token', async () => {
     await expect(createComment(1, { contenu: 'Hi', userId: 1 })).rejects.toThrow(
-      'Connecte-toi pour laisser un commentaire.',
+      'Connecte-toi pour laisser un commentaire.'
     );
   });
 
@@ -45,7 +40,7 @@ describe('commentaires.ts', () => {
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({ Authorization: 'Bearer jwt' }),
-      }),
+      })
     );
     expect(result).toEqual(created);
   });
@@ -55,7 +50,7 @@ describe('commentaires.ts', () => {
     mockFetch({ ok: false, status: 403 });
 
     await expect(updateComment(1, 'modifié')).rejects.toThrow(
-      'Tu ne peux modifier que tes propres commentaires.',
+      'Tu ne peux modifier que tes propres commentaires.'
     );
   });
 
@@ -64,13 +59,13 @@ describe('commentaires.ts', () => {
     mockFetch({ ok: false, status: 401 });
 
     await expect(createComment(1, { contenu: 'Hi', userId: 1 })).rejects.toThrow(
-      'Session expirée — reconnecte-toi.',
+      'Session expirée — reconnecte-toi.'
     );
   });
 
   it('updateComment exige un token', async () => {
     await expect(updateComment(1, 'texte')).rejects.toThrow(
-      'Connecte-toi pour modifier ton commentaire.',
+      'Connecte-toi pour modifier ton commentaire.'
     );
   });
 
@@ -82,7 +77,7 @@ describe('commentaires.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/commentaires/3`,
-      expect.objectContaining({ method: 'DELETE' }),
+      expect.objectContaining({ method: 'DELETE' })
     );
   });
 });

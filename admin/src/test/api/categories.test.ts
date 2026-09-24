@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_URL } from '../../api/client';
-import { createCategory, deleteCategory, fetchCategories, updateCategory } from '../../api/categories';
+import {
+  createCategory,
+  deleteCategory,
+  fetchCategories,
+  updateCategory,
+} from '../../api/categories';
 
 function mockFetch(response: Partial<Response>) {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
@@ -26,7 +31,7 @@ describe('categories.ts', () => {
     mockFetch({ ok: false, status: 401 });
 
     await expect(createCategory({ nom: 'X', description: 'Y' })).rejects.toThrow(
-      'Session expirée — reconnecte-toi.',
+      'Session expirée — reconnecte-toi.'
     );
   });
 
@@ -39,7 +44,7 @@ describe('categories.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/categories/1`,
-      expect.objectContaining({ method: 'PUT' }),
+      expect.objectContaining({ method: 'PUT' })
     );
     expect(result).toEqual(updated);
   });
@@ -52,7 +57,7 @@ describe('categories.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/categories/1`,
-      expect.objectContaining({ method: 'DELETE' }),
+      expect.objectContaining({ method: 'DELETE' })
     );
   });
 });

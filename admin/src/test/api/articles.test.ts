@@ -62,7 +62,7 @@ describe('articles.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/articles`,
-      expect.objectContaining({ method: 'POST' }),
+      expect.objectContaining({ method: 'POST' })
     );
     expect(result).toEqual(created);
   });
@@ -76,7 +76,7 @@ describe('articles.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/articles/1`,
-      expect.objectContaining({ method: 'PUT' }),
+      expect.objectContaining({ method: 'PUT' })
     );
   });
 
@@ -88,7 +88,7 @@ describe('articles.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/articles/1`,
-      expect.objectContaining({ method: 'DELETE' }),
+      expect.objectContaining({ method: 'DELETE' })
     );
   });
 
@@ -99,7 +99,7 @@ describe('articles.ts', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve([{ id: 1, nom: 'Java', description: 'D' }]),
-      }),
+      })
     );
 
     const result = await enrichArticlesWithCategories([

@@ -37,7 +37,7 @@ describe('users.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/users/2`,
-      expect.objectContaining({ method: 'DELETE' }),
+      expect.objectContaining({ method: 'DELETE' })
     );
   });
 });

@@ -172,7 +172,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const article = get().articles.find((a) => a.id === id);
     const titre = article?.titre ?? `#${id}`;
 
-    if (!(await requestConfirm(`Supprimer l'article « ${titre} » ?\n\nCette action est définitive.`))) {
+    if (
+      !(await requestConfirm(`Supprimer l'article « ${titre} » ?\n\nCette action est définitive.`))
+    ) {
       return;
     }
 
@@ -224,7 +226,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const categorie = get().categories.find((c) => c.id === id);
     const nom = categorie?.nom ?? `#${id}`;
 
-    if (!(await requestConfirm(`Supprimer la catégorie « ${nom} » ?\n\nCette action est définitive.`))) {
+    if (
+      !(await requestConfirm(`Supprimer la catégorie « ${nom} » ?\n\nCette action est définitive.`))
+    ) {
       return;
     }
 
@@ -244,7 +248,11 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const user = get().users.find((u) => u.id === id);
     const label = user?.pseudo ?? `#${id}`;
 
-    if (!(await requestConfirm(`Supprimer l'utilisateur « ${label} » ?\n\nCette action est définitive.`))) {
+    if (
+      !(await requestConfirm(
+        `Supprimer l'utilisateur « ${label} » ?\n\nCette action est définitive.`
+      ))
+    ) {
       return;
     }
 

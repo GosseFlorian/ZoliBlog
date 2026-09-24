@@ -1,13 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_URL } from '../../api/articles';
-import {
-  clearAuth,
-  getStoredAuth,
-  getToken,
-  login,
-  persistAuth,
-  register,
-} from '../../api/auth';
+import { clearAuth, getStoredAuth, getToken, login, persistAuth, register } from '../../api/auth';
 
 function mockFetch(response: Partial<Response>) {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
@@ -51,7 +44,7 @@ describe('auth.ts', () => {
     mockFetch({ ok: false, status: 401 });
 
     await expect(login({ mail: 'x@example.com', mdp: 'wrong' })).rejects.toThrow(
-      'Email ou mot de passe incorrect.',
+      'Email ou mot de passe incorrect.'
     );
   });
 
@@ -59,12 +52,11 @@ describe('auth.ts', () => {
     mockFetch({
       ok: false,
       status: 409,
-      json: () =>
-        Promise.resolve({ message: 'Un compte existe deja avec cette adresse mail' }),
+      json: () => Promise.resolve({ message: 'Un compte existe deja avec cette adresse mail' }),
     });
 
     await expect(
-      register({ pseudo: 'new', mail: 'a@example.com', mdp: 'demo1234' }),
+      register({ pseudo: 'new', mail: 'a@example.com', mdp: 'demo1234' })
     ).rejects.toThrow('Un compte existe deja avec cette adresse mail');
   });
 
@@ -76,7 +68,7 @@ describe('auth.ts', () => {
     });
 
     await expect(
-      register({ pseudo: 'alice_dev', mail: 'new@example.com', mdp: 'demo1234' }),
+      register({ pseudo: 'alice_dev', mail: 'new@example.com', mdp: 'demo1234' })
     ).rejects.toThrow('Ce pseudo est deja utilise');
   });
 });

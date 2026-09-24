@@ -19,7 +19,10 @@ describe('commentaires.ts', () => {
 
     const result = await fetchComments(1);
 
-    expect(fetch).toHaveBeenCalledWith(`${API_URL}/admin/articles/1/commentaires`, expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(
+      `${API_URL}/admin/articles/1/commentaires`,
+      expect.any(Object)
+    );
     expect(result).toEqual(comments);
   });
 
@@ -37,7 +40,7 @@ describe('commentaires.ts', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${API_URL}/admin/commentaires/5`,
-      expect.objectContaining({ method: 'DELETE' }),
+      expect.objectContaining({ method: 'DELETE' })
     );
   });
 });

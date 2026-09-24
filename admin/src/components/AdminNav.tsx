@@ -14,9 +14,7 @@ function AdminNav() {
           key={to}
           to={to}
           end={to === '/users'}
-          className={({ isActive }) =>
-            isActive ? 'admin-nav-link active' : 'admin-nav-link'
-          }
+          className={({ isActive }) => (isActive ? 'admin-nav-link active' : 'admin-nav-link')}
         >
           {label}
         </NavLink>
