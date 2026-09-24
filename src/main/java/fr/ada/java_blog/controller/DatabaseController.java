@@ -7,18 +7,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DatabaseController {
 
-    private final JdbcTemplate jdbcTemplate;
+  private final JdbcTemplate jdbcTemplate;
 
-    public DatabaseController(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+  public DatabaseController(JdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
+  }
 
-    @GetMapping("/db/ping")
-    public String ping() {
-        Integer nombreArticles = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM articles",
-                Integer.class
-        );
-        return "connexion ok — " + nombreArticles + " article(s) en base";
-    }
+  @GetMapping("/db/ping")
+  public String ping() {
+    Integer nombreArticles =
+        jdbcTemplate.queryForObject("SELECT COUNT(*) FROM articles", Integer.class);
+    return "connexion ok — " + nombreArticles + " article(s) en base";
+  }
 }

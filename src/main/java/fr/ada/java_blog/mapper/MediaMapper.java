@@ -5,13 +5,9 @@ import fr.ada.java_blog.model.Media;
 
 public final class MediaMapper {
 
-    private MediaMapper() {
-    }
+  private MediaMapper() {}
 
-    public static MediaResponse toResponse(Media media) {
-        return new MediaResponse(
-                media.getId(),
-                media.getType(),
-                media.getUrl());
-    }
+  public static MediaResponse toResponse(Media media) {
+    return new MediaResponse(media.getId(), media.getType(), media.getUrl());
+  }
 }

@@ -96,21 +96,31 @@ make site       # Site public — http://localhost:5174
 
 ```bash
 make help            # liste toutes les cibles du Makefile
-make lint            # ESLint (admin + site)
-make format          # Prettier (admin + site)
+make lint-all        # ESLint (admin + site) + SpotBugs (backend)
+make lint-java       # SpotBugs uniquement (backend)
+make lint-ts         # ESLint uniquement (admin + site)
+make format-all      # Prettier (admin + site) + Spotless (backend)
+make format-java     # Spotless apply uniquement (backend)
+make format-ts       # Prettier uniquement (admin + site)
+make lint            # alias de lint-all
+make format          # alias de format-all
 make test            # tests uniquement (backend + admin + site)
 make test-coverage   # rapports de couverture (JaCoCo + Vitest)
-make ci              # pipeline locale (tests + lint + build des 2 fronts)
+make ci              # pipeline locale (qualité + tests + build des 2 fronts)
 ```
 
 Scripts npm dans chaque front (`admin/`, `site/`) : `dev`, `build`, `lint`, `lint:fix`, `format`, `test`, `test:coverage`.
 
+Backend Java (Maven) : `spotless:apply` / `spotless:check` (formatage), `spotbugs:check` (analyse statique).
+
 ### Tests vs couverture
 
-| Commande             | Backend       | Fronts (admin + site)   |
-| -------------------- | ------------- | ----------------------- |
-| `make test`          | `./mvnw test` | `npm run test`          |
-| `make test-coverage` | `./mvnw test` | `npm run test:coverage` |
+| Commande             | Backend                                      | Fronts (admin + site)   |
+| -------------------- | -------------------------------------------- | ----------------------- |
+| `make lint-all`      | `spotbugs:check`                             | `npm run lint`          |
+| `make format-all`    | `spotless:apply`                             | `npm run format`        |
+| `make test`          | `./mvnw test`                                | `npm run test`          |
+| `make test-coverage` | `./mvnw test`                                | `npm run test:coverage` |
 
 Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils. Côté **backend**, `./mvnw test` produit déjà le rapport JaCoCo à la fin des tests (plugin Maven).
 
@@ -118,15 +128,21 @@ Après `make test-coverage` (ou un `./mvnw test` seul pour le backend), ouvre le
 
 | Partie  | Rapport HTML                    |
 | ------- | ------------------------------- |
-| Backend | `target/site/jacoco/index.html` |
-| Admin   | `admin/coverage/index.html`     |
-| Site    | `site/coverage/index.html`      |
+| Backend (couverture) | `target/site/jacoco/index.html` |
+| Backend (SpotBugs)   | `target/spotbugs.html`            |
+| Admin                | `admin/coverage/index.html`       |
+| Site                 | `site/coverage/index.html`        |
 
 Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'est pas. Les fronts mesurent surtout `src/api/`, `src/store/` et `src/utils/` (pas les composants React).
 
 ### `-B` dans `make ci`
 
-La cible `ci` appelle `./mvnw -B test` : **`-B`** (*batch mode*) désactive le mode interactif de Maven (pas de téléchargement de plugins avec confirmation). C'est la convention en CI et dans les scripts automatisés.
+La cible `ci` reproduit GitHub Actions :
+
+1. **Backend** — `spotless:check` → `spotbugs:check` → `./mvnw test`
+2. **Chaque front** — `npm ci` → `lint` → `format:check` → `build` → `test`
+
+Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (*batch mode*) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
 
 ---
 
@@ -172,6 +188,9 @@ Modèle : [`.env.example`](.env.example)
 | `Could not resolve placeholder 'JWT_SECRET'` | `make env`, puis éditer `.env`                                |
 | Login 401 pour Alice                         | `make db-init`                                                |
 | `./mvnw test` échoue sur la BDD              | `make db-test` + PostgreSQL démarré                           |
+| CI échoue sur Spotless                       | `make format-java` puis recommiter                            |
+| CI échoue sur Prettier                       | `make format-ts` puis recommiter                              |
+| CI échoue sur SpotBugs                       | `./mvnw spotbugs:spotbugs` → ouvrir `target/spotbugs.html`   |
 | `psql: command not found`                    | Ajouter le `bin` PostgreSQL au `PATH`                         |
 | Erreur CORS                                  | Vérifier `CORS_ALLOWED_ORIGINS` dans `.env`, redémarrer l'API |
 
@@ -189,5 +208,6 @@ java_blog/
 ├── doc/               # Cours formation
 ├── docs/              # Doc exploitation (Diátaxis)
 ├── Makefile           # Raccourcis projet (nécessite make)
+├── spotbugs-exclude.xml  # Faux positifs SpotBugs documentés
 └── .env.example       # Modèle de configuration
 ```

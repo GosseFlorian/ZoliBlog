@@ -5,15 +5,14 @@ import fr.ada.java_blog.model.Commentaire;
 
 public final class CommentaireMapper {
 
-    private CommentaireMapper() {
-    }
+  private CommentaireMapper() {}
 
-    public static CommentaireResponse toResponse(Commentaire commentaire) {
-        return new CommentaireResponse(
-                commentaire.getId(),
-                commentaire.getContenu(),
-                commentaire.getUserId(),
-                commentaire.getPseudo(),
-                commentaire.getDate());
-    }
+  public static CommentaireResponse toResponse(Commentaire commentaire) {
+    return new CommentaireResponse(
+        commentaire.getId(),
+        commentaire.getContenu(),
+        commentaire.getUserId(),
+        commentaire.getPseudo(),
+        commentaire.getDate());
+  }
 }

@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   backend-test:
-    name: Backend — Maven test
+    name: Backend — Maven build
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -61,6 +61,12 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d java_blog_test \
             -f src/test/resources/data-test.sql
 
+      - name: Spotless check
+        run: ./mvnw -B spotless:check
+
+      - name: SpotBugs
+        run: ./mvnw -B spotbugs:check
+
       - name: Run tests
         run: ./mvnw -B test
 
@@ -88,6 +94,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Prettier check
+        run: npm run format:check
 
       - name: Build
         run: npm run build
@@ -119,6 +128,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Prettier check
+        run: npm run format:check
 
       - name: Build
         run: npm run build

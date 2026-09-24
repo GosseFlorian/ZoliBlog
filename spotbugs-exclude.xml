@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- DTOs et modèles : getters/setters exposent des références internes -->
+  <Match>
+    <Class name="~fr\.ada\.java_blog\.dto\..*"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="~fr\.ada\.java_blog\.model\..*"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+  <!-- Spring : injection par constructeur (beans singleton) -->
+  <Match>
+    <Class name="~fr\.ada\.java_blog\.(controller|repository|config)\..*"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <!-- JwtService : fail-fast au démarrage si JWT_SECRET invalide -->
+  <Match>
+    <Class name="fr.ada.java_blog.service.JwtService"/>
+    <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+  </Match>
+</FindBugsFilter>
