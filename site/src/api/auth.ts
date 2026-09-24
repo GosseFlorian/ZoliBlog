@@ -91,9 +91,7 @@ export async function register(payload: RegisterPayload): Promise<AuthResponse> 
   });
 
   if (res.status === 409) {
-    throw new Error(
-      await readErrorMessage(res, 'Conflit lors de la création du compte.'),
-    );
+    throw new Error(await readErrorMessage(res, 'Conflit lors de la création du compte.'));
   }
   if (!res.ok) {
     throw new Error('Erreur lors de la création du compte.');

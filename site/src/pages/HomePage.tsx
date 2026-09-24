@@ -25,7 +25,9 @@ function HomePage() {
         <nav className="category-nav" aria-label="Filtrer par catégorie">
           <button
             type="button"
-            className={selectedCategoryId == null ? 'category-nav-link active' : 'category-nav-link'}
+            className={
+              selectedCategoryId == null ? 'category-nav-link active' : 'category-nav-link'
+            }
             aria-current={selectedCategoryId == null ? 'true' : undefined}
             onClick={() => setSelectedCategoryId(null)}
           >

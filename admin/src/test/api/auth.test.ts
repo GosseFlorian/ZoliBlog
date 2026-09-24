@@ -54,7 +54,7 @@ describe('auth.ts', () => {
             userId: 1,
             role: 'ADMIN',
           }),
-      }),
+      })
     );
 
     const result = await login({ mail: 'alice@example.com', mdp: 'demo1234' });
@@ -71,11 +71,11 @@ describe('auth.ts', () => {
       vi.fn().mockResolvedValue({
         ok: false,
         status: 401,
-      }),
+      })
     );
 
     await expect(login({ mail: 'alice@example.com', mdp: 'wrong' })).rejects.toThrow(
-      'Identifiants invalides',
+      'Identifiants invalides'
     );
 
     vi.unstubAllGlobals();
@@ -87,12 +87,12 @@ describe('auth.ts', () => {
       vi.fn().mockResolvedValue({
         ok: false,
         status: 403,
-      }),
+      })
     );
 
-    await expect(
-      login({ mail: 'bob@example.com', mdp: 'demo1234' }),
-    ).rejects.toThrow('Acces reserve aux administrateurs.');
+    await expect(login({ mail: 'bob@example.com', mdp: 'demo1234' })).rejects.toThrow(
+      'Acces reserve aux administrateurs.'
+    );
 
     expect(getToken()).toBeNull();
     expect(isLoggedIn()).toBe(false);

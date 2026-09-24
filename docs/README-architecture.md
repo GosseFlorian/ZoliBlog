@@ -114,7 +114,19 @@ Voir [adr-0003-env.md](adr-0003-env.md).
 | Admin | `admin/` | 5173 | Routes `/admin/*` + login                    |
 | Site  | `site/`  | 5174 | Routes publiques + commentaires authentifiés |
 
-Build : Vite + React. Qualité : ESLint + Prettier (scripts `make lint`, `make format`).
+Build : Vite + React. Qualité front : ESLint + Prettier (`make lint-ts`, `make format-ts`). Raccourcis globaux : `make lint-all`, `make format-all` (alias `make lint`, `make format`).
+
+---
+
+## Qualité backend (Maven)
+
+| Outil | Rôle | Commande |
+| ----- | ---- | -------- |
+| **Spotless** | Formatage Java (Google Java Format) | `./mvnw spotless:apply` / `spotless:check` |
+| **SpotBugs** | Analyse statique (NPE, sécurité, logique) | `./mvnw spotbugs:check` |
+| **JaCoCo** | Couverture de tests | rapport après `./mvnw test` → `target/site/jacoco/index.html` |
+
+Faux positifs SpotBugs documentés dans `spotbugs-exclude.xml` (DTOs, injection Spring).
 
 ---
 

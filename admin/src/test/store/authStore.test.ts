@@ -55,9 +55,12 @@ describe('authStore', () => {
 
   it('logout ferme une confirmation en cours', async () => {
     let resolved: boolean | undefined;
-    void useConfirmStore.getState().requestConfirm('Test ?').then((ok) => {
-      resolved = ok;
-    });
+    void useConfirmStore
+      .getState()
+      .requestConfirm('Test ?')
+      .then((ok) => {
+        resolved = ok;
+      });
 
     useAuthStore.getState().logout();
 

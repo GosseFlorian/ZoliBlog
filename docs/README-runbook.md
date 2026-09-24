@@ -22,6 +22,9 @@ Guide **how-to** au format **symptôme → cause probable → action**.
 | `400 Contenu refusé` sur commentaire | Motif SQL suspect détecté par `InputSanitizer` | Reformuler le commentaire |
 | Headers sécurité absents | Ancienne version de l'API en mémoire | Redémarrer `make backend`, vérifier avec `curl -I http://localhost:8080/ping` |
 | Tests MockMvc → **429** | Rate limit actif en profil test | `security.login-rate-limit.enabled: false` dans `application-test.yaml` |
+| CI échoue sur **Spotless** | Code Java non formaté | `make format-java` puis recommiter |
+| CI échoue sur **Prettier** | Code TS/CSS non formaté | `make format-ts` puis recommiter |
+| CI échoue sur **SpotBugs** | Alerte d'analyse statique | `./mvnw spotbugs:spotbugs` → ouvrir `target/spotbugs.html` |
 
 ---
 

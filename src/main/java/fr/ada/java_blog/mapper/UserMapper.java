@@ -5,14 +5,10 @@ import fr.ada.java_blog.model.User;
 
 public final class UserMapper {
 
-    private UserMapper() {
-    }
+  private UserMapper() {}
 
-    public static UserResponse toResponse(User user) {
-        return new UserResponse(
-                user.getId(),
-                user.getPseudo(),
-                user.getMail());
-        // Pas de utilisateur.getMdp() ici : c'est volontaire et définitif.
-    }
+  public static UserResponse toResponse(User user) {
+    return new UserResponse(user.getId(), user.getPseudo(), user.getMail());
+    // Pas de utilisateur.getMdp() ici : c'est volontaire et définitif.
+  }
 }

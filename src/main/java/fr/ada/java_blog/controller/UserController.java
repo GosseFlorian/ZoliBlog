@@ -14,17 +14,18 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  public UserController(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-    @GetMapping("/{id}")
-    public UserResponse byId(@PathVariable int id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toResponse)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
-    }
+  @GetMapping("/{id}")
+  public UserResponse byId(@PathVariable int id) {
+    return userRepository
+        .findById(id)
+        .map(UserMapper::toResponse)
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
+  }
 }
