@@ -49,6 +49,20 @@ describe('categories.ts', () => {
     expect(result).toEqual(updated);
   });
 
+  it('fetchCategories lance une erreur si echec HTTP', async () => {
+    mockFetch({ ok: false, status: 500 });
+    await expect(fetchCategories()).rejects.toThrow('Erreur HTTP 500');
+  });
+
+  it('createCategory crée une catégorie', async () => {
+    localStorage.setItem('java_blog_token', 'token');
+    const created = { id: 2, nom: 'New', description: 'D' };
+    mockFetch({ ok: true, json: () => Promise.resolve(created) });
+
+    const result = await createCategory({ nom: 'New', description: 'D' });
+    expect(result).toEqual(created);
+  });
+
   it('deleteCategory envoie un DELETE', async () => {
     localStorage.setItem('java_blog_token', 'token');
     mockFetch({ ok: true });

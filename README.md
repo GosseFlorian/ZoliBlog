@@ -122,7 +122,7 @@ Backend Java (Maven) : `spotless:apply` / `spotless:check` (formatage), `spotbug
 | `make test`          | `./mvnw test`                                | `npm run test`          |
 | `make test-coverage` | `./mvnw test`                                | `npm run test:coverage` |
 
-Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils. Côté **backend**, `./mvnw test` produit déjà le rapport JaCoCo à la fin des tests (plugin Maven).
+Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils (≥ 80 % lignes / statements / functions). Côté **backend**, `./mvnw test` produit le rapport JaCoCo et **vérifie** un minimum de **80 %** (lignes et instructions). La CI et `make ci` appliquent ces seuils.
 
 Après `make test-coverage` (ou un `./mvnw test` seul pour le backend), ouvre les rapports HTML dans le navigateur :
 
@@ -140,7 +140,7 @@ Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'e
 La cible `ci` reproduit GitHub Actions :
 
 1. **Backend** — `spotless:check` → `spotbugs:check` → `./mvnw test`
-2. **Chaque front** — `npm ci` → `lint` → `format:check` → `build` → `test`
+2. **Chaque front** — `npm ci` → `lint` → `format:check` → `build` → `test:coverage`
 
 Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (*batch mode*) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
 

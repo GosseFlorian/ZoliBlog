@@ -41,6 +41,22 @@ describe('articles.ts', () => {
     expect(await fetchArticle(999)).toBeNull();
   });
 
+  it('fetchArticle retourne larticle si 200', async () => {
+    const article = { id: 1, titre: 'T', contenu: 'C', publie: true, date: '2024-01-01' };
+    mockFetch({ ok: true, json: () => Promise.resolve(article) });
+    expect(await fetchArticle(1)).toEqual(article);
+  });
+
+  it('fetchArticles lance une erreur si echec', async () => {
+    mockFetch({ ok: false, status: 500 });
+    await expect(fetchArticles()).rejects.toThrow('Erreur chargement articles');
+  });
+
+  it('fetchRecentArticles lance une erreur si echec', async () => {
+    mockFetch({ ok: false, status: 500 });
+    await expect(fetchRecentArticles()).rejects.toThrow('Erreur chargement articles récents');
+  });
+
   it('fetchCategories lance une erreur si echec', async () => {
     mockFetch({ ok: false, status: 500 });
     await expect(fetchCategories()).rejects.toThrow('Erreur chargement catégories');

@@ -78,8 +78,8 @@ ci:
 	$(MVNW) -B spotless:check
 	$(MVNW) -B spotbugs:check
 	$(MVNW) -B test
-	cd admin && npm ci && npm run lint && npm run format:check && npm run build && npm run test
-	cd site && npm ci && npm run lint && npm run format:check && npm run build && npm run test
+	cd admin && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
+	cd site && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
 
 backend:
 	$(MVNW) spring-boot:run
