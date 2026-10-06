@@ -202,7 +202,7 @@ Modèle : [`.env.example`](.env.example)
 
 ```
 java_blog/
-├── src/main/java/     # API Spring Boot
+├── src/main/java/     # API Spring Boot (controller, service, repository…)
 ├── admin/             # Back-office React (5173)
 ├── site/              # Site public React (5174)
 ├── doc/               # Cours formation

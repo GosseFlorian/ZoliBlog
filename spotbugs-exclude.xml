@@ -11,7 +11,7 @@
   </Match>
   <!-- Spring : injection par constructeur (beans singleton) -->
   <Match>
-    <Class name="~fr\.ada\.java_blog\.(controller|repository|config)\..*"/>
+    <Class name="~fr\.ada\.java_blog\.(controller|service|repository|config)\..*"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
   <!-- JwtService : fail-fast au démarrage si JWT_SECRET invalide -->

@@ -19,7 +19,7 @@ Mettre en place une journalisation **structurée et filtrée** :
 |-----------|------|
 | `LogSanitizer` | Masque emails (`a***@example.com`), IP partielles, chemins |
 | `RequestAuditFilter` | Log une ligne par requête : méthode, route, statut, durée |
-| `AuthController` | Logs login réussi/échoué avec mail masqué uniquement |
+| `AuthService` | Logs login réussi/échoué avec mail masqué uniquement |
 | `SecurityConfig` | Log warn sur accès 401 non authentifié |
 | `LOG_LEVEL` | Configurable via `.env` / `application.yaml` |
 

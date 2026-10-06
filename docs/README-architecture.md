@@ -7,20 +7,19 @@ Document **explanation** — pourquoi le projet est structuré ainsi et quelles 
 ## Schéma global
 
 ```
-┌─────────────┐     HTTP      ┌──────────────────────────────────┐
-│  Navigateur │ ────────────► │  Spring Boot (port 8080)         │
-│  admin 5173 │               │  ┌────────────┐  ┌─────────────┐ │
-│  site  5174 │ ◄──────────── │  │ Controllers│→ │ Repositories│ │
-└─────────────┘   JSON + JWT  │  │ + DTOs     │  │ (JdbcTemplate)│
-                              │  │ + Mappers  │  └──────┬──────┘ │
-                              │  └────────────┘         │ JDBC   │
-                              │  SecurityConfig + filtres         │
-                              └─────────────────────────┼────────┘
-                                                        ▼
-                                              ┌─────────────────┐
-                                              │  PostgreSQL     │
-                                              │  java_blog      │
-                                              └─────────────────┘
+┌─────────────┐     HTTP      ┌──────────────────────────────────────────┐
+│  Navigateur │ ────────────► │  Spring Boot (port 8080)                 │
+│  admin 5173 │               │  ┌────────────┐  ┌─────────┐ ┌──────────┐ │
+│  site  5174 │ ◄──────────── │  │ Controllers│→ │ Services│→│Repositories│
+└─────────────┘   JSON + JWT  │  │ + DTOs     │  │ + Mappers│ │(JdbcTemplate)│
+                              │  └────────────┘  └─────────┘ └─────┬────┘ │
+                              │  SecurityConfig + filtres            │ JDBC │
+                              └──────────────────────────────────────┼─────┘
+                                                                     ▼
+                                                           ┌─────────────────┐
+                                                           │  PostgreSQL     │
+                                                           │  java_blog      │
+                                                           └─────────────────┘
 ```
 
 ---
@@ -29,7 +28,8 @@ Document **explanation** — pourquoi le projet est structuré ainsi et quelles 
 
 | Couche         | Package / rôle | Responsabilité                                                  |
 | -------------- | -------------- | --------------------------------------------------------------- |
-| **Controller** | `controller/`  | Routes HTTP, codes de statut, `@Valid`, contrôles métier (IDOR) |
+| **Controller** | `controller/`  | Routes HTTP, codes de statut, `@Valid`, extraction du contexte web (ex. JWT → `userId`) |
+| **Service**    | `service/`     | Logique métier, règles d'accès (IDOR), orchestration repository + mapper |
 | **DTO**        | `dto/`         | Contrat JSON entrant/sortant, validation Bean Validation        |
 | **Mapper**     | `mapper/`      | Conversion Model ↔ DTO (pas de SQL ici)                         |
 | **Model**      | `model/`       | Entités métier (Article, User, Commentaire…)                    |
@@ -37,15 +37,20 @@ Document **explanation** — pourquoi le projet est structuré ainsi et quelles 
 | **Config**     | `config/`      | Sécurité, CORS, filtres, gestion d'erreurs                      |
 | **Util**       | `util/`        | `LogSanitizer`, `InputSanitizer`                                |
 
+Services principaux : `ArticleService`, `CategorieService`, `CommentaireService`, `UserService`, `MediaService`, `AuthService`, `JwtService`.
+
 Flux typique (lecture article) :
 
 ```
 GET /articles/{id}
   → ArticleController
+  → ArticleService.findPublishedById(id)
   → ArticleRepository.findPublishedById(?)
   → ArticleMapper.toResponse(model)
   → JSON ArticleResponse
 ```
+
+> **Supports de formation (`doc/partie-*`)** : ils décrivent la progression pédagogique (souvent controller → repository). Pour l’état **actuel** du dépôt, ce document fait référence.
 
 ---
 
@@ -69,13 +74,13 @@ LoginRateLimitFilter  →  RequestAuditFilter  →  JwtAuthFilter  →  Controll
 
 | Risque                               | Mesure                                               | Fichier(s)                                     |
 | ------------------------------------ | ---------------------------------------------------- | ---------------------------------------------- |
-| **A01** Broken Access Control (IDOR) | `verifierUserIdCorrespondAuToken` sur commentaires   | `CommentaireController`                        |
+| **A01** Broken Access Control (IDOR) | Vérification `userId` token vs auteur / corps        | `CommentaireService`                           |
 | **A03** Injection SQL                | `JdbcTemplate` + `?`, jamais de concat SQL           | `*Repository.java`                             |
-| **A03** XSS                          | `InputSanitizer` + `sanitizeContenu`                 | `CommentaireController`, `util/InputSanitizer` |
+| **A03** XSS                          | `InputSanitizer` + sanitization contenu              | `CommentaireService`, `util/InputSanitizer`    |
 | **A05** Security Misconfiguration    | Headers CSP, X-Frame-Options, CORS restrictif        | `SecurityConfig`, `WebConfig`                  |
 | **A05** Erreurs exposées             | `GlobalExceptionHandler` — pas de stack trace client | `GlobalExceptionHandler`                       |
-| **A07** Auth failures                | BCrypt, `@Valid`, rate limit login                   | `AuthController`, `LoginRateLimitFilter`       |
-| **A09** Logging                      | `LogSanitizer`, logs sans secrets                    | `LogSanitizer`, `AuthController`, filtres      |
+| **A07** Auth failures                | BCrypt, `@Valid`, rate limit login                   | `AuthService`, `LoginRateLimitFilter`          |
+| **A09** Logging                      | `LogSanitizer`, logs sans secrets                    | `LogSanitizer`, `AuthService`, filtres         |
 
 Exemple requête paramétrée (preuve SQL injection) :
 
@@ -127,6 +132,8 @@ Build : Vite + React. Qualité front : ESLint + Prettier (`make lint-ts`, `make 
 | **JaCoCo** | Couverture de tests | rapport après `./mvnw test` → `target/site/jacoco/index.html` |
 
 Faux positifs SpotBugs documentés dans `spotbugs-exclude.xml` (DTOs, injection Spring).
+
+Les tests MockMvc (`*MockMvcTest`) traversent **controller → service → repository** : la couche service est couverte par les tests d’intégration HTTP existants. Des tests unitaires dédiés (`*ServiceTest` avec mocks) restent optionnels.
 
 ---
 
