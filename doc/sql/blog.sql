@@ -94,41 +94,41 @@ INSERT INTO "users" ("id", "pseudo", "mail", "mdp", "role") VALUES
 
 -- 12 articles répartis entre les users (contenus de longueurs variées pour tester l'affichage)
 INSERT INTO "articles" ("id", "titre", "contenu", "date", "statut", "update", "user_id") VALUES
-(1,  'Les bases du SQL',                 E'Le SELECT permet de lire des données. C''est la requête la plus utilisée en SQL.', '2026-01-05 10:00:00', TRUE,  '2026-01-05 10:00:00', 1),
-(2,  'Introduction à PostgreSQL',        E'PostgreSQL est un SGBDR open source fiable et conforme aux standards SQL.\n\nContrairement à SQLite, il convient à la production : utilisateurs simultanés, gros volumes, transactions. Choix fréquent pour Java, Node.js ou Python.\n\nIci, JDBC et SQL direct, sans ORM.\n\nCommandes utiles : CREATE DATABASE java_blog ; \\dt pour lister les tables ; SELECT * FROM articles WHERE statut = TRUE.\n\nProchaine partie : types, FOREIGN KEY et index.', '2026-01-10 09:30:00', TRUE,  '2026-01-11 14:00:00', 1),
-(3,  'Modéliser une base avec Merise',   E'Merise structure la conception en trois niveaux.\n\n1. MCD : entités, associations, cardinalités.\n2. MLD : tables de jonction pour le N-N.\n3. MPD : implémentation PostgreSQL.\n\nPour un blog : user, article, commentaire, catégorie. articles_categories gère le N-N.\n\nConseil : dessine le MCD avant le CREATE TABLE.', '2026-01-12 11:15:00', TRUE,  '2026-01-12 11:15:00', 2),
-(4,  'JavaScript pour débutants',        E'console.log("Hello World");', '2026-01-15 08:00:00', TRUE,  '2026-01-16 09:00:00', 3),
-(5,  'Comprendre les API REST',          E'Une API REST expose des ressources via HTTP.\n\nGET /articles — liste\nGET /articles/3 — détail\nPOST /admin/articles — créer (admin + JWT)\nPUT /admin/articles/3 — modifier\nDELETE /admin/articles/3 — supprimer\n\nCodes : 200, 201, 204, 401, 404.\n\nExemple : {"titre":"Mon titre","contenu":"Mon texte","userId":1}\n\n[Brouillon — headers Authorization à compléter]', '2026-01-18 13:45:00', FALSE, '2026-01-18 13:45:00', 3),
-(6,  'Spring Boot en pratique',          E'Spring Boot démarre une app Java avec une dépendance Maven et @SpringBootApplication.\n\nCouches :\n- Controller : HTTP → JSON\n- Repository : SQL via JdbcTemplate\n- Model / DTO : données\n\nInjection de dépendances : pas de new ArticleRepository() partout.\n\nMockMvc teste les routes en JUnit sans navigateur.', '2026-01-20 10:20:00', TRUE,  '2026-01-21 10:20:00', 4),
-(7,  'Le rugby et les stats sportives',  E'Le Top 14 2025-2026 : essais, mètres parcourus, tackles — un bilan stats passionnant.', '2026-02-01 07:30:00', TRUE,  '2026-02-01 07:30:00', 5),
-(8,  'Gérer une copropriété',            E'Gérer une copropriété demande organisation et communication. Retour après deux ans dans un immeuble de 24 lots.\n\nLire les PV d''AG : travaux, budget, décisions.\n\nCharges courantes : entretien, électricité, ascenseur. Exceptionnelles : ravalement, chaudière, normes.\n\nLe syndic tient la comptabilité. Médiation avant tribunal en cas de conflit.\n\nAstuces : anticiper les travaux, documenter par écrit, participer aux AG, comparer trois devis.\n\nProchain article : contester une hausse de charges.', '2026-02-03 16:00:00', TRUE,  '2026-02-03 16:00:00', 5),
-(9,  'PHP moderne',                      E'PHP 8 : types stricts, enums, attributs, meilleures perfs. Composer pour les dépendances.\n\nExemple :\ndeclare(strict_types=1);\nfunction saluer(string $nom): string { return "Bonjour $nom"; }\n\nSymfony / Laravel pour les gros projets. Slim ou natif pour un petit CRUD.\n\nPHP démarre vite ; Java scale mieux en entreprise.', '2026-02-05 12:00:00', TRUE,  '2026-02-06 08:00:00', 6),
-(10, 'Le hi-fi vintage',                 E'Ma platine Technics SL-1200 tourne encore parfaitement.', '2026-02-08 18:00:00', FALSE, '2026-02-08 18:00:00', 7),
-(11, 'Percussions du monde',             E'Les percussions traversent les cultures.\n\nDjembé (Afrique) : basse, ton, slap.\nCongas (Cuba) : salsa, latin jazz.\nCajón (Pérou) : flamenco moderne.\nTaiko (Japon) : ensemble kumi-daiko.\n\nPour un dev, le rythme rapproche patterns et boucles de code.\n\nConseil : 15 min par jour plutôt qu''un marathon le week-end.', '2026-02-10 09:00:00', TRUE,  '2026-02-10 09:00:00', 8),
-(12, 'Automatiser avec n8n',             E'n8n automatise des workflows (alternative open source à Zapier).\n\nExemple blog :\n1. Webhook à la publication\n2. HTTP vers Mastodon\n3. Email aux abonnés\n\nInterface visuelle, node Function pour du JS.\n\nInstallation : docker run n8nio/n8n. Pas de secrets en clair dans les exports.', '2026-02-12 15:30:00', TRUE,  '2026-02-13 10:00:00', 9);
+(1,  'Les bases du SQL',                 E'Le SELECT permet de lire des données. C''est la requête la plus utilisée en SQL.', '2026-11-02 10:00:00', TRUE,  '2026-11-02 10:00:00', 1),
+(2,  'Introduction à PostgreSQL',        E'PostgreSQL est un SGBDR open source fiable et conforme aux standards SQL.\n\nContrairement à SQLite, il convient à la production : utilisateurs simultanés, gros volumes, transactions. Choix fréquent pour Java, Node.js ou Python.\n\nIci, JDBC et SQL direct, sans ORM.\n\nCommandes utiles : CREATE DATABASE java_blog ; \\dt pour lister les tables ; SELECT * FROM articles WHERE statut = TRUE.\n\nProchaine partie : types, FOREIGN KEY et index.', '2026-11-06 09:30:00', TRUE,  '2026-11-07 14:00:00', 1),
+(3,  'Modéliser une base avec Merise',   E'Merise structure la conception en trois niveaux.\n\n1. MCD : entités, associations, cardinalités.\n2. MLD : tables de jonction pour le N-N.\n3. MPD : implémentation PostgreSQL.\n\nPour un blog : user, article, commentaire, catégorie. articles_categories gère le N-N.\n\nConseil : dessine le MCD avant le CREATE TABLE.', '2026-11-08 11:15:00', TRUE,  '2026-11-08 11:15:00', 2),
+(4,  'JavaScript pour débutants',        E'console.log("Hello World");', '2026-11-11 08:00:00', TRUE,  '2026-11-12 09:00:00', 3),
+(5,  'Comprendre les API REST',          E'Une API REST expose des ressources via HTTP.\n\nGET /articles — liste\nGET /articles/3 — détail\nPOST /admin/articles — créer (admin + JWT)\nPUT /admin/articles/3 — modifier\nDELETE /admin/articles/3 — supprimer\n\nCodes : 200, 201, 204, 401, 404.\n\nExemple : {"titre":"Mon titre","contenu":"Mon texte","userId":1}\n\n[Brouillon — headers Authorization à compléter]', '2026-11-14 13:45:00', FALSE, '2026-11-14 13:45:00', 3),
+(6,  'Spring Boot en pratique',          E'Spring Boot démarre une app Java avec une dépendance Maven et @SpringBootApplication.\n\nCouches :\n- Controller : HTTP → JSON\n- Repository : SQL via JdbcTemplate\n- Model / DTO : données\n\nInjection de dépendances : pas de new ArticleRepository() partout.\n\nMockMvc teste les routes en JUnit sans navigateur.', '2026-11-18 10:20:00', TRUE,  '2026-11-19 10:20:00', 4),
+(7,  'Le rugby et les stats sportives',  E'Le Top 14 2025-2026 : essais, mètres parcourus, tackles — un bilan stats passionnant.', '2026-11-20 07:30:00', TRUE,  '2026-11-20 07:30:00', 5),
+(8,  'Gérer une copropriété',            E'Gérer une copropriété demande organisation et communication. Retour après deux ans dans un immeuble de 24 lots.\n\nLire les PV d''AG : travaux, budget, décisions.\n\nCharges courantes : entretien, électricité, ascenseur. Exceptionnelles : ravalement, chaudière, normes.\n\nLe syndic tient la comptabilité. Médiation avant tribunal en cas de conflit.\n\nAstuces : anticiper les travaux, documenter par écrit, participer aux AG, comparer trois devis.\n\nProchain article : contester une hausse de charges.', '2026-11-21 16:00:00', TRUE,  '2026-11-21 16:00:00', 5),
+(9,  'PHP moderne',                      E'PHP 8 : types stricts, enums, attributs, meilleures perfs. Composer pour les dépendances.\n\nExemple :\ndeclare(strict_types=1);\nfunction saluer(string $nom): string { return "Bonjour $nom"; }\n\nSymfony / Laravel pour les gros projets. Slim ou natif pour un petit CRUD.\n\nPHP démarre vite ; Java scale mieux en entreprise.', '2026-11-22 12:00:00', TRUE,  '2026-11-23 08:00:00', 6),
+(10, 'Le hi-fi vintage',                 E'Ma platine Technics SL-1200 tourne encore parfaitement.', '2026-11-24 18:00:00', FALSE, '2026-11-24 18:00:00', 7),
+(11, 'Percussions du monde',             E'Les percussions traversent les cultures.\n\nDjembé (Afrique) : basse, ton, slap.\nCongas (Cuba) : salsa, latin jazz.\nCajón (Pérou) : flamenco moderne.\nTaiko (Japon) : ensemble kumi-daiko.\n\nPour un dev, le rythme rapproche patterns et boucles de code.\n\nConseil : 15 min par jour plutôt qu''un marathon le week-end.', '2026-11-26 09:00:00', TRUE,  '2026-11-26 09:00:00', 8),
+(12, 'Automatiser avec n8n',             E'n8n automatise des workflows (alternative open source à Zapier).\n\nExemple blog :\n1. Webhook à la publication\n2. HTTP vers Mastodon\n3. Email aux abonnés\n\nInterface visuelle, node Function pour du JS.\n\nInstallation : docker run n8nio/n8n. Pas de secrets en clair dans les exports.', '2026-11-28 15:30:00', TRUE,  '2026-11-29 10:00:00', 9);
 
 -- Commentaires
 INSERT INTO "commentaires" ("id", "contenu", "user_id", "article_id", "date") VALUES
-(1,  'Super article, merci !',                    2,  1,  '2026-01-05 12:00:00'),
-(2,  'Ça manque un peu d''exemples je trouve.',    3,  1,  '2026-01-05 15:00:00'),
-(3,  'Très clair, bravo.',                         4,  2,  '2026-01-11 09:00:00'),
-(4,  'J''aurais aimé un schéma en plus.',          5,  3,  '2026-01-12 18:00:00'),
-(5,  'Merci pour cette intro !',                   1,  4,  '2026-01-16 10:00:00'),
-(6,  'Est-ce que ça marche avec Express aussi ?',  6,  5,  '2026-01-19 08:30:00'),
-(7,  'Bon résumé de Spring Boot.',                 7,  6,  '2026-01-21 11:00:00'),
-(8,  'Intéressant, je ne connaissais pas ces stats.', 8, 7,  '2026-02-01 09:15:00'),
-(9,  'Ça correspond exactement à ma situation.',   9,  8,  '2026-02-03 17:00:00'),
-(10, 'PHP 8 a vraiment progressé.',                10, 9,  '2026-02-06 09:00:00'),
-(11, 'J''ai une platine similaire !',              2,  10, '2026-02-08 19:00:00'),
-(12, 'Passionnant, merci pour ce partage.',        3,  11, '2026-02-10 10:30:00'),
-(13, 'n8n est top pour ce genre de use-case.',     4,  12, '2026-02-13 08:00:00'),
-(14, 'Petite coquille dans le paragraphe 2.',      5,  1,  '2026-01-06 10:00:00'),
-(15, 'Vivement la suite !',                        6,  2,  '2026-01-12 07:00:00'),
-(16, 'Je vais tester ça ce week-end.',             7,  3,  '2026-01-13 20:00:00'),
-(17, 'Bonne synthèse.',                            8,  4,  '2026-01-17 12:00:00'),
-(18, 'Merci, ça répond à ma question.',            9,  5,  '2026-01-20 09:00:00'),
-(19, 'Article bien structuré.',                    10, 6,  '2026-01-22 14:00:00'),
-(20, 'Hâte du prochain article rugby.',            1,  7,  '2026-02-02 08:00:00');
+(1,  'Super article, merci !',                    2,  1,  '2026-11-02 12:00:00'),
+(2,  'Ça manque un peu d''exemples je trouve.',    3,  1,  '2026-11-02 15:00:00'),
+(3,  'Très clair, bravo.',                         4,  2,  '2026-11-07 09:00:00'),
+(4,  'J''aurais aimé un schéma en plus.',          5,  3,  '2026-11-08 18:00:00'),
+(5,  'Merci pour cette intro !',                   1,  4,  '2026-11-12 10:00:00'),
+(6,  'Est-ce que ça marche avec Express aussi ?',  6,  5,  '2026-11-15 08:30:00'),
+(7,  'Bon résumé de Spring Boot.',                 7,  6,  '2026-11-19 11:00:00'),
+(8,  'Intéressant, je ne connaissais pas ces stats.', 8, 7,  '2026-11-20 09:15:00'),
+(9,  'Ça correspond exactement à ma situation.',   9,  8,  '2026-11-21 17:00:00'),
+(10, 'PHP 8 a vraiment progressé.',                10, 9,  '2026-11-23 09:00:00'),
+(11, 'J''ai une platine similaire !',              2,  10, '2026-11-24 19:00:00'),
+(12, 'Passionnant, merci pour ce partage.',        3,  11, '2026-11-26 10:30:00'),
+(13, 'n8n est top pour ce genre de use-case.',     4,  12, '2026-11-29 08:00:00'),
+(14, 'Petite coquille dans le paragraphe 2.',      5,  1,  '2026-11-03 10:00:00'),
+(15, 'Vivement la suite !',                        6,  2,  '2026-11-08 07:00:00'),
+(16, 'Je vais tester ça ce week-end.',             7,  3,  '2026-11-09 20:00:00'),
+(17, 'Bonne synthèse.',                            8,  4,  '2026-11-13 12:00:00'),
+(18, 'Merci, ça répond à ma question.',            9,  5,  '2026-11-16 09:00:00'),
+(19, 'Article bien structuré.',                    10, 6,  '2026-11-20 14:00:00'),
+(20, 'Hâte du prochain article rugby.',            1,  7,  '2026-11-21 08:00:00');
 
 -- 5 catégories
 INSERT INTO "categories" (id, nom, description) VALUES
