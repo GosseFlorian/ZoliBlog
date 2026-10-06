@@ -3,13 +3,9 @@ package fr.ada.java_blog.controller;
 import fr.ada.java_blog.dto.CommentaireCreateRequest;
 import fr.ada.java_blog.dto.CommentaireResponse;
 import fr.ada.java_blog.dto.CommentaireUpdateRequest;
-import fr.ada.java_blog.mapper.CommentaireMapper;
-import fr.ada.java_blog.repository.ArticleRepository;
-import fr.ada.java_blog.repository.CommentaireRepository;
-import fr.ada.java_blog.util.InputSanitizer;
+import fr.ada.java_blog.service.CommentaireService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,26 +16,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class CommentaireController {
 
-  private final CommentaireRepository commentaireRepository;
-  private final ArticleRepository articleRepository;
+  private final CommentaireService commentaireService;
 
-  public CommentaireController(
-      CommentaireRepository commentaireRepository, ArticleRepository articleRepository) {
-    this.commentaireRepository = commentaireRepository;
-    this.articleRepository = articleRepository;
+  public CommentaireController(CommentaireService commentaireService) {
+    this.commentaireService = commentaireService;
   }
 
   @GetMapping("/articles/{articleId}/commentaires")
   public List<CommentaireResponse> list(@PathVariable int articleId) {
-    verifierArticleExiste(articleId);
-    return commentaireRepository.findByArticleId(articleId).stream()
-        .map(CommentaireMapper::toResponse)
-        .toList();
+    return commentaireService.listByArticleId(articleId);
   }
 
   @PostMapping("/articles/{articleId}/commentaires")
@@ -47,20 +36,14 @@ public class CommentaireController {
       @PathVariable int articleId,
       @Valid @RequestBody CommentaireCreateRequest body,
       Authentication authentication) {
-    verifierArticleExiste(articleId);
-    verifierUserIdCorrespondAuToken(body.userId(), authentication);
-    String contenu = sanitizeContenu(body.contenu());
-    var saved = commentaireRepository.save(articleId, contenu, body.userId());
-    return ResponseEntity.status(HttpStatus.CREATED).body(CommentaireMapper.toResponse(saved));
+    int userIdAuthentifie = Integer.parseInt(authentication.getName());
+    CommentaireResponse created = commentaireService.creer(articleId, body, userIdAuthentifie);
+    return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
   @GetMapping("/commentaires/{id}")
   public CommentaireResponse one(@PathVariable int id) {
-    return commentaireRepository
-        .findById(id)
-        .map(CommentaireMapper::toResponse)
-        .orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable"));
+    return commentaireService.findById(id);
   }
 
   @PatchMapping("/commentaires/{id}")
@@ -68,70 +51,14 @@ public class CommentaireController {
       @PathVariable int id,
       @Valid @RequestBody CommentaireUpdateRequest body,
       Authentication authentication) {
-    var commentaire =
-        commentaireRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable"));
-
-    verifierUserIdCorrespondAuToken(commentaire.getUserId(), authentication);
-
-    String contenu = sanitizeContenu(body.contenu());
-    if (!commentaireRepository.updateById(id, contenu)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable");
-    }
-
-    var misAJour =
-        commentaireRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable"));
-
-    return CommentaireMapper.toResponse(misAJour);
-  }
-
-  private void verifierArticleExiste(int articleId) {
-    articleRepository
-        .findPublishedById(articleId)
-        .orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Article introuvable"));
+    int userIdAuthentifie = Integer.parseInt(authentication.getName());
+    return commentaireService.modifier(id, body, userIdAuthentifie);
   }
 
   @DeleteMapping("/commentaires/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id, Authentication authentication) {
-    var commentaire =
-        commentaireRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable"));
-
-    verifierUserIdCorrespondAuToken(commentaire.getUserId(), authentication);
-
-    if (!commentaireRepository.deleteById(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Commentaire introuvable");
-    }
-
+    int userIdAuthentifie = Integer.parseInt(authentication.getName());
+    commentaireService.supprimer(id, userIdAuthentifie);
     return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * Le principal posé par JwtAuthFilter est le userId (subject du JWT) sous forme de String. On
-   * refuse si le userId attendu (celui du corps pour create, celui de l'auteur en base pour update)
-   * ne correspond pas à celui du token — empêche de poster ou modifier "au nom" d'un autre
-   * utilisateur via un appel direct à l'API.
-   */
-  private void verifierUserIdCorrespondAuToken(Integer userId, Authentication authentication) {
-    int userIdDuToken = Integer.parseInt(authentication.getName());
-    if (!Objects.equals(userId, userIdDuToken)) {
-      throw new ResponseStatusException(
-          HttpStatus.FORBIDDEN, "Le userId envoyé ne correspond pas à l'utilisateur authentifié");
-    }
-  }
-
-  private static String sanitizeContenu(String contenu) {
-    if (InputSanitizer.looksLikeSqlInjection(contenu)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Contenu refusé");
-    }
-    return InputSanitizer.stripDangerousHtml(contenu);
   }
 }
