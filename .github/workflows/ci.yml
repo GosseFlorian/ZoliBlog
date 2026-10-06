@@ -67,7 +67,7 @@ jobs:
       - name: SpotBugs
         run: ./mvnw -B spotbugs:check
 
-      - name: Run tests
+      - name: Run tests (JaCoCo ≥ 80 %)
         run: ./mvnw -B test
 
   frontend-admin-build:
@@ -101,8 +101,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Unit tests (if configured)
-        run: npm run test --if-present
+      - name: Unit tests with coverage (≥ 80 %)
+        run: npm run test:coverage
 
   frontend-site-build:
     name: Frontend front-office — Vite build
@@ -135,8 +135,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Unit tests (if configured)
-        run: npm run test --if-present
+      - name: Unit tests with coverage (≥ 80 %)
+        run: npm run test:coverage
 
   doc-check:
     name: Documentation — fichiers présents

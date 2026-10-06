@@ -164,6 +164,32 @@ describe('blogStore', () => {
     expect(useBlogStore.getState().commentsError).toBe('Erreur réseau');
   });
 
+  it('submitComment stocke une erreur si echec', async () => {
+    vi.mocked(commentairesApi.createComment).mockRejectedValue(new Error('Envoi impossible'));
+
+    const ok = await useBlogStore.getState().submitComment(1, { contenu: 'Hi', userId: 1 });
+
+    expect(ok).toBe(false);
+    expect(useBlogStore.getState().commentSubmitError).toBe('Envoi impossible');
+  });
+
+  it('updateComment stocke une erreur si echec', async () => {
+    vi.mocked(commentairesApi.updateComment).mockRejectedValue(new Error('Patch failed'));
+
+    const ok = await useBlogStore.getState().updateComment(1, 'texte');
+
+    expect(ok).toBe(false);
+    expect(useBlogStore.getState().commentActionError).toBe('Patch failed');
+  });
+
+  it('loadArticles stocke une erreur si echec', async () => {
+    vi.mocked(articlesApi.fetchRecentArticles).mockRejectedValue(new Error('Réseau'));
+
+    await useBlogStore.getState().loadArticles();
+
+    expect(useBlogStore.getState().articlesError).toBe('Réseau');
+  });
+
   it('resetCurrentArticle remet à zéro', () => {
     useBlogStore.setState({
       currentArticle: { id: 1, titre: 'A', contenu: 'C', publie: true, date: '2024-01-01' },

@@ -176,4 +176,63 @@ describe('adminStore', () => {
 
     expect(useAdminStore.getState().error).toBe('API down');
   });
+
+  it('handleEditCategorieSubmit enregistre une catégorie', async () => {
+    vi.mocked(categoriesApi.updateCategory).mockResolvedValue({
+      id: 1,
+      nom: 'Mod',
+      description: 'D',
+    });
+    vi.mocked(categoriesApi.fetchCategories).mockResolvedValue([]);
+
+    const ok = await useAdminStore.getState().handleEditCategorieSubmit({
+      id: 1,
+      nom: 'Mod',
+      description: 'D',
+    });
+
+    expect(ok).toBe(true);
+  });
+
+  it('handleCreateCategorieSubmit stocke une erreur si echec', async () => {
+    vi.mocked(categoriesApi.createCategory).mockRejectedValue(new Error('Erreur création'));
+
+    const ok = await useAdminStore.getState().handleCreateCategorieSubmit({
+      nom: 'X',
+      description: 'Y',
+    });
+
+    expect(ok).toBe(false);
+    expect(useAdminStore.getState().feedback?.type).toBe('error');
+  });
+
+  it('handleDeleteCategorie supprime si confirmé', async () => {
+    vi.mocked(categoriesApi.deleteCategory).mockResolvedValue(undefined);
+    vi.mocked(categoriesApi.fetchCategories).mockResolvedValue([]);
+    useAdminStore.setState({
+      categories: [{ id: 1, nom: 'Java', description: 'D' }],
+    });
+
+    const deletePromise = useAdminStore.getState().handleDeleteCategorie(1);
+    await vi.waitFor(() => {
+      expect(useConfirmStore.getState().confirmRequest).not.toBeNull();
+    });
+    useConfirmStore.getState().resolveConfirm(true);
+    await deletePromise;
+
+    expect(categoriesApi.deleteCategory).toHaveBeenCalledWith(1);
+  });
+
+  it('handleEditArticleSubmit retourne false si echec', async () => {
+    vi.mocked(articlesApi.updateArticle).mockRejectedValue(new Error('Update failed'));
+
+    const ok = await useAdminStore.getState().handleEditArticleSubmit({
+      id: 1,
+      titre: 'X',
+      contenu: 'C',
+      publie: true,
+    });
+
+    expect(ok).toBe(false);
+  });
 });

@@ -129,11 +129,11 @@ Build : Vite + React. Qualité front : ESLint + Prettier (`make lint-ts`, `make 
 | ----- | ---- | -------- |
 | **Spotless** | Formatage Java (Google Java Format) | `./mvnw spotless:apply` / `spotless:check` |
 | **SpotBugs** | Analyse statique (NPE, sécurité, logique) | `./mvnw spotbugs:check` |
-| **JaCoCo** | Couverture de tests | rapport après `./mvnw test` → `target/site/jacoco/index.html` |
+| **JaCoCo** | Couverture de tests (seuil ≥ 80 % en CI) | `./mvnw test` → rapport `target/site/jacoco/index.html` + goal `check` |
 
 Faux positifs SpotBugs documentés dans `spotbugs-exclude.xml` (DTOs, injection Spring).
 
-Les tests MockMvc (`*MockMvcTest`) traversent **controller → service → repository** : la couche service est couverte par les tests d’intégration HTTP existants. Des tests unitaires dédiés (`*ServiceTest` avec mocks) restent optionnels.
+Les tests MockMvc (`*MockMvcTest`) traversent **controller → service → repository**. Des tests unitaires `*ServiceTest` et `GlobalExceptionHandlerTest` complètent la couverture pour atteindre le seuil JaCoCo.
 
 ---
 

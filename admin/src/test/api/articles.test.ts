@@ -109,6 +109,41 @@ describe('articles.ts', () => {
     expect(result[0].categories).toEqual([{ id: 1, nom: 'Java', description: 'D' }]);
   });
 
+  it('fetchArticleCategories retourne les catégories', async () => {
+    localStorage.setItem('java_blog_token', 'token');
+    mockFetch({
+      ok: true,
+      json: () => Promise.resolve([{ id: 1, nom: 'Java', description: 'D' }]),
+    });
+
+    const { fetchArticleCategories } = await import('../../api/articles');
+    const result = await fetchArticleCategories(1);
+
+    expect(fetch).toHaveBeenCalledWith(
+      `${API_URL}/admin/articles/1/categories`,
+      expect.any(Object)
+    );
+    expect(result).toHaveLength(1);
+  });
+
+  it('updateArticleCategories envoie un PUT', async () => {
+    localStorage.setItem('java_blog_token', 'token');
+    mockFetch({ ok: true });
+
+    const { updateArticleCategories } = await import('../../api/articles');
+    await updateArticleCategories(1, [1, 2]);
+
+    expect(fetch).toHaveBeenCalledWith(
+      `${API_URL}/admin/articles/1/categories`,
+      expect.objectContaining({ method: 'PUT' })
+    );
+  });
+
+  it('deleteArticle lance une erreur si 401', async () => {
+    mockFetch({ ok: false, status: 401 });
+    await expect(deleteArticle(1)).rejects.toThrow('Session expirée — reconnecte-toi.');
+  });
+
   it('enrichArticlesWithCategories retourne un tableau vide en cas derreur', async () => {
     localStorage.setItem('java_blog_token', 'token');
     mockFetch({ ok: false, status: 500 });
