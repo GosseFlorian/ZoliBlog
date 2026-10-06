@@ -111,12 +111,18 @@ describe('articles.ts', () => {
 
   it('fetchArticleCategories retourne les catégories', async () => {
     localStorage.setItem('java_blog_token', 'token');
-    mockFetch({ ok: true, json: () => Promise.resolve([{ id: 1, nom: 'Java', description: 'D' }]) });
+    mockFetch({
+      ok: true,
+      json: () => Promise.resolve([{ id: 1, nom: 'Java', description: 'D' }]),
+    });
 
     const { fetchArticleCategories } = await import('../../api/articles');
     const result = await fetchArticleCategories(1);
 
-    expect(fetch).toHaveBeenCalledWith(`${API_URL}/admin/articles/1/categories`, expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(
+      `${API_URL}/admin/articles/1/categories`,
+      expect.any(Object)
+    );
     expect(result).toHaveLength(1);
   });
 
