@@ -2,6 +2,8 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  // Dev : /. Prod Pages : VITE_BASE=/ZoliBlog/admin/
+  base: process.env.VITE_BASE ?? "/",
   plugins: [react()],
   test: {
     environment: "jsdom",

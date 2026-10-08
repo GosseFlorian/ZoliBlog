@@ -4,6 +4,8 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Dev : /. Prod Pages : VITE_BASE=/ZoliBlog/
+  base: process.env.VITE_BASE ?? "/",
   plugins: [react()],
   server: { port: 5174 },
   test: {
