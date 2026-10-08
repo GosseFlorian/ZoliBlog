@@ -1,0 +1,21 @@
+# Profil prod — Render / PaaS (activer avec SPRING_PROFILES_ACTIVE=prod)
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  # Render (et la plupart des PaaS) injectent PORT
+  port: ${PORT:8080}
+
+# GitHub Pages — origine sans chemin (site + admin sur GosseFlorian.github.io)
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://GosseFlorian.github.io}
+
+security:
+  login-rate-limit:
+    enabled: ${SECURITY_LOGIN_RATE_LIMIT_ENABLED:true}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}

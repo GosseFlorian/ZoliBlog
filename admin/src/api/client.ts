@@ -4,7 +4,10 @@
 
 const TOKEN_KEY = 'java_blog_token';
 
-export const API_URL = 'http://localhost:8080';
+const DEFAULT_API_URL = 'http://localhost:8080';
+
+/** URL de l’API (build prod : variable VITE_API_URL). */
+export const API_URL = (import.meta.env.VITE_API_URL ?? DEFAULT_API_URL).replace(/\/$/, '');
 
 export function getAuthHeaders(): Record<string, string> {
   const token = localStorage.getItem(TOKEN_KEY);

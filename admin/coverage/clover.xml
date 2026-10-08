@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1791282199822" clover="3.2.0">
-  <project timestamp="1791282199822" name="All files">
-    <metrics statements="269" coveredstatements="216" conditionals="124" coveredconditionals="73" methods="64" coveredmethods="63" elements="457" coveredelements="352" complexity="0" loc="269" ncloc="269" packages="3" files="11" classes="11"/>
+<coverage generated="1791467317568" clover="3.2.0">
+  <project timestamp="1791467317568" name="All files">
+    <metrics statements="270" coveredstatements="217" conditionals="126" coveredconditionals="75" methods="64" coveredmethods="63" elements="460" coveredelements="355" complexity="0" loc="270" ncloc="270" packages="3" files="11" classes="11"/>
     <package name="api">
-      <metrics statements="129" coveredstatements="106" conditionals="73" coveredconditionals="50" methods="28" coveredmethods="28"/>
+      <metrics statements="130" coveredstatements="107" conditionals="75" coveredconditionals="52" methods="28" coveredmethods="28"/>
       <file name="articles.ts" path="C:\Users\flori\Documents\ADA\Projet_ZoliBlog\java_blog\admin\src\api\articles.ts">
         <metrics statements="49" coveredstatements="37" conditionals="30" coveredconditionals="18" methods="10" coveredmethods="10"/>
         <line num="24" count="2" type="stmt"/>
@@ -107,14 +107,15 @@
         <line num="74" count="0" type="stmt"/>
       </file>
       <file name="client.ts" path="C:\Users\flori\Documents\ADA\Projet_ZoliBlog\java_blog\admin\src\api\client.ts">
-        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
         <line num="5" count="8" type="stmt"/>
         <line num="7" count="8" type="stmt"/>
-        <line num="10" count="25" type="stmt"/>
-        <line num="11" count="25" type="cond" truecount="2" falsecount="0"/>
-        <line num="12" count="7" type="stmt"/>
-        <line num="14" count="18" type="stmt"/>
-        <line num="18" count="7" type="stmt"/>
+        <line num="10" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="25" type="stmt"/>
+        <line num="14" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="17" count="18" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
       </file>
       <file name="commentaires.ts" path="C:\Users\flori\Documents\ADA\Projet_ZoliBlog\java_blog\admin\src\api\commentaires.ts">
         <metrics statements="11" coveredstatements="8" conditionals="8" coveredconditionals="5" methods="2" coveredmethods="2"/>
