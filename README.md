@@ -172,6 +172,7 @@ Modèle : [`.env.example`](.env.example)
 | ---------------------------------------------------------- | ------------------------------------- |
 | [docs/README-diataxis.md](docs/README-diataxis.md)         | Hub — les 4 types de doc              |
 | [docs/README-exploitation.md](docs/README-exploitation.md) | Installer, lancer, maintenir          |
+| [docs/README-deploiement.md](docs/README-deploiement.md)   | Déployer (GitHub Pages + Render)      |
 | [docs/README-runbook.md](docs/README-runbook.md)           | Dépannage et incidents                |
 | [docs/README-api.md](docs/README-api.md)                   | Référence des routes HTTP             |
 | [docs/README-architecture.md](docs/README-architecture.md) | Couches, schéma, sécurité             |

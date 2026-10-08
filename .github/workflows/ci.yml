@@ -148,6 +148,7 @@ jobs:
           test -f README.md
           test -f docs/README-diataxis.md
           test -f docs/README-exploitation.md
+          test -f docs/README-deploiement.md
           test -f docs/README-runbook.md
           test -f docs/README-api.md
           test -f docs/README-architecture.md

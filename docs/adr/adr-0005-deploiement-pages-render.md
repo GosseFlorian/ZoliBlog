@@ -62,3 +62,9 @@ Adopter un modèle **hybride gratuit** :
 - **Sous-chemin GitHub Pages** : configuration `base` / `basename` et fichiers `404.html` pour le routing SPA au rafraîchissement.
 - **Free tier Render** : cold start après inactivité, limites de durée/ressources Postgres — acceptable pour démo, pas pour prod réelle.
 - **CORS cross-origin** : erreurs fréquentes si l’origine ou `VITE_API_URL` est mal configurée au build.
+
+## Liens
+
+- [README-deploiement.md](../README-deploiement.md) — procédure pas à pas
+- [README-exploitation.md](../README-exploitation.md) — dev local
+- [ADR-0003 — `.env`](adr-0003-env.md) — secrets et environnements (même dossier `adr/`)
