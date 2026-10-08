@@ -91,7 +91,7 @@ Clique **Create Web Service** (premier build long, normal).
 
 ### 4.2 Variables d’environnement (Render)
 
-**Dans le repo** : `application-prod.yaml` (CORS, logs, rate limit, port) et `.env.production.example` (`VITE_API_URL` pour les fronts).
+**Dans le repo** : `application-prod.yaml` (CORS, logs, rate limit, port). **Front Pages** : variable GitHub **`VITE_API_URL`** (§ 5).
 
 **Sur Render — Web Service → Environment** (secrets, jamais dans Git) :
 
@@ -138,7 +138,7 @@ jdbc:postgresql://dpg-xxxx-a:5432/zoliblog_db?sslmode=require
 
 ### 4.4 Front — URL API
 
-URL publique du service : **`https://zoliblog.onrender.com`** (déjà dans **`.env.production.example`** → `VITE_API_URL`). Commit sur `main` → rebuild Pages (section 6).
+URL publique du service (ex. **`https://zoliblog-production.up.railway.app`**) → variable de dépôt **`VITE_API_URL`** (section 5), puis rebuild Pages (section 6).
 
 ### 4.5 Smoke tests
 
@@ -170,15 +170,13 @@ Fichier `src/main/resources/application-prod.yaml` :
 
 ## 5. Frontends — variables de build
 
-Les fronts ne lisent **pas** le `.env` dev (Spring). En **production**, Vite charge **`.env.production`** (gitignoré ; source versionnée = `.env.production.example`) :
+Les fronts ne lisent **pas** le `.env` dev (Spring). **`VITE_API_URL`** n’est pas un secret (visible dans le JS) mais **dépend de l’environnement** :
 
-| Fichier | Versionné ? | Rôle |
-| ------- | ------------- | ---- |
-| **`.env.production.example`** | Oui | Modèle + URL API prod (`VITE_API_URL`) — non secret (visible dans le JS) |
-| **`.env.production`** | Non (gitignore) | Copie locale ou générée en CI avant le build |
-
-Local : `cp .env.production.example .env.production` avant un `npm run build` manuel.  
-CI deploy : copie automatique `example` → `.env.production`.
+| Contexte | Où configurer `VITE_API_URL` |
+| -------- | ------------------------------ |
+| **GitHub Pages (CI)** | Variable de dépôt **Actions → Variables** : `VITE_API_URL` = URL publique de l’API (ex. `https://zoliblog-production.up.railway.app`, sans `/` final). Le workflow **Deploy GitHub Pages** l’injecte au `npm run build`. |
+| **Build prod local** | `cp .env.production.example .env.production` puis éditer (souvent `http://localhost:8080` ou l’URL Railway pour un test). **`.env.production`** reste gitignoré. |
+| **Modèle local** | **`.env.production.example`** (versionné) — exemple uniquement, pas utilisé par la CI. |
 
 **Chemin Pages (`base`)** : constante dans chaque `vite.config.ts` (`/ZoliBlog/` et `/ZoliBlog/admin/` en mode `production`, `/` en dev).
 
@@ -203,8 +201,7 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 2. **Source** : **GitHub Actions** (pas « Deploy from branch »).
 3. Le workflow **`.github/workflows/deploy-pages.yml`** :
    - se lance après une **CI réussie** sur `main`, ou manuellement (**Actions → Deploy GitHub Pages → Run workflow**) ;
-   - vérifie que **`.env.production.example`** ne contient plus `CHANGE_ME`, puis copie vers `.env.production` ;
-   - build site + admin (`npm run build` → fichiers `.env.production` ci-dessus) ;
+   - vérifie la variable de dépôt **`VITE_API_URL`**, puis build site + admin (`npm run build`) ;
    - fusionne les `dist/` dans `deploy/` ;
    - copie `404.html` (site et admin) pour le routing SPA au rafraîchissement.
 
@@ -222,7 +219,7 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 1. Merge des changements de déploiement sur **`main`** (CI verte).
 2. Créer Postgres Render + exécuter `doc/sql/blog.sql`.
 3. Créer le Web Service Render + variables + vérifier `/ping`.
-4. Mettre à jour **`VITE_API_URL`** dans **`.env.production.example`**, committer sur `main`.
+4. Définir **`VITE_API_URL`** dans **Settings → Secrets and variables → Actions → Variables** (URL Railway, sans `/` final).
 5. Activer Pages (Actions) et lancer / vérifier le workflow deploy.
 6. Tester dans le navigateur (site, login, admin Alice).
 7. En cas d’erreur CORS : vérifier `CORS_ALLOWED_ORIGINS` et l’origine exacte dans la console réseau.

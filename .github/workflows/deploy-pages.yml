@@ -28,6 +28,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_API_URL: ${{ vars.VITE_API_URL }}
 
     steps:
       - name: Checkout
@@ -35,24 +37,28 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
-      - name: Préparer .env.production (depuis le modèle versionné)
+      - name: Vérifier VITE_API_URL (variable Actions)
         run: |
           set -euo pipefail
-          test -f .env.production.example || { echo "::error::.env.production.example manquant"; exit 1; }
-          if grep -q 'CHANGE_ME' .env.production.example; then
-            echo "::error::Remplacer VITE_API_URL dans .env.production.example par l’URL Render réelle, puis committer."
+          if [ -z "${VITE_API_URL}" ]; then
+            echo "::error::Définir la variable de dépôt VITE_API_URL (Settings → Secrets and variables → Actions → Variables)."
             exit 1
           fi
-          grep -qE '^VITE_API_URL=https?://' .env.production.example || {
-            echo "::error::VITE_API_URL invalide dans .env.production.example"
-            exit 1
-          }
-          cp .env.production.example .env.production
+          case "${VITE_API_URL}" in
+            http://*|https://*) ;;
+            *)
+              echo "::error::VITE_API_URL doit commencer par http:// ou https:// (sans slash final)."
+              exit 1
+              ;;
+          esac
+          case "${VITE_API_URL}" in
+            */) echo "::error::VITE_API_URL ne doit pas se terminer par /."; exit 1 ;;
+          esac
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
           cache: npm
           cache-dependency-path: |
             site/package-lock.json
