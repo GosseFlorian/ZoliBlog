@@ -60,45 +60,111 @@ psql "<EXTERNAL_DATABASE_URL>" -f doc/sql/blog.sql
 
 ## 4. API Spring Boot sur Render
 
-1. **New → Web Service** → connecter le repo **ZoliBlog**, branche **`main`**.
-2. **Root directory** : `/` (racine Maven).
-3. **Runtime** : Java (ou Native).
-4. **Build command** :
+Prérequis : PostgreSQL Render initialisé (section 3).
+
+### 4.1 Créer le Web Service
+
+1. **Dashboard → New + → Web Service**.
+2. **Connect a repository** : autoriser GitHub si besoin, choisir **`ZoliBlog`**.
+3. **Branch** : `main` (après merge de la branche déploiement).
+4. **Name** : ex. `zoliblog-api` → URL du type `https://zoliblog-api.onrender.com`.
+5. **Region** : même région que la base (ex. Frankfurt).
+6. **Root Directory** : laisser vide (racine du repo).
+7. **Runtime** : **Java** (ou **Native** selon l’interface).
+8. **Instance type** : **Free** si disponible.
+
+**Build command :**
 
 ```bash
 ./mvnw -B -DskipTests package
 ```
 
-5. **Start command** :
+**Start command :**
 
 ```bash
-java -jar target/java_blog-0.0.1-SNAPSHOT.jar
+java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar
 ```
 
-6. **Variables d’environnement** (exemple) :
+**Advanced → Health Check Path** (si proposé) : `/ping`.
 
-| Variable                            | Exemple / remarque                                |
-| ----------------------------------- | ------------------------------------------------- |
-| `JWT_SECRET`                        | Chaîne aléatoire **≥ 32 caractères**              |
-| `DATABASE_URL`                      | `jdbc:postgresql://…` (URL JDBC Render)           |
-| `POSTGRES_USER`                     | Utilisateur Render                                |
-| `POSTGRES_PASSWORD`                 | Mot de passe Render                               |
-| `CORS_ALLOWED_ORIGINS`              | `https://<user>.github.io` (**sans** `/ZoliBlog`) |
-| `LOG_LEVEL`                         | `INFO` ou `WARN`                                  |
-| `SECURITY_LOGIN_RATE_LIMIT_ENABLED` | `true`                                            |
+Clique **Create Web Service** (premier build long, normal).
 
-7. **Health check path** (si proposé) : `/ping`.
+### 4.2 Variables d’environnement (Render)
 
-8. Noter l’URL publique de l’API, ex. `https://zoliblog-api.onrender.com` → sert de **`VITE_API_URL`** pour les builds front.
+**Dans le repo** : `application-prod.yaml` (CORS, logs, rate limit, port) et `.env.production.example` (`VITE_API_URL` pour les fronts).
 
-**Smoke test :**
+**Sur Render — Web Service → Environment** (secrets, jamais dans Git) :
+
+| Variable | Rôle |
+| -------- | ---- |
+| `JWT_SECRET` | ≥ 32 caractères |
+| `DATABASE_URL` | JDBC — § 4.3 |
+| `POSTGRES_USER` | Utilisateur Postgres Render |
+| `POSTGRES_PASSWORD` | Mot de passe Postgres Render |
+
+Start command :
 
 ```bash
-curl -s https://<api>.onrender.com/ping
-curl -s https://<api>.onrender.com/db/ping
+java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar
 ```
 
-**Free tier :** l’API peut **s’endormir** ; le premier appel après inactivité est lent (cold start) — normal pour une démo diplôme.
+**Save Changes** → redeploy. Cf. [ADR-0003](adr/adr-0003-env.md).
+
+### 4.3 JDBC depuis l’URL Postgres Render
+
+Sur la base **PostgreSQL** → **Connect** :
+
+- **Internal Database URL** (recommandé si l’API est sur Render) :  
+  `postgresql://USER:PASSWORD@HOST/NOM_BASE`
+- Convertir en JDBC pour `DATABASE_URL` :
+
+```text
+jdbc:postgresql://HOST:5432/NOM_BASE?sslmode=require
+```
+
+Exemple :
+
+```text
+postgresql://zoliblog_db_user:****@dpg-xxxx-a/zoliblog_db
+```
+
+→
+
+```text
+jdbc:postgresql://dpg-xxxx-a:5432/zoliblog_db?sslmode=require
+```
+
+(`USER` / `PASSWORD` restent dans `POSTGRES_USER` et `POSTGRES_PASSWORD`.)
+
+### 4.4 Front — URL API
+
+URL publique du service : **`https://zoliblog.onrender.com`** (déjà dans **`.env.production.example`** → `VITE_API_URL`). Commit sur `main` → rebuild Pages (section 6).
+
+### 4.5 Smoke tests
+
+```bash
+curl -s https://zoliblog.onrender.com/ping
+curl -s https://zoliblog.onrender.com/db/ping
+```
+
+Login (optionnel) :
+
+```bash
+curl -s -X POST https://zoliblog.onrender.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"mail\":\"alice@example.com\",\"mdp\":\"demo1234\"}"
+```
+
+**Free tier :** cold start après inactivité — le premier appel peut prendre 30–60 s.
+
+### 4.6 Profil Spring `prod`
+
+Fichier `src/main/resources/application-prod.yaml` :
+
+- écoute sur **`PORT`** (injecté par Render) ;
+- **CORS** : `https://GosseFlorian.github.io` par défaut ;
+- logs **`WARN`**, rate limit login **activé** ;
+- secrets JDBC + JWT : variables Render (§ 4.2).
 
 ---
 

@@ -19,6 +19,8 @@ Commiter ces valeurs exposerait le projet (A05 — Security Misconfiguration). I
 - Fichier **`.env.example`** — modèle sans secrets réels, versionné
 - **`dotenv-java`** + placeholders Spring `${VAR:default}` dans `application.yaml`
 - Cible Makefile `make env` pour copier `.env.example` → `.env`
+- **Prod Render** : mêmes clés sensibles via **Environment** du Web Service (pas de `.env` sur le serveur)
+- **Prod front** : `.env.production.example` (versionné) → `.env.production` (gitignoré) pour `VITE_API_URL` uniquement
 
 Variables clés : `JWT_SECRET`, `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CORS_ALLOWED_ORIGINS`, `LOG_LEVEL`, `SECURITY_LOGIN_RATE_LIMIT_ENABLED`.
 
