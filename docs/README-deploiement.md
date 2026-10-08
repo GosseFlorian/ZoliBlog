@@ -162,13 +162,16 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ## 8. CI / CD (résumé)
 
-| Pipeline      | Fichier                              | Rôle                          |
-| ------------- | ------------------------------------ | ----------------------------- |
-| **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push |
-| **CD fronts** | `.github/workflows/deploy-pages.yml` | Build + publication Pages     |
-| **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`   |
+| Pipeline      | Fichier                              | Rôle                                                                 |
+| ------------- | ------------------------------------ | -------------------------------------------------------------------- |
+| **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push                                        |
+| **CI**        | job `backend-package`                | Artefact **zoliblog-api-jar** (`target/java_blog-*.jar`, 14 jours)   |
+| **CD fronts** | `.github/workflows/deploy-pages.yml` | Build + publication Pages                                            |
+| **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`                                          |
 
-Parité locale : `make ci` (sans déploiement).
+Parité locale : `make ci` (sans déploiement). JAR local : `./mvnw -B -DskipTests package` → `target/java_blog-0.0.1-SNAPSHOT.jar`.
+
+Téléchargement du JAR CI : **Actions** → run vert → artefact **zoliblog-api-jar**.
 
 ---
 
