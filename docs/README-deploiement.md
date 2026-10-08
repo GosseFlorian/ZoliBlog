@@ -104,24 +104,28 @@ curl -s https://<api>.onrender.com/db/ping
 
 ## 5. Frontends — variables de build
 
-Les fronts ne lisent **pas** le `.env` racine (réservé à Spring). En production, les variables sont passées **au moment du build** (GitHub Actions).
+Les fronts ne lisent **pas** le `.env` dev (Spring). En **production**, Vite charge **`.env.production`** (gitignoré ; source versionnée = `.env.production.example`) :
 
-| Variable       | Site (`site/`)              | Admin (`admin/`)   |
-| -------------- | --------------------------- | ------------------ |
-| `VITE_API_URL` | URL Render (sans `/` final) | idem               |
-| `VITE_BASE`    | `/ZoliBlog/`                | `/ZoliBlog/admin/` |
+| Fichier | Versionné ? | Rôle |
+| ------- | ------------- | ---- |
+| **`.env.production.example`** | Oui | Modèle + URL API prod (`VITE_API_URL`) — non secret (visible dans le JS) |
+| **`.env.production`** | Non (gitignore) | Copie locale ou générée en CI avant le build |
 
-**Exemple en local (simulation Pages, Git Bash) :**
+Local : `cp .env.production.example .env.production` avant un `npm run build` manuel.  
+CI deploy : copie automatique `example` → `.env.production`.
+
+**Chemin Pages (`base`)** : constante dans chaque `vite.config.ts` (`/ZoliBlog/` et `/ZoliBlog/admin/` en mode `production`, `/` en dev).
+
+`envDir: '..'` : les builds `npm run build` dans `site/` et `admin/` lisent **`.env.production`** à la racine pour `VITE_API_URL`.
+
+**Build prod local (simulation Pages) :**
 
 ```bash
-cd site
-VITE_API_URL=https://<api>.onrender.com VITE_BASE=/ZoliBlog/ npm run build
-
-cd ../admin
-VITE_API_URL=https://<api>.onrender.com VITE_BASE=/ZoliBlog/admin/ npm run build
+cd site && npm run build
+cd ../admin && npm run build
 ```
 
-En **dev** (`npm run dev`), ne pas définir `VITE_BASE` : défaut `/` → `http://localhost:5173` et `5174`.
+En **dev** (`npm run dev`), le mode n’est pas `production` → `base: '/'` → `http://localhost:5173` et `5174`.
 
 Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `routerBasename()` dans `main.tsx`.
 
@@ -131,13 +135,12 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 1. Repo **ZoliBlog → Settings → Pages**.
 2. **Source** : **GitHub Actions** (pas « Deploy from branch »).
-3. Le workflow **`deploy-pages.yml`** (à la racine `.github/workflows/`) :
-   - build site + admin avec les `VITE_*` ci-dessus ;
-   - fusionne les `dist/` en un artefact unique ;
-   - copie `404.html` pour le routing SPA (rafraîchissement d’URL).
-
-4. **Variables du repo** (Settings → Secrets and variables → Actions) :
-   - **`VITE_API_URL`** : variable (URL publique Render) — utilisée par le workflow de déploiement.
+3. Le workflow **`.github/workflows/deploy-pages.yml`** :
+   - se lance après une **CI réussie** sur `main`, ou manuellement (**Actions → Deploy GitHub Pages → Run workflow**) ;
+   - vérifie que **`.env.production.example`** ne contient plus `CHANGE_ME`, puis copie vers `.env.production` ;
+   - build site + admin (`npm run build` → fichiers `.env.production` ci-dessus) ;
+   - fusionne les `dist/` dans `deploy/` ;
+   - copie `404.html` (site et admin) pour le routing SPA au rafraîchissement.
 
 **URLs attendues après déploiement :**
 
@@ -153,7 +156,7 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 1. Merge des changements de déploiement sur **`main`** (CI verte).
 2. Créer Postgres Render + exécuter `doc/sql/blog.sql`.
 3. Créer le Web Service Render + variables + vérifier `/ping`.
-4. Configurer `VITE_API_URL` dans GitHub Actions.
+4. Mettre à jour **`VITE_API_URL`** dans **`.env.production.example`**, committer sur `main`.
 5. Activer Pages (Actions) et lancer / vérifier le workflow deploy.
 6. Tester dans le navigateur (site, login, admin Alice).
 7. En cas d’erreur CORS : vérifier `CORS_ALLOWED_ORIGINS` et l’origine exacte dans la console réseau.
@@ -162,12 +165,12 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ## 8. CI / CD (résumé)
 
-| Pipeline      | Fichier                              | Rôle                                                                 |
-| ------------- | ------------------------------------ | -------------------------------------------------------------------- |
-| **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push                                        |
-| **CI**        | job `backend-package`                | Artefact **zoliblog-api-jar** (`target/java_blog-*.jar`, 14 jours)   |
-| **CD fronts** | `.github/workflows/deploy-pages.yml` | Build + publication Pages                                            |
-| **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`                                          |
+| Pipeline      | Fichier                              | Rôle                                                               |
+| ------------- | ------------------------------------ | ------------------------------------------------------------------ |
+| **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push                                      |
+| **CI**        | job `backend-package`                | Artefact **zoliblog-api-jar** (`target/java_blog-*.jar`, 14 jours) |
+| **CD fronts** | `.github/workflows/deploy-pages.yml` | Build + publication Pages                                          |
+| **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`                                        |
 
 Parité locale : `make ci` (sans déploiement). JAR local : `./mvnw -B -DskipTests package` → `target/java_blog-0.0.1-SNAPSHOT.jar`.
 
@@ -179,7 +182,7 @@ Téléchargement du JAR CI : **Actions** → run vert → artefact **zoliblog-ap
 
 | Symptôme                         | Piste                                                          |
 | -------------------------------- | -------------------------------------------------------------- |
-| Assets 404 (JS/CSS)              | `VITE_BASE` incorrect ou oublié au build                       |
+| Assets 404 (JS/CSS)              | `base` dans `vite.config.ts` (repo renommé ≠ `ZoliBlog` ?)     |
 | F5 sur `/connexion` → 404 GitHub | Fichiers `404.html` manquants (workflow deploy)                |
 | `Failed to fetch` / CORS         | `CORS_ALLOWED_ORIGINS` ou mauvaise `VITE_API_URL` **au build** |
 | API lente au 1er clic            | Cold start Render free tier                                    |

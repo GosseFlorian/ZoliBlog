@@ -38,8 +38,8 @@ Adopter un modèle **hybride gratuit** :
    - Schéma initial via scripts SQL versionnés (`doc/sql/`), procédure documentée (pas de Flyway à ce stade).
 
 4. **Intégration front ↔ API** :
-   - Build Vite avec `VITE_API_URL` pointant vers l’URL Render.
-   - `base` Vite et `basename` React Router adaptés au préfixe Pages `/ZoliBlog/` et `/ZoliBlog/admin/`.
+   - Build Vite : `VITE_API_URL` dans **`.env.production.example`** (versionné) ; `.env.production` gitignoré, copié au build.
+   - `base` Vite (constant en prod dans `vite.config.ts`) et `basename` React Router : `/ZoliBlog/` et `/ZoliBlog/admin/`.
    - CORS API : origine `https://<user>.github.io` (sans chemin — une seule origine pour site et admin).
 
 5. **CI/CD** :

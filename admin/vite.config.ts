@@ -1,9 +1,13 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
-  // Dev : /. Prod Pages : VITE_BASE=/ZoliBlog/admin/
-  base: process.env.VITE_BASE ?? "/",
+/** GitHub Pages — repo ZoliBlog (project site). */
+const PAGES_BASE = "/ZoliBlog/admin/";
+
+export default defineConfig(({ mode }) => ({
+  // VITE_API_URL : ../.env.production (envDir racine)
+  envDir: "..",
+  base: mode === "production" ? PAGES_BASE : "/",
   plugins: [react()],
   test: {
     environment: "jsdom",
@@ -18,4 +22,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
