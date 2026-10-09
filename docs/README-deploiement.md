@@ -195,9 +195,23 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ---
 
-## 6. Fronts en production
+## 6. Railway — 2 services (API + web)
 
-Le workflow **GitHub Pages** (`deploy-pages.yml`) et les contournements SPA (`404.html`, `spa-path-restore.js`) ont été **retirés** : hébergement des fronts **sur Railway** (étapes suivantes sur la branche dédiée).
+| Service | Racine repo | Rôle |
+| ------- | ----------- | ---- |
+| **API** | `/` (défaut) | Spring Boot — [`railway.toml`](../railway.toml) |
+| **Web** | **`web/`** | Site + admin statiques — [`web/README.md`](../web/README.md) |
+
+| URL (exemple) | Service |
+| ------------- | ------- |
+| `https://zoliblog-production.up.railway.app/ping` | API |
+| `https://<web>.up.railway.app/` | Site |
+| `https://<web>.up.railway.app/admin/` | Admin |
+
+**Web** : variable **`VITE_API_URL`** = URL de l’API (build).  
+**API** : **`CORS_ALLOWED_ORIGINS`** = URL publique du service web.
+
+Pas de Docker : Node + `serve-handler` (`web/server.js`), rewrites SPA pour `/` et `/admin/**`.
 
 ---
 
