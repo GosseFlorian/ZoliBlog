@@ -11,7 +11,7 @@ Au démarrage, des valeurs sensibles étaient en dur ou absentes du dépôt Git 
 - URL et identifiants PostgreSQL
 - Origines CORS des frontends
 
-Commiter ces valeurs exposerait le projet (A05 — Security Misconfiguration). Il fallait un mécanisme standard pour le dev local et la démo jury.
+Commiter ces valeurs exposerait le projet (A05 — Security Misconfiguration). Il fallait un mécanisme standard pour le dev local, la CI et les environnements déployés (variables d’environnement, pas de secrets dans Git).
 
 ## Décision
 
@@ -20,7 +20,7 @@ Commiter ces valeurs exposerait le projet (A05 — Security Misconfiguration). I
 - **`dotenv-java`** + placeholders Spring `${VAR:default}` dans `application.yaml`
 - Cible Makefile `make env` pour copier `.env.example` → `.env`
 - **Prod API (Railway)** : mêmes clés sensibles via **Variables** du service (pas de `.env` sur le serveur)
-- **Prod front (Railway, migration)** : **`VITE_API_URL`** au build ; en local, `.env.production.example` → `.env.production` (gitignoré)
+- **Prod front (Railway)** : **`VITE_API_URL`** sur le service Fronts (build Vite)
 
 Variables clés : `JWT_SECRET`, `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CORS_ALLOWED_ORIGINS`, `LOG_LEVEL`, `SECURITY_LOGIN_RATE_LIMIT_ENABLED`.
 

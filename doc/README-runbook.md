@@ -78,7 +78,7 @@ Si le rate limit bloque encore les tests après redémarrage : attendre 5 minute
 |--------|-----|--------|
 | Dev local | Développeur | Runbook ci-dessus |
 | CI GitHub | Workflow `.github/workflows/ci.yml` | Consulter les logs Actions, reproduire avec `make ci` |
-| Jury / démo | — | Vérifier prérequis (Java 21, PostgreSQL, `.env`) avant la soutenance |
+| Démo / présentation | — | Vérifier prérequis (Java 21, PostgreSQL, `.env`) avant la session |
 
 ---
 

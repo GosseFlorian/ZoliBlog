@@ -17,10 +17,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend-test:
-    name: Backend — Maven build
+  backend:
+    name: Backend — qualité, tests et JAR
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: backend-api
@@ -69,31 +69,10 @@ jobs:
       - name: SpotBugs
         run: ./mvnw -B spotbugs:check
 
-      - name: Run tests (JaCoCo ≥ 80 %)
+      - name: Tests (JaCoCo ≥ 80 %)
         run: ./mvnw -B test
 
-  backend-package:
-    name: Backend — JAR déployable
-    runs-on: ubuntu-latest
-    needs: backend-test
-    timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: backend-api
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          cache-dependency-path: backend-api/pom.xml
-
-      - name: Package (sans re-exécuter les tests)
+      - name: Package JAR
         run: ./mvnw -B -DskipTests package
 
       - name: Publier artefact JAR
@@ -104,8 +83,8 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  frontend-admin-build:
-    name: Frontend back-office — Vite build
+  frontend-admin:
+    name: Frontend admin — lint et tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -132,14 +111,11 @@ jobs:
       - name: Prettier check
         run: npm run format:check
 
-      - name: Build
-        run: npm run build
-
       - name: Unit tests with coverage (≥ 80 %)
         run: npm run test:coverage
 
-  frontend-site-build:
-    name: Frontend front-office — Vite build
+  frontend-site:
+    name: Frontend site — lint et tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -166,11 +142,42 @@ jobs:
       - name: Prettier check
         run: npm run format:check
 
-      - name: Build
-        run: npm run build
-
       - name: Unit tests with coverage (≥ 80 %)
         run: npm run test:coverage
+
+  fronts-railway:
+    name: Fronts — build monorepo (Railway)
+    runs-on: ubuntu-latest
+    needs:
+      - frontend-admin
+      - frontend-site
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Build
+        run: npm ci && npm run build
+
+      - name: Vérifier les artefacts static
+        run: |
+          test -f site/dist/index.html
+          test -f admin/dist/index.html
+
+      - name: Smoke Express (server.js)
+        run: |
+          PORT=3456 npm start &
+          sleep 3
+          curl -sf http://127.0.0.1:3456/ | grep -qi html
+          curl -sf http://127.0.0.1:3456/admin/ | grep -qi html
 
   doc-check:
     name: Documentation — fichiers présents
@@ -189,3 +196,6 @@ jobs:
           test -f doc/README-api.md
           test -f doc/README-architecture.md
           test -f doc/adr/README-adr.md
+          test -f package.json
+          test -f package-lock.json
+          test -f server.js

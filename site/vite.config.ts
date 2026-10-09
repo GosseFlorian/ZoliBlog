@@ -2,12 +2,12 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-/** Prod : Spring sert le site à la racine (Railway). Dev : /. */
+/** Prod : site à la racine (/). Dev : /. */
 const PROD_BASE = "/";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  // VITE_API_URL : ../.env.production (envDir racine)
+  // VITE_API_URL : variable d’env au build (Railway) ; envDir racine pour .env* locaux optionnels
   envDir: "..",
   base: mode === "production" ? PROD_BASE : "/",
   plugins: [react()],

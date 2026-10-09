@@ -1,273 +1,159 @@
-# Déploiement — Railway (API + web + Postgres)
+# Déploiement — Railway
 
-Guide **how-to** pour publier le ZoliBlog en **production** (branche `main`, CI verte).
+Guide **how-to** pour publier le ZoliBlog en production (branche `main`, **CI verte** obligatoire avant merge).
 
-> **Procédure cible :** [§ 6 Railway](#6-railway--2-services-api--fronts) — [`package.json`](../package.json) + [`server.js`](../server.js) à la racine.  
-> **Historique Pages + Render :** [ADR-0005](adr/adr-0005-deploiement-pages-render.md) et § 3–4 ci-dessous (stack jury précédente).  
-> **Dev local :** [README-exploitation.md](README-exploitation.md) (Makefile, `.env` racine pour Spring uniquement)
+> **Dev local :** [README-exploitation.md](README-exploitation.md)  
+> **Décision :** [ADR-0005 — Railway](adr/adr-0005-deploiement-railway.md)
 
 ---
 
-## 1. Vue d’ensemble
+## 1. Architecture prod
 
 ```
 Navigateur
     │
-    ├─► https://<user>.github.io/ZoliBlog/          (site public — GitHub Pages)
-    ├─► https://<user>.github.io/ZoliBlog/admin/    (back-office — GitHub Pages)
+    ├─► https://<fronts>.up.railway.app/           site (Vite, base /)
+    ├─► https://<fronts>.up.railway.app/admin/     admin (Vite, base /admin/)
     │
-    └─► fetch HTTPS ──► https://<api>.onrender.com  (Spring Boot — Render)
+    └─► fetch HTTPS ──► https://<api>.up.railway.app   API Spring Boot
                               │
-                              └─► PostgreSQL (Render Postgres)
+                              └─► PostgreSQL (Railway)
 ```
 
-| Composant             | Hébergeur          | Branche / déclencheur                     |
-| --------------------- | ------------------ | ----------------------------------------- |
-| Site + admin (static) | Railway (à venir)  | Même service ou JAR Spring — doc en cours   |
-| API JAR               | Render Web Service | Push `main` (auto-deploy GitHub)          |
-| Base de données       | Render Postgres    | Manuelle (création + seed SQL)            |
-
-Remplace `<user>` par ton identifiant GitHub (ex. `GosseFlorian`). Le dépôt doit s’appeler **`ZoliBlog`** (project page → chemin `/ZoliBlog/`).
+| Service Railway | Root Directory | Rôle |
+| ----------------- | -------------- | ---- |
+| **API** | `backend-api` | JAR Spring Boot, profil `prod` |
+| **Fronts** | *(racine repo)* | `npm run build` + Express [`server.js`](../server.js) |
+| **Postgres** | plugin DB | Schéma via `blog.sql` |
 
 ---
 
 ## 2. Prérequis
 
-| Outil / compte                      | Usage                                                       |
-| ----------------------------------- | ----------------------------------------------------------- |
-| Repo GitHub **ZoliBlog**            | Code + Actions + Pages                                      |
-| Compte [Render](https://render.com) | API + PostgreSQL                                            |
-| CI verte sur `main`                 | Tests avant merge ([`ci.yml`](../.github/workflows/ci.yml)) |
-
-Secrets **jamais** dans Git : JWT, mot de passe Postgres → Render (cf. [ADR-0003](adr/adr-0003-env.md)).
+- Repo GitHub + [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) vert sur `main`
+- Projet Railway (3 ressources : Postgres, API, Fronts)
+- Compte démo après seed : `alice@example.com` / `demo1234`
 
 ---
 
-## 3. PostgreSQL sur Render
+## 3. Variables d’environnement
 
-1. **Dashboard Render → New → PostgreSQL** (free tier si disponible).
-2. Noter : host, port, database, user, password, **Internal Database URL** (pour l’API sur Render).
-3. **Initialiser le schéma** (une fois), depuis ta machine avec `psql` et l’URL **externe** :
+### Où les mettre ?
 
-```bash
-psql "<EXTERNAL_DATABASE_URL>" -f backend-api/src/main/resources/blog.sql
+| Type | Exemple | Où |
+| ---- | ------- | --- |
+| **Secrets** | `JWT_SECRET`, mots de passe Postgres | **Railway uniquement** (service API) — jamais dans Git ([ADR-0003](adr/adr-0003-env.md)) |
+| **Config Spring prod** | JDBC, `CORS_ALLOWED_ORIGINS` | Railway (service API) |
+| **`VITE_API_URL`** | URL publique de l’API | Service **Fronts** sur Railway (build Vite) |
+
+### `VITE_API_URL` (build des fronts)
+
+Valeur **publique** (visible dans le JS). À définir sur le service **Fronts** :
+
+```text
+VITE_API_URL=https://<api>.up.railway.app
 ```
 
-4. Vérifier le compte démo : `alice@example.com` / `demo1234` (après `blog.sql`).
+Sans slash final. Après modification → **redeploy** du service Fronts (rebuild).
 
-> Pas de Flyway : `backend-api/src/main/resources/blog.sql` (prod/dev) et `backend-api/src/test/resources/blog-test.sql` (tests).
+Le **`.env`** racine sert au **dev Spring** (`make backend`), pas au deploy Railway.
 
----
-
-## 4. API Spring Boot sur Render
-
-Prérequis : PostgreSQL Render initialisé (section 3).
-
-### 4.1 Créer le Web Service
-
-1. **Dashboard → New + → Web Service**.
-2. **Connect a repository** : autoriser GitHub si besoin, choisir **`ZoliBlog`**.
-3. **Branch** : `main` (après merge de la branche déploiement).
-4. **Name** : ex. `zoliblog-api` → URL du type `https://zoliblog-api.onrender.com`.
-5. **Region** : même région que la base (ex. Frankfurt).
-6. **Root Directory** : `backend-api` (module Maven du monorepo).
-7. **Runtime** : **Java** (ou **Native** selon l’interface).
-8. **Instance type** : **Free** si disponible.
-
-**Build command :**
-
-```bash
-./mvnw -B -DskipTests package
-```
-
-**Start command :**
-
-```bash
-java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar
-```
-
-**Advanced → Health Check Path** (si proposé) : `/ping`.
-
-Clique **Create Web Service** (premier build long, normal).
-
-### 4.2 Variables d’environnement (Render)
-
-**Dans le repo** : `application-prod.yaml` (CORS, logs, rate limit, port). **Front Pages** : variable GitHub **`VITE_API_URL`** (§ 5).
-
-**Sur Render — Web Service → Environment** (secrets, jamais dans Git) :
+### API (service `backend-api`)
 
 | Variable | Rôle |
 | -------- | ---- |
 | `JWT_SECRET` | ≥ 32 caractères |
-| `DATABASE_URL` | JDBC — § 4.3 |
-| `POSTGRES_USER` | Utilisateur Postgres Render |
-| `POSTGRES_PASSWORD` | Mot de passe Postgres Render |
+| `DATABASE_URL` | JDBC PostgreSQL |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` | Connexion BDD |
+| `CORS_ALLOWED_ORIGINS` | URL du service **fronts** (ex. `https://xxx-web.up.railway.app`), sans `/` final |
 
-Start command :
+Profil : `SPRING_PROFILES_ACTIVE=prod` (start command ci-dessous). Détails : `backend-api/src/main/resources/application-prod.yaml`.
+
+---
+
+## 4. PostgreSQL
+
+1. Créer Postgres sur Railway.
+2. Initialiser une fois depuis ta machine :
 
 ```bash
-java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar
+psql "<DATABASE_URL_EXTERNE>" -f backend-api/src/main/resources/blog.sql
 ```
 
-**Save Changes** → redeploy. Cf. [ADR-0003](adr/adr-0003-env.md).
-
-### 4.3 JDBC depuis l’URL Postgres Render
-
-Sur la base **PostgreSQL** → **Connect** :
-
-- **Internal Database URL** (recommandé si l’API est sur Render) :  
-  `postgresql://USER:PASSWORD@HOST/NOM_BASE`
-- Convertir en JDBC pour `DATABASE_URL` :
-
-```text
-jdbc:postgresql://HOST:5432/NOM_BASE?sslmode=require
-```
-
-Exemple :
-
-```text
-postgresql://zoliblog_db_user:****@dpg-xxxx-a/zoliblog_db
-```
-
-→
-
-```text
-jdbc:postgresql://dpg-xxxx-a:5432/zoliblog_db?sslmode=require
-```
-
-(`USER` / `PASSWORD` restent dans `POSTGRES_USER` et `POSTGRES_PASSWORD`.)
-
-### 4.4 Front — URL API
-
-URL publique du service (ex. **`https://zoliblog-production.up.railway.app`**) → variable de dépôt **`VITE_API_URL`** (section 5), puis rebuild Pages (section 6).
-
-### 4.5 Smoke tests
-
-```bash
-curl -s https://zoliblog.onrender.com/ping
-curl -s https://zoliblog.onrender.com/db/ping
-```
-
-Login (optionnel) :
-
-```bash
-curl -s -X POST https://zoliblog.onrender.com/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"mail\":\"alice@example.com\",\"mdp\":\"demo1234\"}"
-```
-
-**Free tier :** cold start après inactivité — le premier appel peut prendre 30–60 s.
-
-### 4.6 Profil Spring `prod`
-
-Fichier `backend-api/src/main/resources/application-prod.yaml` :
-
-- écoute sur **`PORT`** (injecté par Render) ;
-- **CORS** : `https://GosseFlorian.github.io` par défaut ;
-- logs **`WARN`**, rate limit login **activé** ;
-- secrets JDBC + JWT : variables Render (§ 4.2).
+Pas de Flyway : `blog.sql` (prod/dev), `blog-test.sql` (tests).
 
 ---
 
-## 5. Frontends — variables de build
+## 5. Service API
 
-Les fronts ne lisent **pas** le `.env` dev (Spring). **`VITE_API_URL`** n’est pas un secret (visible dans le JS) mais **dépend de l’environnement** :
+| Réglage | Valeur |
+| -------- | ------ |
+| **Root Directory** | `backend-api` |
+| **Build** | `./mvnw -B -DskipTests package` |
+| **Start** | `java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar` |
 
-| Contexte | Où configurer `VITE_API_URL` |
-| -------- | ------------------------------ |
-| **Prod (Railway, à venir)** | `VITE_API_URL` = URL publique de l’API au build (ex. même domaine Railway que l’API). |
-| **Build prod local** | `cp .env.production.example .env.production` puis éditer (souvent `http://localhost:8080` ou l’URL Railway pour un test). **`.env.production`** reste gitignoré. |
-| **Modèle local** | **`.env.production.example`** (versionné) — exemple uniquement, pas utilisé par la CI. |
-
-**Chemin Pages (`base`)** : constante dans chaque `vite.config.ts` (`/ZoliBlog/` et `/ZoliBlog/admin/` en mode `production`, `/` en dev).
-
-`envDir: '..'` : les builds `npm run build` dans `site/` et `admin/` lisent **`.env.production`** à la racine pour `VITE_API_URL`.
-
-**Build prod local (simulation Pages) :**
-
-```bash
-cd site && npm run build
-cd ../admin && npm run build
-```
-
-En **dev** (`npm run dev`), le mode n’est pas `production` → `base: '/'` → `http://localhost:5173` et `5174`.
-
-Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `routerBasename()` dans `main.tsx`.
+Smoke : `curl -s https://<api>/ping` → `pong`.
 
 ---
 
-## 6. Railway — 2 services (API + fronts)
+## 6. Service Fronts
 
-Un service **fronts** à la racine : Railpack lit [`package.json`](../package.json) (`npm run build` → site + admin, `npm start` → Express).
+| Réglage | Valeur |
+| -------- | ------ |
+| **Root Directory** | *(vide — racine du monorepo)* |
+| **Build** | `npm ci && npm run build` |
+| **Start** | `npm start` |
 
-| Service | Root Directory (UI) | Build / start (UI) |
-| ------- | --------------------- | -------------------- |
-| **API** | `backend-api` | `./mvnw -B -DskipTests package` → `java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar` |
-| **Fronts** | *(vide — racine)* | `npm ci && npm run build` → `npm start` |
+[`package.json`](../package.json) enchaîne `site/` + `admin/` ; [`server.js`](../server.js) sert `site/dist` et `admin/dist`.
 
-Pas de `railway.toml`. Pas de dossier `web/`.
-
-| URL (exemple) | Service |
-| ------------- | ------- |
-| `https://<api>/ping` | API |
-| `https://<fronts>/` | Site |
-| `https://<fronts>/admin/` | Admin (`admin` Vite `base: '/admin/'`) |
-
-**Fronts** : **`VITE_API_URL`** = URL de l’API (build).  
-**API** : **`CORS_ALLOWED_ORIGINS`** = URL publique du service fronts (sans `/` final).
-
-Express sert `site/dist` et `admin/dist` ([`server.js`](../server.js)).
+**Networking :** le port public doit correspondre au **`PORT`** injecté (souvent **8080**). Si logs `listening on …:8080` mais Networking = 3000 → **502**.
 
 ---
 
-## 7. Ordre du premier déploiement (Railway)
+## 7. Ordre de mise en prod
 
-1. Merge sur **`main`** (CI verte).
-2. Créer **Postgres** (Railway ou autre) + exécuter `backend-api/src/main/resources/blog.sql`.
-3. Service **API** : Root `backend-api`, JDBC + `JWT_SECRET`.
-4. Service **fronts** : racine repo, `npm ci && npm run build`, `npm start`, **`VITE_API_URL`**.
-5. Domaine fronts → **`CORS_ALLOWED_ORIGINS`** sur l’API → redéployer l’API.
-6. Smoke : `/ping`, `/`, `/admin/`, login Alice.
-
-*(Stack Render / Pages : § 3–4 si tu restes sur l’ancienne procédure ADR-0005.)*
-
----
-
-## 8. CI / CD (résumé)
-
-| Pipeline      | Fichier                              | Rôle                                                               |
-| ------------- | ------------------------------------ | ------------------------------------------------------------------ |
-| **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push                                      |
-| **CI**        | job `backend-package`                | Artefact **zoliblog-api-jar** (`target/java_blog-*.jar`, 14 jours) |
-| **CD fronts** | Railway (à documenter)               | Site + admin avec l’API                                            |
-| **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`                                        |
-
-Parité locale : `make ci` (sans déploiement). JAR local : `cd backend-api && ./mvnw -B -DskipTests package` → `backend-api/target/java_blog-0.0.1-SNAPSHOT.jar`.
-
-Téléchargement du JAR CI : **Actions** → run vert → artefact **zoliblog-api-jar**.
+1. CI verte sur `main`.
+2. Postgres + `blog.sql`.
+3. Déployer **API** (variables secrets + JDBC).
+4. **`VITE_API_URL`** sur le service Fronts = URL API.
+5. Déployer **Fronts**.
+6. Mettre **`CORS_ALLOWED_ORIGINS`** = URL fronts → redéployer **API**.
+7. Tests : `/`, `/admin/`, login Alice, F12 → appels vers l’API prod.
 
 ---
 
-## 9. Dépannage déploiement
+## 8. CI et parité deploy
 
-| Symptôme                         | Piste                                                          |
-| -------------------------------- | -------------------------------------------------------------- |
-| Assets 404 (JS/CSS)              | `base` dans `vite.config.ts` (repo renommé ≠ `ZoliBlog` ?)     |
-| F5 sur `/connexion` → 404 GitHub | Fichiers `404.html` manquants (workflow deploy)                |
-| `Failed to fetch` / CORS         | `CORS_ALLOWED_ORIGINS` ou mauvaise `VITE_API_URL` **au build** |
-| API lente au 1er clic            | Cold start Render free tier                                    |
-| Login 401 Alice                  | Seed SQL non appliqué sur Postgres Render                      |
-| Admin 403                        | Compte sans rôle ADMIN en base                                 |
+La CI exécute les mêmes builds que Railway :
 
-→ Runbook général : [README-runbook.md](README-runbook.md)
+| Job | Équivalent prod |
+| --- | ---------------- |
+| `backend` | Spotless, SpotBugs, tests, package JAR |
+| `frontend-admin` / `frontend-site` | Lint, format, tests (sans build Vite) |
+| `fronts-railway` | `npm ci && npm run build` + smoke Express |
+
+Parité locale : `make ci` (inclut le build racine).
+
+---
+
+## 9. Dépannage
+
+| Symptôme | Piste |
+| -------- | ----- |
+| **502** fronts | Networking port = `PORT` des logs (`8080` vs `3000`) |
+| `Failed to fetch` / CORS | `CORS_ALLOWED_ORIGINS` + `VITE_API_URL` au **build** |
+| API `localhost` dans le navigateur | Rebuild fronts après correction `VITE_API_URL` |
+| Assets admin 404 | `admin` prod : `base: '/admin/'` dans `vite.config.ts` |
+| Login 401 Alice | `blog.sql` non appliqué sur Postgres prod |
+
+→ [README-runbook.md](README-runbook.md)
 
 ---
 
 ## 10. Liens
 
-| Document                                             | Contenu                 |
-| ---------------------------------------------------- | ----------------------- |
-| [README-exploitation.md](README-exploitation.md)     | Installation dev        |
-| [README-runbook.md](README-runbook.md)               | Incidents               |
-| [README-architecture.md](README-architecture.md)     | Couches, CORS, sécurité |
-| [ADR-0005](adr/adr-0005-deploiement-pages-render.md) | Pourquoi Pages + Render |
+| Document | Contenu |
+| -------- | ------- |
+| [README-exploitation.md](README-exploitation.md) | Dev local |
+| [README-architecture.md](README-architecture.md) | CORS, couches |
+| [ADR-0005](adr/adr-0005-deploiement-railway.md) | Pourquoi Railway |

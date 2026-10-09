@@ -1,11 +1,11 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
-/** Prod : Spring sert l’admin sous /admin/ (Railway). Dev : /. */
+/** Prod : admin sous /admin/ (Express). Dev : /. */
 const PROD_BASE = "/admin/";
 
 export default defineConfig(({ mode }) => ({
-  // VITE_API_URL : ../.env.production (envDir racine)
+  // VITE_API_URL : variable d’env au build (Railway) ; envDir racine pour .env* locaux optionnels
   envDir: "..",
   base: mode === "production" ? PROD_BASE : "/",
   plugins: [react()],
