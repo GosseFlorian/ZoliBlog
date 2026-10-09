@@ -19,7 +19,7 @@ L’**API Spring Boot** tourne sur un **autre** service Railway (racine du repo)
 │                                                              │
 │  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐     │
 │  │  Postgres    │   │  API (Java)  │   │  web (Node)  │     │
-│  │  zoliblog-db │◄──│  racine /    │   │  dossier web/│     │
+│  │  zoliblog-db │◄──│  backend-api/│   │  build cd web│     │
 │  └──────────────┘   └──────┬───────┘   └──────┬───────┘     │
 │                            │                   │             │
 │                     /ping, /articles…     /, /admin/…        │
@@ -65,7 +65,7 @@ Build / start Railway : **uniquement dans l’UI** (pas de `railway.toml` dans l
 
 ### Service **API** (existant)
 
-- **Root Directory** : *(vide — racine du repo)*
+- **Root Directory** : `backend-api`
 - **Build** : `./mvnw -B -DskipTests package`
 - **Start** : `java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar`
 - **Variables** : `JWT_SECRET`, JDBC, `POSTGRES_*`, etc.
@@ -94,8 +94,10 @@ Build / start Railway : **uniquement dans l’UI** (pas de `railway.toml` dans l
 
 ### Détection du builder (Railway)
 
-- **Ne pas** ajouter de **`railway.toml` à la racine** : Railpack peut imposer **Java/Maven sur tous les services** → 502 sur le web.
-- **Web** : si les logs de build montrent `./mvnw`, forcer **Nixpacks/Railpack Node** ou vérifier build/start dans l’UI (commandes ci-dessus).
+Les **deux services** clonent la **même racine** (`pom.xml`, `mvnw`, …). Railpack peut afficher **Detected Java** même sur le service web ; le build custom `cd web && …` doit quand même tourner si Node est installé pour l’étape build.
+
+- **Start Command** : **`cd web && npm start`**. Si les logs montrent seulement `$ npm start`, corriger l’UI → échec / 502.
+- **Ne pas** mettre de `railway.toml` à la racine (conflit entre services).
 
 Logs de build web attendus : `=== Build site ===`, `npm run build`, **pas** `./mvnw package`.
 
@@ -144,4 +146,5 @@ npm start
 | `Failed to fetch` / CORS | `CORS_ALLOWED_ORIGINS` sur l’API = URL exacte du **web** (schéma + domaine, sans slash). |
 | API appelle `localhost` en prod | Rebuild **web** après avoir défini **`VITE_API_URL`**. |
 | Build échoue (npm dans site/admin) | Logs Railway : Node 20+ ; chemins `../site` et `../admin` depuis `web/`. |
+| `spawnSync /bin/sh ENOENT` ou build `(/site)` | Root Directory = **`web`** → repasser à **vide** + build `cd web && …`. Pousser la dernière version de `build-static.js`. |
 | Page blanche | Console navigateur : erreur de chargement d’asset → revérifier un build complet (`npm run build`). |
