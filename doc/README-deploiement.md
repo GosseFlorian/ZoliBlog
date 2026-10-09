@@ -205,6 +205,8 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 Pas de `railway.toml` dans le repo pour l’instant : tout se configure dans l’UI Railway.
 
+**Railpack (web)** : [`railpack.json`](../railpack.json) à la racine — provider Node + start `server.js` (Node absent au run si seulement `RAILPACK_PACKAGES` en variable).
+
 | URL (exemple) | Service |
 | ------------- | ------- |
 | `https://zoliblog-production.up.railway.app/ping` | API |
