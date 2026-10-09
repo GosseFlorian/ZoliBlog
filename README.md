@@ -16,7 +16,7 @@ API REST, back-office admin et site public pour un blog (formation ADA).
 | **Make**       | —       | `make --version`                 |
 | **Git Bash**   | —       | terminal recommandé sous Windows |
 
-> Maven : `./mvnw` (wrapper inclus).  
+> Maven : `backend-api/mvnw` (wrapper dans **`backend-api/`**) — ou **`make backend`** / **`make test`**.  
 > Le **`Makefile`** à la racine nécessite l'outil **`make`** — il n'est pas inclus dans Git Bash par défaut.
 
 ---
@@ -66,7 +66,7 @@ export PATH="/c/ProgramData/chocolatey/bin:$PATH"
 ```bash
 make setup      # .env + npm install (admin + site)
 make db-init    # schéma blog.sql + mot de passe BCrypt Alice
-make db-test    # base java_blog_test (pour ./mvnw test)
+make db-test    # base java_blog_test (pour les tests backend)
 ```
 
 **Compte de test** : `alice@example.com` / `demo1234`
@@ -119,17 +119,17 @@ Backend Java (Maven) : `spotless:apply` / `spotless:check` (formatage), `spotbug
 | -------------------- | -------------------------------------------- | ----------------------- |
 | `make lint-all`      | `spotbugs:check`                             | `npm run lint`          |
 | `make format-all`    | `spotless:apply`                             | `npm run format`        |
-| `make test`          | `./mvnw test`                                | `npm run test`          |
-| `make test-coverage` | `./mvnw test`                                | `npm run test:coverage` |
+| `make test`          | Maven test (`backend-api/`)                  | `npm run test`          |
+| `make test-coverage` | Maven test (`backend-api/`)                  | `npm run test:coverage` |
 
-Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils (≥ 80 % lignes / statements / functions). Côté **backend**, `./mvnw test` produit le rapport JaCoCo et **vérifie** un minimum de **80 %** (lignes et instructions). La CI et `make ci` appliquent ces seuils.
+Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils (≥ 80 % lignes / statements / functions). Côté **backend**, `make test` produit le rapport JaCoCo et **vérifie** un minimum de **80 %** (lignes et instructions). La CI et `make ci` appliquent ces seuils.
 
-Après `make test-coverage` (ou un `./mvnw test` seul pour le backend), ouvre les rapports HTML dans le navigateur :
+Après `make test-coverage` (ou `make test` seul pour le backend), ouvre les rapports HTML dans le navigateur :
 
 | Partie  | Rapport HTML                    |
 | ------- | ------------------------------- |
-| Backend (couverture) | `target/site/jacoco/index.html` |
-| Backend (SpotBugs)   | `target/spotbugs.html`            |
+| Backend (couverture) | `backend-api/target/site/jacoco/index.html` |
+| Backend (SpotBugs)   | `backend-api/target/spotbugs.html`            |
 | Admin                | `admin/coverage/index.html`       |
 | Site                 | `site/coverage/index.html`        |
 
@@ -139,7 +139,7 @@ Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'e
 
 La cible `ci` reproduit GitHub Actions :
 
-1. **Backend** — `spotless:check` → `spotbugs:check` → `./mvnw test`
+1. **Backend** — `spotless:check` → `spotbugs:check` → tests Maven (`backend-api/`)
 2. **Chaque front** — `npm ci` → `lint` → `format:check` → `build` → `test:coverage`
 
 Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (*batch mode*) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
@@ -170,14 +170,13 @@ Modèle : [`.env.example`](.env.example)
 
 | Document                                                   | Contenu                               |
 | ---------------------------------------------------------- | ------------------------------------- |
-| [docs/README-diataxis.md](docs/README-diataxis.md)         | Hub — les 4 types de doc              |
-| [docs/README-exploitation.md](docs/README-exploitation.md) | Installer, lancer, maintenir          |
-| [docs/README-deploiement.md](docs/README-deploiement.md)   | Déployer (GitHub Pages + Render)      |
-| [docs/README-runbook.md](docs/README-runbook.md)           | Dépannage et incidents                |
-| [docs/README-api.md](docs/README-api.md)                   | Référence des routes HTTP             |
-| [docs/README-architecture.md](docs/README-architecture.md) | Couches, schéma, sécurité             |
-| [docs/adr/README-adr.md](docs//adr/README-adr.md)          | Décisions techniques (ADR)            |
-| [doc/INDEX.md](doc/INDEX.md)                               | Supports de formation (parties 01–08) |
+| [doc/README-diataxis.md](doc/README-diataxis.md)         | Hub — les 4 types de doc              |
+| [doc/README-exploitation.md](doc/README-exploitation.md) | Installer, lancer, maintenir          |
+| [doc/README-deploiement.md](doc/README-deploiement.md)   | Déployer (Railway, Postgres, …)       |
+| [doc/README-runbook.md](doc/README-runbook.md)           | Dépannage et incidents                |
+| [doc/README-api.md](doc/README-api.md)                   | Référence des routes HTTP             |
+| [doc/README-architecture.md](doc/README-architecture.md) | Couches, schéma, sécurité             |
+| [doc/adr/README-adr.md](doc/adr/README-adr.md)           | Décisions techniques (ADR)            |
 
 ---
 
@@ -188,14 +187,14 @@ Modèle : [`.env.example`](.env.example)
 | `make: command not found`                    | Installer Make (section ci-dessus), redémarrer Git Bash       |
 | `Could not resolve placeholder 'JWT_SECRET'` | `make env`, puis éditer `.env`                                |
 | Login 401 pour Alice                         | `make db-init`                                                |
-| `./mvnw test` échoue sur la BDD              | `make db-test` + PostgreSQL démarré                           |
+| Tests backend échouent sur la BDD            | `make db-test` + PostgreSQL démarré                           |
 | CI échoue sur Spotless                       | `make format-java` puis recommiter                            |
 | CI échoue sur Prettier                       | `make format-ts` puis recommiter                              |
-| CI échoue sur SpotBugs                       | `./mvnw spotbugs:spotbugs` → ouvrir `target/spotbugs.html`   |
+| CI échoue sur SpotBugs                       | `make lint-java` → `backend-api/target/spotbugs.html`         |
 | `psql: command not found`                    | Ajouter le `bin` PostgreSQL au `PATH`                         |
 | Erreur CORS                                  | Vérifier `CORS_ALLOWED_ORIGINS` dans `.env`, redémarrer l'API |
 
-→ Détail : [docs/README-runbook.md](docs/README-runbook.md)
+→ Détail : [doc/README-runbook.md](doc/README-runbook.md)
 
 ---
 
@@ -203,12 +202,11 @@ Modèle : [`.env.example`](.env.example)
 
 ```
 java_blog/
-├── src/main/java/     # API Spring Boot (controller, service, repository…)
+├── backend-api/       # API Spring Boot (Maven, blog.sql en src/main/resources)
 ├── admin/             # Back-office React (5173)
 ├── site/              # Site public React (5174)
-├── doc/               # Cours formation
-├── docs/              # Doc exploitation (Diátaxis)
+├── web/               # Service Railway — build + serve site + admin
+├── doc/               # Doc exploitation (Diátaxis) + adr
 ├── Makefile           # Raccourcis projet (nécessite make)
-├── spotbugs-exclude.xml  # Faux positifs SpotBugs documentés
 └── .env.example       # Modèle de configuration
 ```

@@ -1,9 +1,7 @@
 # Raccourcis DevOps — ZoliBlog
-ifeq ($(OS),Windows_NT)
-    MVNW = mvnw.cmd
-else
-    MVNW = ./mvnw
-endif
+BACKEND = backend-api
+MVN = ./mvnw
+RUN_MVN = cd $(BACKEND) && $(MVN)
 .PHONY: help setup env db-init db-test \
         lint-all lint-java lint-ts format-all format-java format-ts \
         lint format test test-coverage ci backend admin site
@@ -37,13 +35,13 @@ env:
 	cp .env.example .env
 
 db-init:
-	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d java_blog -f doc/sql/blog.sql
+	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d java_blog -f backend-api/src/main/resources/blog.sql
 
 db-test:
-	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d postgres -f doc/sql/upgrade-06-01-create-java-blog-test.sql
+	PGPASSWORD=$${POSTGRES_PASSWORD:-postgres} psql -h localhost -U $${POSTGRES_USER:-postgres} -d postgres -c "CREATE DATABASE java_blog_test" || true
 
 lint-java:
-	$(MVNW) spotbugs:check
+	$(RUN_MVN) spotbugs:check
 
 lint-ts:
 	cd admin && npm run lint
@@ -52,7 +50,7 @@ lint-ts:
 lint-all: lint-java lint-ts
 
 format-java:
-	$(MVNW) spotless:apply
+	$(RUN_MVN) spotless:apply
 
 format-ts:
 	cd admin && npm run format
@@ -65,24 +63,24 @@ lint: lint-all
 format: format-all
 
 test:
-	$(MVNW) test
+	$(RUN_MVN) test
 	cd admin && npm run test
 	cd site && npm run test
 
 test-coverage:
-	$(MVNW) test
+	$(RUN_MVN) test
 	cd admin && npm run test:coverage
 	cd site && npm run test:coverage
 
 ci:
-	$(MVNW) -B spotless:check
-	$(MVNW) -B spotbugs:check
-	$(MVNW) -B test
+	$(RUN_MVN) -B spotless:check
+	$(RUN_MVN) -B spotbugs:check
+	$(RUN_MVN) -B test
 	cd admin && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
 	cd site && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
 
 backend:
-	$(MVNW) spring-boot:run
+	$(RUN_MVN) spring-boot:run
 
 admin:
 	cd admin && npm run dev
