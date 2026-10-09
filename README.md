@@ -1,6 +1,6 @@
 # ZoliBlog — Spring Boot + React
 
-API REST, back-office admin et site public pour un blog (formation ADA).
+API REST, back-office admin et site public pour un blog (monorepo Spring Boot + React/Vite).
 
 ![CI](https://github.com/GosseFlorian/java_blog/actions/workflows/ci.yml/badge.svg)
 
@@ -106,7 +106,7 @@ make lint            # alias de lint-all
 make format          # alias de format-all
 make test            # tests uniquement (backend + admin + site)
 make test-coverage   # rapports de couverture (JaCoCo + Vitest)
-make ci              # pipeline locale (qualité + tests + build des 2 fronts)
+make ci              # pipeline locale (qualité + tests + build Railway fronts)
 ```
 
 Scripts npm dans chaque front (`admin/`, `site/`) : `dev`, `build`, `lint`, `lint:fix`, `format`, `test`, `test:coverage`.
@@ -139,8 +139,9 @@ Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'e
 
 La cible `ci` reproduit GitHub Actions :
 
-1. **Backend** — `spotless:check` → `spotbugs:check` → tests Maven (`backend-api/`)
-2. **Chaque front** — `npm ci` → `lint` → `format:check` → `build` → `test:coverage`
+1. **Backend** — `spotless:check` → `spotbugs:check` → tests Maven → `package` JAR (`backend-api/`)
+2. **Chaque front** — `npm ci` → `lint` → `format:check` → `test:coverage` (sans build Vite)
+3. **Fronts prod** — `npm ci && npm run build` à la racine (seul build Vite, parité Railway)
 
 Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (*batch mode*) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
 

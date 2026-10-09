@@ -20,7 +20,7 @@ help:
 	@echo "  make format-ts      - Prettier (admin + site)"
 	@echo "  make test           - tests (backend + admin + site)"
 	@echo "  make test-coverage  - tests + rapports de couverture (JaCoCo + Vitest)"
-	@echo "  make ci             - pipeline locale (qualité + tests + build des 2 fronts)"
+	@echo "  make ci             - pipeline locale (qualité + tests + build Railway fronts)"
 	@echo "  make backend        - API port 8080"
 	@echo "  make admin          - Vite port 5173"
 	@echo "  make site           - Vite port 5174"
@@ -76,8 +76,10 @@ ci:
 	$(RUN_MVN) -B spotless:check
 	$(RUN_MVN) -B spotbugs:check
 	$(RUN_MVN) -B test
-	cd admin && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
-	cd site && npm ci && npm run lint && npm run format:check && npm run build && npm run test:coverage
+	$(RUN_MVN) -B -DskipTests package
+	cd admin && npm ci && npm run lint && npm run format:check && npm run test:coverage
+	cd site && npm ci && npm run lint && npm run format:check && npm run test:coverage
+	npm ci && npm run build
 
 backend:
 	$(RUN_MVN) spring-boot:run

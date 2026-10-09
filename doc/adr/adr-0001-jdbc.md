@@ -5,12 +5,12 @@ Statut : Accepté
 
 ## Contexte
 
-Le projet blog est une formation ADA centrée sur la compréhension du SQL et des couches applicatives. Il fallait choisir entre :
+Le ZoliBlog persiste articles, utilisateurs et commentaires dans PostgreSQL. Il fallait choisir entre :
 
 - **JPA / Hibernate** — ORM, entités annotées, requêtes générées
 - **JDBC pur + `JdbcTemplate`** — SQL explicite, mapping manuel vers les models
 
-Le référentiel CDA exige la maîtrise de la persistance et de l'accès aux données ; le parcours pédagogique (parties 02–04) construit les repositories requête par requête.
+Les repositories du dépôt portent des requêtes SQL visibles (filtres publication, jointures, CRUD admin). L’équipe privilégie la lisibilité du SQL et le contrôle des requêtes plutôt qu’un mapping ORM implicite.
 
 ## Décision
 
@@ -23,7 +23,7 @@ Pas de dépendance `spring-boot-starter-data-jpa`.
 **Positif :**
 
 - SQL visible et auditable (preuve anti-injection avec `?`)
-- Aligné avec les objectifs pédagogiques du cursus
+- Requêtes et schéma auditable dans le code source (revue, dépannage, tests)
 - Contrôle fin des requêtes (articles publiés, jointures N-N, etc.)
 
 **Négatif :**

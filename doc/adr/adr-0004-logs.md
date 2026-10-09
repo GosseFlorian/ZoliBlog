@@ -29,12 +29,12 @@ Interdiction explicite : ne jamais logger `body.mdp()`, le token JWT entier ou l
 
 **Positif :**
 
-- Traçabilité pour le runbook et la démo CDA (OWASP A09)
+- Traçabilité pour le runbook et la conformité aux bonnes pratiques OWASP A09
 - Réduction du risque en cas d'exposition des fichiers log
 
 **Négatif :**
 
 - Debugging parfois plus difficile (données masquées)
-- Pas de centralisation type ELK / Grafana dans le périmètre formation
+- Pas de centralisation type ELK / Grafana : stack volontairement légère pour ce projet
 
 **Complément :** les réponses d'erreur client passent par `GlobalExceptionHandler` — pas de stack trace Java exposée (A05).
