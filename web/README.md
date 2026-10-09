@@ -84,19 +84,25 @@ Build / start Railway : **uniquement dans l’UI** (pas de `railway.toml` dans l
    ```bash
    cd web && npm ci && npm run build
    ```
-4. **Start Command** :
-   ```bash
-   cd web && npm start
-   ```
+4. **Start Command** : laisser Railway / [`railpack.json`](../railpack.json) (`cd web && node server.js`), ou la même ligne sans `npm`.
 5. **Variables** (service web) :
    - **`VITE_API_URL`** = URL HTTPS de l’**API** (sans `/` final).
 6. **Networking → Generate Domain** → port = valeur de **`PORT`** (ou logs `listening on …`).
 
-### Détection du builder (Railway)
+### Railpack (service **web**, racine repo)
 
-Les **deux services** clonent la **même racine** (`pom.xml`, `mvnw`, …). Railpack peut afficher **Detected Java** même sur le service web ; le build custom `cd web && …` doit quand même tourner si Node est installé pour l’étape build.
+Root Directory **vide**. `RAILPACK_PACKAGES` installe Node pour le **build** ; sans **provider Node** au deploy, le run échoue (`node: not found`).
 
-- **Start Command** : **`cd web && npm start`**. Si les logs montrent seulement `$ npm start`, corriger l’UI → échec / 502.
+**[`railpack.json`](../railpack.json)** à la racine : `"provider": "node"` + start `cd web && node server.js`. Lu seulement quand le contexte de build = racine (service **web**). L’API (`Root Directory = backend-api`) ne l’utilise pas.
+
+| Variable (service web) | Exemple | Rôle |
+| ---------------------- | ------- | ---- |
+| `RAILPACK_NO_SPA` | `true` | Garde `server.js` (rewrites `/admin`) |
+| `VITE_API_URL` | `https://…` | URL API au build Vite |
+
+**Build Command** (UI) : `cd web && npm ci && npm run build`  
+**Start Command** (UI) : vide ou `cd web && node server.js` — **pas** `npm start`, **pas** le hack `sh -c PATH=…` si `railpack.json` est en place.
+
 - **Ne pas** mettre de `railway.toml` à la racine (conflit entre services).
 
 Logs de build web attendus : `=== Build site ===`, `npm run build`, **pas** `./mvnw package`.
@@ -148,3 +154,4 @@ npm start
 | Build échoue (npm dans site/admin) | Logs Railway : Node 20+ ; chemins `../site` et `../admin` depuis `web/`. |
 | `spawnSync /bin/sh ENOENT` ou build `(/site)` | Root Directory = **`web`** → repasser à **vide** + build `cd web && …`. Pousser la dernière version de `build-static.js`. |
 | Page blanche | Console navigateur : erreur de chargement d’asset → revérifier un build complet (`npm run build`). |
+| **502** / `npm: command not found` au run | Node présent au **build** seulement. Start = `sh -c 'export PATH="/mise/shims:$PATH" && cd web && node server.js'` (pas `npm start`). Logs deploy : `zoliblog-web listening on http://0.0.0.0:…` |

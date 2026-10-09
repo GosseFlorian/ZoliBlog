@@ -8,21 +8,32 @@
  * PORT : obligatoire sur Railway (sinon 3000 en local).
  */
 const http = require("http");
+const { existsSync } = require("node:fs");
+const { join } = require("node:path");
 const handler = require("serve-handler");
+
+const webDir = __dirname;
+const deployDir = join(webDir, "deploy");
+
+if (!existsSync(join(deployDir, "index.html"))) {
+  console.error(
+    `deploy/ introuvable (${deployDir}). Le build Railway a-t-il exécuté « npm run build » dans web/ ?`
+  );
+  process.exit(1);
+}
 
 const server = http.createServer((request, response) =>
   handler(request, response, {
-    public: "deploy",
+    public: deployDir,
     rewrites: [
-      // Back-office React (basename /admin/)
       { source: "/admin/**", destination: "/admin/index.html" },
-      // Site public React (basename /)
       { source: "**", destination: "/index.html" },
     ],
   })
 );
 
 const port = Number(process.env.PORT) || 3000;
-server.listen(port, () => {
-  console.log(`zoliblog-web listening on ${port}`);
+const host = "0.0.0.0";
+server.listen(port, host, () => {
+  console.log(`zoliblog-web listening on http://${host}:${port} (cwd=${process.cwd()})`);
 });
