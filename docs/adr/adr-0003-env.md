@@ -20,7 +20,7 @@ Commiter ces valeurs exposerait le projet (A05 — Security Misconfiguration). I
 - **`dotenv-java`** + placeholders Spring `${VAR:default}` dans `application.yaml`
 - Cible Makefile `make env` pour copier `.env.example` → `.env`
 - **Prod API (Railway)** : mêmes clés sensibles via **Variables** du service (pas de `.env` sur le serveur)
-- **Prod front (GitHub Pages)** : variable de dépôt **`VITE_API_URL`** (Actions → Variables) injectée au build CI ; en local, `.env.production.example` → `.env.production` (gitignoré)
+- **Prod front (Railway, migration)** : **`VITE_API_URL`** au build ; en local, `.env.production.example` → `.env.production` (gitignoré)
 
 Variables clés : `JWT_SECRET`, `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CORS_ALLOWED_ORIGINS`, `LOG_LEVEL`, `SECURITY_LOGIN_RATE_LIMIT_ENABLED`.
 

@@ -28,7 +28,7 @@ Adopter un modèle **hybride gratuit** :
 1. **Frontends (statiques)** — **GitHub Pages** (project site), un seul site Pages par dépôt :
    - Site public à la racine du site publié : `https://<user>.github.io/ZoliBlog/`
    - Back-office sous-chemin : `https://<user>.github.io/ZoliBlog/admin/`
-   - Publication via **GitHub Actions** (`deploy-pages.yml`), déclenchée sur `main` après qualité CI.
+   - ~~Publication GitHub Pages (`deploy-pages.yml`)~~ — **retiré** ; fronts migrés vers **Railway** (ADR à mettre à jour).
 
 2. **API Spring Boot** — **Render** (Web Service, build Maven → JAR ; déploiement géré par le PaaS, sans stack Compose à opérer côté diplôme) :
    - URL publique dédiée (ex. `https://zoliblog-api.onrender.com`).
