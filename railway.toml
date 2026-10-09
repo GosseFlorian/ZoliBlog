@@ -1,6 +1,0 @@
-# Service API Spring Boot (racine du repo). Fronts : dossier web/ (2ᵉ service Railway).
-[build]
-buildCommand = "./mvnw -B -DskipTests package"
-
-[deploy]
-startCommand = "java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar"

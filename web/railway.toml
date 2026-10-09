@@ -1,6 +1,0 @@
-# 2ᵉ service Railway : Root Directory = web (Settings du service).
-[build]
-buildCommand = "npm ci && npm run build"
-
-[deploy]
-startCommand = "npm start"

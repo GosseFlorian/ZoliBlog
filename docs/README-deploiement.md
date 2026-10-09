@@ -197,10 +197,12 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ## 6. Railway — 2 services (API + web)
 
-| Service | Racine repo | Rôle |
-| ------- | ----------- | ---- |
-| **API** | `/` (défaut) | Spring Boot — [`railway.toml`](../railway.toml) |
-| **Web** | **`web/`** | Site + admin statiques — [`web/README.md`](../web/README.md) |
+| Service | Root Directory (UI) | Build / start (UI) |
+| ------- | --------------------- | -------------------- |
+| **API** | *(vide — racine)* | `./mvnw -B -DskipTests package` → `java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar` |
+| **Web** | *(vide — racine)* | `cd web && npm ci && npm run build` → `cd web && npm start` — détails [`web/README.md`](../web/README.md) |
+
+Pas de `railway.toml` dans le repo pour l’instant : tout se configure dans l’UI Railway.
 
 | URL (exemple) | Service |
 | ------------- | ------- |
