@@ -40,6 +40,13 @@ build/
 .env.production
 .env*.local
 
+### Node (monorepo) ###
+/node_modules/
+
 ### React admin ###
 admin/node_modules/
 admin/dist/
+
+### React site ###
+site/node_modules/
+site/dist/

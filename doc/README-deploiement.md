@@ -2,7 +2,7 @@
 
 Guide **how-to** pour publier le ZoliBlog en **production** (branche `main`, CI verte).
 
-> **Procédure cible :** [§ 6 Railway](#6-railway--2-services-api--web) + détail service web [`web/README.md`](../web/README.md).  
+> **Procédure cible :** [§ 6 Railway](#6-railway--2-services-api--fronts) — [`package.json`](../package.json) + [`server.js`](../server.js) à la racine.  
 > **Historique Pages + Render :** [ADR-0005](adr/adr-0005-deploiement-pages-render.md) et § 3–4 ci-dessous (stack jury précédente).  
 > **Dev local :** [README-exploitation.md](README-exploitation.md) (Makefile, `.env` racine pour Spring uniquement)
 
@@ -196,27 +196,27 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ---
 
-## 6. Railway — 2 services (API + web)
+## 6. Railway — 2 services (API + fronts)
+
+Un service **fronts** à la racine : Railpack lit [`package.json`](../package.json) (`npm run build` → site + admin, `npm start` → Express).
 
 | Service | Root Directory (UI) | Build / start (UI) |
 | ------- | --------------------- | -------------------- |
 | **API** | `backend-api` | `./mvnw -B -DskipTests package` → `java -Dspring.profiles.active=prod -jar target/java_blog-0.0.1-SNAPSHOT.jar` |
-| **Web** | *(vide — racine)* | `cd web && npm ci && npm run build` → `cd web && npm start` — détails [`web/README.md`](../web/README.md) |
+| **Fronts** | *(vide — racine)* | `npm ci && npm run build` → `npm start` |
 
-Pas de `railway.toml` dans le repo pour l’instant : tout se configure dans l’UI Railway.
-
-**Railpack (web)** : [`railpack.json`](../railpack.json) à la racine — provider Node + start `server.js` (Node absent au run si seulement `RAILPACK_PACKAGES` en variable).
+Pas de `railway.toml`. Pas de dossier `web/`.
 
 | URL (exemple) | Service |
 | ------------- | ------- |
-| `https://zoliblog-production.up.railway.app/ping` | API |
-| `https://<web>.up.railway.app/` | Site |
-| `https://<web>.up.railway.app/admin/` | Admin |
+| `https://<api>/ping` | API |
+| `https://<fronts>/` | Site |
+| `https://<fronts>/admin/` | Admin (`admin` Vite `base: '/admin/'`) |
 
-**Web** : variable **`VITE_API_URL`** = URL de l’API (build).  
-**API** : **`CORS_ALLOWED_ORIGINS`** = URL publique du service web.
+**Fronts** : **`VITE_API_URL`** = URL de l’API (build).  
+**API** : **`CORS_ALLOWED_ORIGINS`** = URL publique du service fronts (sans `/` final).
 
-Pas de Docker : Node + `serve-handler` (`web/server.js`), rewrites SPA pour `/` et `/admin/**`.
+Express sert `site/dist` et `admin/dist` ([`server.js`](../server.js)).
 
 ---
 
@@ -224,10 +224,10 @@ Pas de Docker : Node + `serve-handler` (`web/server.js`), rewrites SPA pour `/` 
 
 1. Merge sur **`main`** (CI verte).
 2. Créer **Postgres** (Railway ou autre) + exécuter `backend-api/src/main/resources/blog.sql`.
-3. Service **API** : Root `backend-api`, build/start Maven, variables JDBC + `JWT_SECRET`, `CORS_ALLOWED_ORIGINS` (URL du web, § 6).
-4. Service **web** : racine repo vide, `cd web && npm ci && npm run build` / `cd web && npm start`, **`VITE_API_URL`** = URL API.
-5. Smoke : `/ping`, site `/`, admin `/admin/`, login Alice.
-6. CORS : origine exacte du web dans `CORS_ALLOWED_ORIGINS`, redéployer l’API si besoin.
+3. Service **API** : Root `backend-api`, JDBC + `JWT_SECRET`.
+4. Service **fronts** : racine repo, `npm ci && npm run build`, `npm start`, **`VITE_API_URL`**.
+5. Domaine fronts → **`CORS_ALLOWED_ORIGINS`** sur l’API → redéployer l’API.
+6. Smoke : `/ping`, `/`, `/admin/`, login Alice.
 
 *(Stack Render / Pages : § 3–4 si tu restes sur l’ancienne procédure ADR-0005.)*
 

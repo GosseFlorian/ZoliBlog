@@ -205,7 +205,8 @@ java_blog/
 ├── backend-api/       # API Spring Boot (Maven, blog.sql en src/main/resources)
 ├── admin/             # Back-office React (5173)
 ├── site/              # Site public React (5174)
-├── web/               # Service Railway — build + serve site + admin
+├── package.json       # Fronts Railway (build site + admin)
+├── server.js          # Express — / et /admin
 ├── doc/               # Doc exploitation (Diátaxis) + adr
 ├── Makefile           # Raccourcis projet (nécessite make)
 └── .env.example       # Modèle de configuration
