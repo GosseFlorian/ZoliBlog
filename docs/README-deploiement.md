@@ -203,7 +203,7 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
    - se lance après une **CI réussie** sur `main`, ou manuellement (**Actions → Deploy GitHub Pages → Run workflow**) ;
    - vérifie la variable de dépôt **`VITE_API_URL`**, puis build site + admin (`npm run build`) ;
    - fusionne les `dist/` dans `deploy/` ;
-   - copie `404.html` (site et admin) pour le routing SPA au rafraîchissement.
+   - publie `deploy/github-pages-404.html` en `404.html` racine (admin vs site au F5) ; `spa-path-restore.js` dans chaque build Vite.
 
 **URLs attendues après déploiement :**
 
