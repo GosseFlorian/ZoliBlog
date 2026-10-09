@@ -7,12 +7,17 @@ import LoginPage from './pages/LoginPage.tsx';
 import ArticlesPage from './pages/ArticlesPage.tsx';
 import CategoriesPage from './pages/CategoriesPage.tsx';
 import UsersPage from './pages/UsersPage.tsx';
+import NotFoundPage from './pages/NotFoundPage.tsx';
 import { useAuthStore } from './store/authStore.ts';
 import { useAdminStore } from './store/adminStore.ts';
 import './App.css';
 
-function App() {
+function RedirectToLogin() {
   const location = useLocation();
+  return <Navigate to="/login" state={{ from: location }} replace />;
+}
+
+function App() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const pseudo = useAuthStore((s) => s.pseudo);
   const logout = useAuthStore((s) => s.logout);
@@ -28,8 +33,12 @@ function App() {
   if (!isAuthenticated) {
     return (
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" state={{ from: location }} replace />} />
+        <Route path="/articles/*" element={<RedirectToLogin />} />
+        <Route path="/categories/*" element={<RedirectToLogin />} />
+        <Route path="/users" element={<RedirectToLogin />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     );
   }
@@ -55,7 +64,7 @@ function App() {
           <Route path="/articles/*" element={<ArticlesPage />} />
           <Route path="/categories/*" element={<CategoriesPage />} />
           <Route path="/users" element={<UsersPage />} />
-          <Route path="*" element={<Navigate to="/articles" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </div>
