@@ -53,12 +53,11 @@ Vite grave l’URL API dans le JavaScript (`import.meta.env.VITE_API_URL`).
 
 | Fichier | Rôle |
 | ------- | ---- |
-| `railway.toml` | Build / start pour **ce** service (si Railway le lit ; sinon recopier dans l’UI). |
 | `scripts/build-static.js` | Build site + admin → `deploy/`. |
 | `server.js` | Serveur HTTP sur **`PORT`**. |
 | `package.json` | Scripts `build` et `start`. |
 
-`railway.toml` **à la racine du repo** concerne uniquement le service **API**, pas celui-ci.
+Build / start Railway : **uniquement dans l’UI** (pas de `railway.toml` dans le repo pour l’instant).
 
 ---
 
@@ -75,14 +74,30 @@ Vite grave l’URL API dans le JavaScript (`import.meta.env.VITE_API_URL`).
 
 ### Service **web** (nouveau)
 
+> **Important — Root Directory**  
+> Ne mets **pas** `web` seul : Railway n’envoie alors **pas** les dossiers `site/` et `admin/`, le build échoue.  
+> Laisse **Root Directory vide** (racine du repo, comme l’API).
+
 1. **+ New** → **GitHub Repo** → même repo.
-2. **Settings → Root Directory** : **`web`**
-3. **Variables** :
+2. **Settings → Source → Root Directory** : **vide** (`.` / racine).
+3. **Build Command** :
+   ```bash
+   cd web && npm ci && npm run build
+   ```
+4. **Start Command** :
+   ```bash
+   cd web && npm start
+   ```
+5. **Variables** (service web) :
    - **`VITE_API_URL`** = URL HTTPS de l’**API** (sans `/` final).
-4. **Networking → Generate Domain** → URL du front.
-5. **Build** : `npm ci && npm run build`  
-   **Start** : `npm start`  
-   (ou laisser `web/railway.toml` faire foi.)
+6. **Networking → Generate Domain** → port = valeur de **`PORT`** (ou logs `listening on …`).
+
+### Détection du builder (Railway)
+
+- **Ne pas** ajouter de **`railway.toml` à la racine** : Railpack peut imposer **Java/Maven sur tous les services** → 502 sur le web.
+- **Web** : si les logs de build montrent `./mvnw`, forcer **Nixpacks/Railpack Node** ou vérifier build/start dans l’UI (commandes ci-dessus).
+
+Logs de build web attendus : `=== Build site ===`, `npm run build`, **pas** `./mvnw package`.
 
 Après le premier deploy web, **mettre à jour `CORS_ALLOWED_ORIGINS`** sur l’API si l’URL du front vient d’être créée, puis **redéployer l’API**.
 
