@@ -2,14 +2,14 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-/** GitHub Pages — repo ZoliBlog (project site). */
-const PAGES_BASE = "/ZoliBlog/";
+/** Prod : Spring sert le site à la racine (Railway). Dev : /. */
+const PROD_BASE = "/";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   // VITE_API_URL : ../.env.production (envDir racine)
   envDir: "..",
-  base: mode === "production" ? PAGES_BASE : "/",
+  base: mode === "production" ? PROD_BASE : "/",
   plugins: [react()],
   server: { port: 5174 },
   test: {

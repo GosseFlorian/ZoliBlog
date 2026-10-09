@@ -22,7 +22,7 @@ Navigateur
 
 | Composant             | Hébergeur          | Branche / déclencheur                     |
 | --------------------- | ------------------ | ----------------------------------------- |
-| Site + admin (static) | GitHub Pages       | Push `main` → workflow `deploy-pages.yml` |
+| Site + admin (static) | Railway (à venir)  | Même service ou JAR Spring — doc en cours   |
 | API JAR               | Render Web Service | Push `main` (auto-deploy GitHub)          |
 | Base de données       | Render Postgres    | Manuelle (création + seed SQL)            |
 
@@ -174,7 +174,7 @@ Les fronts ne lisent **pas** le `.env` dev (Spring). **`VITE_API_URL`** n’est 
 
 | Contexte | Où configurer `VITE_API_URL` |
 | -------- | ------------------------------ |
-| **GitHub Pages (CI)** | Variable de dépôt **Actions → Variables** : `VITE_API_URL` = URL publique de l’API (ex. `https://zoliblog-production.up.railway.app`, sans `/` final). Le workflow **Deploy GitHub Pages** l’injecte au `npm run build`. |
+| **Prod (Railway, à venir)** | `VITE_API_URL` = URL publique de l’API au build (ex. même domaine Railway que l’API). |
 | **Build prod local** | `cp .env.production.example .env.production` puis éditer (souvent `http://localhost:8080` ou l’URL Railway pour un test). **`.env.production`** reste gitignoré. |
 | **Modèle local** | **`.env.production.example`** (versionné) — exemple uniquement, pas utilisé par la CI. |
 
@@ -195,22 +195,23 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 
 ---
 
-## 6. GitHub Pages
+## 6. Railway — 2 services (API + web)
 
-1. Repo **ZoliBlog → Settings → Pages**.
-2. **Source** : **GitHub Actions** (pas « Deploy from branch »).
-3. Le workflow **`.github/workflows/deploy-pages.yml`** :
-   - se lance après une **CI réussie** sur `main`, ou manuellement (**Actions → Deploy GitHub Pages → Run workflow**) ;
-   - vérifie la variable de dépôt **`VITE_API_URL`**, puis build site + admin (`npm run build`) ;
-   - fusionne les `dist/` dans `deploy/` ;
-   - publie `deploy/github-pages-404.html` en `404.html` racine (admin vs site au F5) ; `spa-path-restore.js` dans chaque build Vite.
+| Service | Racine repo | Rôle |
+| ------- | ----------- | ---- |
+| **API** | `/` (défaut) | Spring Boot — [`railway.toml`](../railway.toml) |
+| **Web** | **`web/`** | Site + admin statiques — [`web/README.md`](../web/README.md) |
 
-**URLs attendues après déploiement :**
+| URL (exemple) | Service |
+| ------------- | ------- |
+| `https://zoliblog-production.up.railway.app/ping` | API |
+| `https://<web>.up.railway.app/` | Site |
+| `https://<web>.up.railway.app/admin/` | Admin |
 
-| App   | URL                                        |
-| ----- | ------------------------------------------ |
-| Site  | `https://<user>.github.io/ZoliBlog/`       |
-| Admin | `https://<user>.github.io/ZoliBlog/admin/` |
+**Web** : variable **`VITE_API_URL`** = URL de l’API (build).  
+**API** : **`CORS_ALLOWED_ORIGINS`** = URL publique du service web.
+
+Pas de Docker : Node + `serve-handler` (`web/server.js`), rewrites SPA pour `/` et `/admin/**`.
 
 ---
 
@@ -219,9 +220,8 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 1. Merge des changements de déploiement sur **`main`** (CI verte).
 2. Créer Postgres Render + exécuter `doc/sql/blog.sql`.
 3. Créer le Web Service Render + variables + vérifier `/ping`.
-4. Définir **`VITE_API_URL`** dans **Settings → Secrets and variables → Actions → Variables** (URL Railway, sans `/` final).
-5. Activer Pages (Actions) et lancer / vérifier le workflow deploy.
-6. Tester dans le navigateur (site, login, admin Alice).
+4. Configurer **`VITE_API_URL`** au build front (Railway / CI — voir étapes à venir).
+5. Tester dans le navigateur (site, login, admin Alice).
 7. En cas d’erreur CORS : vérifier `CORS_ALLOWED_ORIGINS` et l’origine exacte dans la console réseau.
 
 ---
@@ -232,7 +232,7 @@ Détails code : `import.meta.env.VITE_API_URL`, `vite.config.ts` (`base`), `rout
 | ------------- | ------------------------------------ | ------------------------------------------------------------------ |
 | **CI**        | `.github/workflows/ci.yml`           | Qualité + tests sur PR / push                                      |
 | **CI**        | job `backend-package`                | Artefact **zoliblog-api-jar** (`target/java_blog-*.jar`, 14 jours) |
-| **CD fronts** | `.github/workflows/deploy-pages.yml` | Build + publication Pages                                          |
+| **CD fronts** | Railway (à documenter)               | Site + admin avec l’API                                            |
 | **CD API**    | Render (lien GitHub)                 | Rebuild JAR sur push `main`                                        |
 
 Parité locale : `make ci` (sans déploiement). JAR local : `./mvnw -B -DskipTests package` → `target/java_blog-0.0.1-SNAPSHOT.jar`.

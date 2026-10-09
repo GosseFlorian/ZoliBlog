@@ -82,7 +82,7 @@ public class SecurityConfig {
                     // API publique (lecture articles, santé)
                     .requestMatchers("/articles/**", "/ping", "/db/**")
                     .permitAll()
-                    // Back-office — rôle ADMIN obligatoire
+                    // API back-office — rôle ADMIN obligatoire
                     .requestMatchers("/admin/**")
                     .hasAuthority("ADMIN")
                     .anyRequest()

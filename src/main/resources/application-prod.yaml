@@ -8,9 +8,9 @@ server:
   # Render (et la plupart des PaaS) injectent PORT
   port: ${PORT:8080}
 
-# GitHub Pages — origine sans chemin (site + admin sur GosseFlorian.github.io)
+# Fronts servis par le même service → CORS surtout utile si origine externe (ex. dev Vite).
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://GosseFlorian.github.io}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://zoliblog-production.up.railway.app}
 
 security:
   login-rate-limit:
