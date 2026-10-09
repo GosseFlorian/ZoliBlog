@@ -82,9 +82,8 @@ jobs:
           rm -rf deploy
           mkdir -p deploy/admin
           cp -r site/dist/. deploy/
-          cp site/dist/index.html deploy/404.html
           cp -r admin/dist/. deploy/admin/
-          cp admin/dist/index.html deploy/admin/404.html
+          cp deploy/github-pages-404.html deploy/404.html
           echo "Arborescence publiée :"
           find deploy -maxdepth 2 -type f | head -20
 
