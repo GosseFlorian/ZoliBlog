@@ -1,9 +1,0 @@
-{
-  "provider": "node",
-  "packages": {
-    "node": "20"
-  },
-  "deploy": {
-    "startCommand": "cd web && node server.js"
-  }
-}
