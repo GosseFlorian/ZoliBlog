@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import ArticlePage from './pages/ArticlePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { useAuthStore } from './store/authStore';
 import ConfirmDialog from './components/ConfirmDialog';
 import './App.css';
@@ -45,6 +46,7 @@ function App() {
         <Route path="/articles/:id" element={<ArticlePage />} />
         <Route path="/connexion" element={<LoginPage />} />
         <Route path="/inscription" element={<RegisterPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
