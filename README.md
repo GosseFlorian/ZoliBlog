@@ -2,7 +2,7 @@
 
 API REST, back-office admin et site public pour un blog (monorepo Spring Boot + React/Vite).
 
-![CI](https://github.com/GosseFlorian/java_blog/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/GosseFlorian/ZoliBlog/actions/workflows/ci.yml/badge.svg)
 
 ---
 
@@ -115,23 +115,23 @@ Backend Java (Maven) : `spotless:apply` / `spotless:check` (formatage), `spotbug
 
 ### Tests vs couverture
 
-| Commande             | Backend                                      | Fronts (admin + site)   |
-| -------------------- | -------------------------------------------- | ----------------------- |
-| `make lint-all`      | `spotbugs:check`                             | `npm run lint`          |
-| `make format-all`    | `spotless:apply`                             | `npm run format`        |
-| `make test`          | Maven test (`backend-api/`)                  | `npm run test`          |
-| `make test-coverage` | Maven test (`backend-api/`)                  | `npm run test:coverage` |
+| Commande             | Backend                     | Fronts (admin + site)   |
+| -------------------- | --------------------------- | ----------------------- |
+| `make lint-all`      | `spotbugs:check`            | `npm run lint`          |
+| `make format-all`    | `spotless:apply`            | `npm run format`        |
+| `make test`          | Maven test (`backend-api/`) | `npm run test`          |
+| `make test-coverage` | Maven test (`backend-api/`) | `npm run test:coverage` |
 
 Les deux cibles lancent les tests. La différence est côté **fronts** : `test:coverage` active Vitest avec rapport HTML et seuils (≥ 80 % lignes / statements / functions). Côté **backend**, `make test` produit le rapport JaCoCo et **vérifie** un minimum de **80 %** (lignes et instructions). La CI et `make ci` appliquent ces seuils.
 
 Après `make test-coverage` (ou `make test` seul pour le backend), ouvre les rapports HTML dans le navigateur :
 
-| Partie  | Rapport HTML                    |
-| ------- | ------------------------------- |
+| Partie               | Rapport HTML                                |
+| -------------------- | ------------------------------------------- |
 | Backend (couverture) | `backend-api/target/site/jacoco/index.html` |
-| Backend (SpotBugs)   | `backend-api/target/spotbugs.html`            |
-| Admin                | `admin/coverage/index.html`       |
-| Site                 | `site/coverage/index.html`        |
+| Backend (SpotBugs)   | `backend-api/target/spotbugs.html`          |
+| Admin                | `admin/coverage/index.html`                 |
+| Site                 | `site/coverage/index.html`                  |
 
 Le vert indique le code exécuté par au moins un test ; le rouge, ce qui ne l'est pas. Les fronts mesurent surtout `src/api/`, `src/store/` et `src/utils/` (pas les composants React).
 
@@ -143,7 +143,7 @@ La cible `ci` reproduit GitHub Actions :
 2. **Chaque front** — `npm ci` → `lint` → `format:check` → `test:coverage` (sans build Vite)
 3. **Fronts prod** — `npm ci && npm run build` à la racine (seul build Vite, parité Railway)
 
-Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (*batch mode*) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
+Prérequis local : PostgreSQL démarré + `make db-test`. **`-B`** (_batch mode_) désactive le mode interactif de Maven — convention en CI et scripts automatisés.
 
 ---
 
@@ -169,15 +169,15 @@ Modèle : [`.env.example`](.env.example)
 
 ## Documentation
 
-| Document                                                   | Contenu                               |
-| ---------------------------------------------------------- | ------------------------------------- |
-| [doc/README-diataxis.md](doc/README-diataxis.md)         | Hub — les 4 types de doc              |
-| [doc/README-exploitation.md](doc/README-exploitation.md) | Installer, lancer, maintenir          |
-| [doc/README-deploiement.md](doc/README-deploiement.md)   | Déployer (Railway, Postgres, …)       |
-| [doc/README-runbook.md](doc/README-runbook.md)           | Dépannage et incidents                |
-| [doc/README-api.md](doc/README-api.md)                   | Référence des routes HTTP             |
-| [doc/README-architecture.md](doc/README-architecture.md) | Couches, schéma, sécurité             |
-| [doc/adr/README-adr.md](doc/adr/README-adr.md)           | Décisions techniques (ADR)            |
+| Document                                                 | Contenu                         |
+| -------------------------------------------------------- | ------------------------------- |
+| [doc/README-diataxis.md](doc/README-diataxis.md)         | Hub — les 4 types de doc        |
+| [doc/README-exploitation.md](doc/README-exploitation.md) | Installer, lancer, maintenir    |
+| [doc/README-deploiement.md](doc/README-deploiement.md)   | Déployer (Railway, Postgres, …) |
+| [doc/README-runbook.md](doc/README-runbook.md)           | Dépannage et incidents          |
+| [doc/README-api.md](doc/README-api.md)                   | Référence des routes HTTP       |
+| [doc/README-architecture.md](doc/README-architecture.md) | Couches, schéma, sécurité       |
+| [doc/adr/README-adr.md](doc/adr/README-adr.md)           | Décisions techniques (ADR)      |
 
 ---
 
