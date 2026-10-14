@@ -17,14 +17,14 @@ Navigateur
     │
     └─► fetch HTTPS ──► https://<api>.up.railway.app   API Spring Boot
                               │
-                              └─► PostgreSQL (Railway)
+                              └─► PostgreSQL (réseau privé Railway, pas d’accès Internet)
 ```
 
 | Service Railway | Root Directory | Rôle |
 | ----------------- | -------------- | ---- |
 | **API** | `backend-api` | JAR Spring Boot, profil `prod` |
 | **Fronts** | *(racine repo)* | `npm run build` + Express [`server.js`](../server.js) |
-| **Postgres** | plugin DB | Schéma via `blog.sql` |
+| **Postgres** | plugin DB | BDD **privée** ; schéma via `blog.sql` (CLI) |
 
 ---
 
@@ -60,27 +60,43 @@ Le **`.env`** racine sert au **dev Spring** (`make backend`), pas au deploy Rail
 
 ### API (service `backend-api`)
 
+Référencer le service Postgres du **même projet / même environment** (réseau privé). Adapter `Postgres` si ton service a un autre nom.
+
 | Variable | Rôle |
 | -------- | ---- |
 | `JWT_SECRET` | ≥ 32 caractères |
-| `DATABASE_URL` | JDBC PostgreSQL |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` | Connexion BDD |
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` — URL **privée** (`*.railway.internal`) |
+| `POSTGRES_USER` | `${{Postgres.PGUSER}}` |
+| `POSTGRES_PASSWORD` | `${{Postgres.POSTGRES_PASSWORD}}` |
 | `CORS_ALLOWED_ORIGINS` | URL du service **fronts** (ex. `https://xxx-web.up.railway.app`), sans `/` final |
+
+Ne pas utiliser `DATABASE_PUBLIC_URL` ni activer de proxy TCP sur Postgres pour l’API : le trafic API ↔ BDD reste sur le réseau interne Railway.
 
 Profil : `SPRING_PROFILES_ACTIVE=prod` (start command ci-dessous). Détails : `backend-api/src/main/resources/application-prod.yaml`.
 
 ---
 
-## 4. PostgreSQL
+## 4. PostgreSQL (privé)
 
-1. Créer Postgres sur Railway.
-2. Initialiser une fois depuis ta machine :
+1. Créer le plugin **PostgreSQL** sur Railway (même projet que l’API).
+2. **Networking → Public** : laisser le proxy TCP **désactivé** (pas de port 5432 exposé sur Internet). La base n’est joignable que depuis les services du projet via le réseau privé.
+3. Brancher l’**API** avec les références ci-dessus (`${{Postgres.DATABASE_URL}}`, etc.), puis redéployer l’API.
+4. **Schéma initial** (une fois) : sans URL publique, `psql` direct depuis ta machine ne suffit pas. Utiliser la [Railway CLI](https://docs.railway.com/guides/cli) (tunnel vers la BDD privée) :
 
 ```bash
-psql "<DATABASE_URL_EXTERNE>" -f backend-api/src/main/resources/blog.sql
+railway link    # une fois, depuis la racine du repo
+railway connect Postgres
 ```
 
-Pas de Flyway : `blog.sql` (prod/dev), `blog-test.sql` (tests).
+Dans la session `psql` ouverte (depuis la racine du repo) :
+
+```text
+\i backend-api/src/main/resources/blog.sql
+```
+
+(Sous Windows, chemin avec `/` ou chemin absolu si besoin.)
+
+Pas de Flyway : `blog.sql` (prod/dev), `blog-test.sql` (tests locaux / CI uniquement).
 
 ---
 
@@ -113,8 +129,8 @@ Smoke : `curl -s https://<api>/ping` → `pong`.
 ## 7. Ordre de mise en prod
 
 1. CI verte sur `main`.
-2. Postgres + `blog.sql`.
-3. Déployer **API** (variables secrets + JDBC).
+2. Postgres (privé) + `blog.sql` via `railway connect`.
+3. Déployer **API** (variables + références Postgres privées).
 4. **`VITE_API_URL`** sur le service Fronts = URL API.
 5. Déployer **Fronts**.
 6. Mettre **`CORS_ALLOWED_ORIGINS`** = URL fronts → redéployer **API**.
@@ -145,6 +161,8 @@ Parité locale : `make ci` (inclut le build racine).
 | API `localhost` dans le navigateur | Rebuild fronts après correction `VITE_API_URL` |
 | Assets admin 404 | `admin` prod : `base: '/admin/'` dans `vite.config.ts` |
 | Login 401 Alice | `blog.sql` non appliqué sur Postgres prod |
+| API ne démarre pas / erreurs JDBC | `DATABASE_URL` = URL privée (`${{Postgres.DATABASE_URL}}`), pas l’URL publique ; API et Postgres dans le **même** environment |
+| `psql` depuis le PC échoue | Normal si Postgres est privé : utiliser `railway connect Postgres`, pas `DATABASE_PUBLIC_URL` |
 
 → [README-runbook.md](README-runbook.md)
 
