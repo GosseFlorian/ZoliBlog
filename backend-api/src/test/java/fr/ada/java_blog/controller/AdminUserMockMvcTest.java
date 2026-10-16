@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ada.java_blog.util.JwtTestHelper;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +63,14 @@ class AdminUserMockMvcTest {
   void createUser_mailDejaUtilise_retourne409() throws Exception {
     String body =
         """
-                {"pseudo":"nouveau_user","mail":"alice@example.com","mdp":"motdepasse"}
-                """;
+        {"pseudo":"nouveau_user","mail":"alice@example.com","mdp":"motdepasse"}
+        """;
 
     mockMvc
         .perform(
             post("/admin/users")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Un compte existe deja avec cette adresse mail"));

@@ -1,6 +1,5 @@
 package fr.ada.java_blog.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +37,8 @@ class AdminUserControllerMockMvcTest {
     mockMvc
         .perform(get("/admin/users").header("Authorization", "Bearer " + bearerToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(2))));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[1]").exists());
   }
 
   @Test

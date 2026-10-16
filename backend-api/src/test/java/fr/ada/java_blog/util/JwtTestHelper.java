@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -17,12 +18,15 @@ public final class JwtTestHelper {
       throws Exception {
     String body =
         """
-                {"mail":"alice@example.com","mdp":"demo1234"}
-                """;
+        {"mail":"alice@example.com","mdp":"demo1234"}
+        """;
 
     MvcResult result =
         mockMvc
-            .perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
+            .perform(
+                post("/auth/login")
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(body))
             .andExpect(status().isOk())
             .andReturn();
 

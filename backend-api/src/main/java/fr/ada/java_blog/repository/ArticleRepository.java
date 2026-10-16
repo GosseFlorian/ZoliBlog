@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ArticleRepository {
 
+  @NonNull
   private static final RowMapper<Article> ROW_MAPPER =
       (rs, rowNum) -> {
         Timestamp dateTs = rs.getTimestamp("date");
@@ -37,12 +39,12 @@ public class ArticleRepository {
   public List<Article> findRecents(int limit) {
     return jdbcTemplate.query(
         """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        WHERE statut = true
-                        ORDER BY date DESC, id DESC
-                        LIMIT ?
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            WHERE statut = true
+            ORDER BY date DESC, id DESC
+            LIMIT ?
+            """,
         ROW_MAPPER,
         limit);
   }
@@ -51,10 +53,10 @@ public class ArticleRepository {
     Integer count =
         jdbcTemplate.queryForObject(
             """
-                        SELECT COUNT(*)
-                        FROM articles
-                        WHERE statut = true
-                        """,
+            SELECT COUNT(*)
+            FROM articles
+            WHERE statut = true
+            """,
             Integer.class);
     return count != null ? count : 0;
   }
@@ -62,11 +64,11 @@ public class ArticleRepository {
   public List<Article> findPublies() {
     return jdbcTemplate.query(
         """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        WHERE statut = true
-                        ORDER BY date DESC, id DESC
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            WHERE statut = true
+            ORDER BY date DESC, id DESC
+            """,
         ROW_MAPPER);
   }
 
@@ -74,10 +76,10 @@ public class ArticleRepository {
     List<Article> articles =
         jdbcTemplate.query(
             """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        WHERE id = ? AND statut = true
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            WHERE id = ? AND statut = true
+            """,
             ROW_MAPPER,
             id);
     return articles.stream().findFirst();
@@ -87,10 +89,10 @@ public class ArticleRepository {
     List<Article> articles =
         jdbcTemplate.query(
             """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        WHERE id = ?
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            WHERE id = ?
+            """,
             ROW_MAPPER,
             id);
     return articles.stream().findFirst();
@@ -99,10 +101,10 @@ public class ArticleRepository {
   public List<Article> findAllAdmin() {
     return jdbcTemplate.query(
         """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        ORDER BY date DESC, id DESC
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            ORDER BY date DESC, id DESC
+            """,
         ROW_MAPPER);
   }
 
@@ -110,10 +112,10 @@ public class ArticleRepository {
     List<Article> articles =
         jdbcTemplate.query(
             """
-                        SELECT id, titre, contenu, statut, date, "update", user_id
-                        FROM articles
-                        WHERE id = ?
-                        """,
+            SELECT id, titre, contenu, statut, date, "update", user_id
+            FROM articles
+            WHERE id = ?
+            """,
             ROW_MAPPER,
             id);
     return articles.stream().findFirst();
@@ -123,10 +125,10 @@ public class ArticleRepository {
     Integer id =
         jdbcTemplate.queryForObject(
             """
-                        INSERT INTO articles (titre, contenu, date, statut, "update", user_id)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                        RETURNING id
-                        """,
+            INSERT INTO articles (titre, contenu, date, statut, "update", user_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            RETURNING id
+            """,
             Integer.class,
             article.getTitre(),
             article.getContenu(),
@@ -142,10 +144,10 @@ public class ArticleRepository {
     int rows =
         jdbcTemplate.update(
             """
-                        UPDATE articles
-                        SET titre = ?, contenu = ?, statut = ?, "update" = ?
-                        WHERE id = ?
-                        """,
+            UPDATE articles
+            SET titre = ?, contenu = ?, statut = ?, "update" = ?
+            WHERE id = ?
+            """,
             article.getTitre(),
             article.getContenu(),
             article.isPublie(),
@@ -158,10 +160,10 @@ public class ArticleRepository {
     int rows =
         jdbcTemplate.update(
             """
-                        UPDATE articles
-                        SET statut = ?, "update" = ?
-                        WHERE id = ?
-                        """,
+            UPDATE articles
+            SET statut = ?, "update" = ?
+            WHERE id = ?
+            """,
             publie,
             Timestamp.valueOf(LocalDateTime.now()),
             id);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,6 +14,7 @@ public class CommentaireRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @NonNull
   private static final RowMapper<Commentaire> ROW_MAPPER =
       (rs, rowNum) -> {
         Commentaire commentaire =
@@ -28,10 +30,10 @@ public class CommentaireRepository {
 
   private static final String SELECT_WITH_USER =
       """
-            SELECT c.id, c.contenu, c.user_id, c.article_id, c.date, u.pseudo
-            FROM commentaires c
-            JOIN users u ON u.id = c.user_id
-            """;
+      SELECT c.id, c.contenu, c.user_id, c.article_id, c.date, u.pseudo
+      FROM commentaires c
+      JOIN users u ON u.id = c.user_id
+      """;
 
   public CommentaireRepository(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
@@ -41,9 +43,9 @@ public class CommentaireRepository {
     String sql =
         SELECT_WITH_USER
             + """
-                WHERE c.article_id = ?
-                ORDER BY c.date DESC
-                """;
+            WHERE c.article_id = ?
+            ORDER BY c.date DESC
+            """;
     return jdbcTemplate.query(sql, ROW_MAPPER, articleId);
   }
 
@@ -60,10 +62,10 @@ public class CommentaireRepository {
   public Commentaire save(int articleId, String contenu, int userId) {
     String sql =
         """
-                INSERT INTO commentaires (contenu, user_id, article_id, date)
-                VALUES (?, ?, ?, ?)
-                RETURNING id
-                """;
+        INSERT INTO commentaires (contenu, user_id, article_id, date)
+        VALUES (?, ?, ?, ?)
+        RETURNING id
+        """;
     LocalDateTime now = LocalDateTime.now();
     Integer generatedId =
         jdbcTemplate.queryForObject(sql, Integer.class, contenu, userId, articleId, now);
@@ -77,10 +79,10 @@ public class CommentaireRepository {
   public boolean updateById(int id, String contenu) {
     String sql =
         """
-                UPDATE commentaires
-                SET contenu = ?
-                WHERE id = ?
-                """;
+        UPDATE commentaires
+        SET contenu = ?
+        WHERE id = ?
+        """;
     return jdbcTemplate.update(sql, contenu, id) > 0;
   }
 

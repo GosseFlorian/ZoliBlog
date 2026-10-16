@@ -7,18 +7,21 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class CategorieRepository {
 
+  @NonNull
   private static final RowMapper<Categorie> RowMapper =
       (rs, rowNum) ->
           new Categorie(rs.getInt("id"), rs.getString("nom"), rs.getString("description"));
 
   // Même RowMapper qu'ArticleRepository : on lit une ligne "articles" complète,
   // même quand elle vient d'un JOIN avec articles_categories.
+  @NonNull
   private static final RowMapper<Article> ArticleRowMapper =
       (rs, rowNum) -> {
         Timestamp dateTs = rs.getTimestamp("date");
@@ -42,10 +45,10 @@ public class CategorieRepository {
   public List<Categorie> findAll() {
     return jdbcTemplate.query(
         """
-                        SELECT id, nom, description
-                        FROM categories
-                        ORDER BY nom ASC
-                        """,
+            SELECT id, nom, description
+            FROM categories
+            ORDER BY nom ASC
+            """,
         RowMapper);
   }
 
@@ -53,10 +56,10 @@ public class CategorieRepository {
     List<Categorie> categories =
         jdbcTemplate.query(
             """
-                        SELECT id, nom, description
-                            FROM categories
-                            WHERE id = ?
-                            """,
+            SELECT id, nom, description
+                FROM categories
+                WHERE id = ?
+                """,
             RowMapper,
             id);
     return categories.stream().findFirst();
@@ -65,12 +68,12 @@ public class CategorieRepository {
   public List<Categorie> findByArticleId(int articleId) {
     return jdbcTemplate.query(
         """
-                        SELECT c.id, c.nom, c.description
-                        FROM categories c
-                        JOIN articles_categories ac ON ac.categorie_id = c.id
-                        WHERE ac.article_id = ?
-                        ORDER BY c.nom ASC
-                        """,
+            SELECT c.id, c.nom, c.description
+            FROM categories c
+            JOIN articles_categories ac ON ac.categorie_id = c.id
+            WHERE ac.article_id = ?
+            ORDER BY c.nom ASC
+            """,
         RowMapper,
         articleId);
   }
@@ -78,12 +81,12 @@ public class CategorieRepository {
   public List<Article> findArticlesPubliesByCategorieId(int categorieId) {
     return jdbcTemplate.query(
         """
-                        SELECT a.id, a.titre, a.contenu, a.statut, a.date, a."update", a.user_id
-                        FROM articles a
-                        JOIN articles_categories ac ON ac.article_id = a.id
-                        WHERE ac.categorie_id = ? AND a.statut = TRUE
-                        ORDER BY a.date DESC
-                        """,
+            SELECT a.id, a.titre, a.contenu, a.statut, a.date, a."update", a.user_id
+            FROM articles a
+            JOIN articles_categories ac ON ac.article_id = a.id
+            WHERE ac.categorie_id = ? AND a.statut = TRUE
+            ORDER BY a.date DESC
+            """,
         ArticleRowMapper,
         categorieId);
   }
@@ -92,10 +95,10 @@ public class CategorieRepository {
     Integer id =
         jdbcTemplate.queryForObject(
             """
-                        INSERT INTO categories (nom, description)
-                        VALUES (?, ?)
-                        RETURNING id
-                        """,
+            INSERT INTO categories (nom, description)
+            VALUES (?, ?)
+            RETURNING id
+            """,
             Integer.class,
             categorie.getNom(),
             categorie.getDescription());
@@ -107,10 +110,10 @@ public class CategorieRepository {
     int rows =
         jdbcTemplate.update(
             """
-                        UPDATE categories
-                        SET nom = ?, description = ?
-                        WHERE id = ?
-                        """,
+            UPDATE categories
+            SET nom = ?, description = ?
+            WHERE id = ?
+            """,
             categorie.getNom(),
             categorie.getDescription(),
             id);
@@ -126,9 +129,9 @@ public class CategorieRepository {
   public void replaceCategoriesArticle(int articleId, List<Integer> categorieIds) {
     jdbcTemplate.update(
         """
-                        DELETE FROM articles_categories
-                        WHERE article_id = ?
-                        """,
+            DELETE FROM articles_categories
+            WHERE article_id = ?
+            """,
         articleId);
     categorieIds.stream()
         .distinct()
@@ -136,9 +139,9 @@ public class CategorieRepository {
             categorieId ->
                 jdbcTemplate.update(
                     """
-                        INSERT INTO articles_categories (article_id, categorie_id)
-                        VALUES (?, ?)
-                        """,
+                    INSERT INTO articles_categories (article_id, categorie_id)
+                    VALUES (?, ?)
+                    """,
                     articleId,
                     categorieId));
   }

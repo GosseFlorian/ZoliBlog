@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ada.java_blog.util.JwtTestHelper;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,11 @@ class AdminMediaControllerMockMvcTest {
         .perform(
             post("/admin/medias")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(
                     """
-                        {"type":"image","url":"https://example.com/test.png"}
-                        """))
+                                                {"type":"image","url":"https://example.com/test.png"}
+                                                """))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.type").value("image"));
   }
@@ -58,11 +59,11 @@ class AdminMediaControllerMockMvcTest {
             .perform(
                 post("/admin/medias")
                     .header("Authorization", "Bearer " + bearerToken)
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .content(
                         """
-                        {"type":"gif","url":"https://example.com/anim.gif"}
-                        """))
+                                                {"type":"gif","url":"https://example.com/anim.gif"}
+                                                """))
             .andExpect(status().isCreated())
             .andReturn();
 

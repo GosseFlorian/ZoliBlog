@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ public class UserRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @NonNull
   private static final RowMapper<User> USER_ROW_MAPPER =
       (rs, rowNum) ->
           new User(
@@ -31,10 +33,10 @@ public class UserRepository {
     List<User> user =
         jdbcTemplate.query(
             """
-                        SELECT id, pseudo, mail, mdp, role
-                        FROM users
-                        WHERE id = ?
-                        """,
+            SELECT id, pseudo, mail, mdp, role
+            FROM users
+            WHERE id = ?
+            """,
             USER_ROW_MAPPER,
             id);
     return user.stream().findFirst();
@@ -43,10 +45,10 @@ public class UserRepository {
   public List<User> findAll() {
     return jdbcTemplate.query(
         """
-                        SELECT id, pseudo, mail, mdp, role
-                        FROM users
-                        ORDER BY pseudo ASC
-                        """,
+            SELECT id, pseudo, mail, mdp, role
+            FROM users
+            ORDER BY pseudo ASC
+            """,
         USER_ROW_MAPPER);
   }
 
@@ -54,10 +56,10 @@ public class UserRepository {
     Integer id =
         jdbcTemplate.queryForObject(
             """
-                        INSERT INTO users (pseudo, mail, mdp, role)
-                        VALUES (?, ?, ?, ?::user_role)
-                        RETURNING id
-                        """,
+            INSERT INTO users (pseudo, mail, mdp, role)
+            VALUES (?, ?, ?, ?::user_role)
+            RETURNING id
+            """,
             Integer.class,
             user.getPseudo(),
             user.getMail(),
@@ -71,10 +73,10 @@ public class UserRepository {
     int rows =
         jdbcTemplate.update(
             """
-                        UPDATE users
-                        SET pseudo = ?, mail = ?, mdp = ?
-                        WHERE id = ?
-                        """,
+            UPDATE users
+            SET pseudo = ?, mail = ?, mdp = ?
+            WHERE id = ?
+            """,
             user.getPseudo(),
             user.getMail(),
             user.getMdp(),
@@ -95,10 +97,10 @@ public class UserRepository {
   public Optional<User> findByMail(String mail) {
     String sql =
         """
-                SELECT id, pseudo, mail, mdp, role
-                FROM "users"
-                WHERE mail = ?
-                """;
+        SELECT id, pseudo, mail, mdp, role
+        FROM "users"
+        WHERE mail = ?
+        """;
 
     return jdbcTemplate.query(sql, USER_ROW_MAPPER, mail).stream().findFirst();
   }
@@ -107,10 +109,10 @@ public class UserRepository {
     return jdbcTemplate
         .query(
             """
-                        SELECT id, pseudo, mail, mdp, role
-                        FROM users
-                        WHERE pseudo = ?
-                        """,
+                SELECT id, pseudo, mail, mdp, role
+                FROM users
+                WHERE pseudo = ?
+                """,
             USER_ROW_MAPPER,
             pseudo)
         .stream()
@@ -121,10 +123,10 @@ public class UserRepository {
     Integer count =
         jdbcTemplate.queryForObject(
             """
-                        SELECT COUNT(*)
-                        FROM users
-                        WHERE mail = ? AND id <> ?
-                        """,
+            SELECT COUNT(*)
+            FROM users
+            WHERE mail = ? AND id <> ?
+            """,
             Integer.class,
             mail,
             excludeId);
@@ -135,10 +137,10 @@ public class UserRepository {
     Integer count =
         jdbcTemplate.queryForObject(
             """
-                        SELECT COUNT(*)
-                        FROM users
-                        WHERE pseudo = ? AND id <> ?
-                        """,
+            SELECT COUNT(*)
+            FROM users
+            WHERE pseudo = ? AND id <> ?
+            """,
             Integer.class,
             pseudo,
             excludeId);

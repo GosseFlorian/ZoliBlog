@@ -1,6 +1,7 @@
 package fr.ada.java_blog.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
@@ -20,7 +21,9 @@ class GlobalExceptionHandlerTest {
         handler.handleStatus(new ResponseStatusException(HttpStatus.NOT_FOUND, "Introuvable"));
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertEquals("Introuvable", response.getBody().get("message"));
+    Map<String, String> body = response.getBody();
+    assertNotNull(body);
+    assertEquals("Introuvable", body.get("message"));
   }
 
   @Test
@@ -29,7 +32,9 @@ class GlobalExceptionHandlerTest {
     ResponseEntity<Map<String, String>> response = handler.handleIntegrity(ex);
 
     assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-    assertTrue(response.getBody().get("message").contains("pseudo"));
+    Map<String, String> body = response.getBody();
+    assertNotNull(body);
+    assertTrue(body.get("message").contains("pseudo"));
   }
 
   @Test
@@ -38,7 +43,9 @@ class GlobalExceptionHandlerTest {
     ResponseEntity<Map<String, String>> response = handler.handleIntegrity(ex);
 
     assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-    assertTrue(response.getBody().get("message").contains("media"));
+    Map<String, String> body = response.getBody();
+    assertNotNull(body);
+    assertTrue(body.get("message").contains("media"));
   }
 
   @Test
@@ -46,6 +53,8 @@ class GlobalExceptionHandlerTest {
     ResponseEntity<Map<String, String>> response =
         handler.handleGeneric(new RuntimeException("boom"));
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("Erreur interne du serveur", response.getBody().get("message"));
+    Map<String, String> body = response.getBody();
+    assertNotNull(body);
+    assertEquals("Erreur interne du serveur", body.get("message"));
   }
 }

@@ -1,5 +1,7 @@
 package fr.ada.java_blog.util;
 
+import org.springframework.lang.Nullable;
+
 public final class LogSanitizer {
 
   private LogSanitizer() {
@@ -15,7 +17,7 @@ public final class LogSanitizer {
   }
 
   /** a***@example.com — le domaine reste lisible pour le debug. */
-  public static String maskEmail(String mail) {
+  public static String maskEmail(@Nullable String mail) {
     if (mail == null || !mail.contains("@")) {
       return "***";
     }
@@ -27,7 +29,7 @@ public final class LogSanitizer {
   }
 
   /** 192.168.1.xxx — repère une IP sans la stocker en clair. */
-  public static String maskIp(String ip) {
+  public static String maskIp(@Nullable String ip) {
     if (ip == null || ip.isBlank()) {
       return "unknown";
     }

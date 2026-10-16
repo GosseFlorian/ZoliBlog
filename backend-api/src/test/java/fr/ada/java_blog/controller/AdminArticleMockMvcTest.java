@@ -1,6 +1,5 @@
 package fr.ada.java_blog.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ada.java_blog.util.JwtTestHelper;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,8 @@ class AdminArticleMockMvcTest {
         .perform(get("/admin/articles").header("Authorization", "Bearer " + bearerToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").exists());
   }
 
   @Test
@@ -75,7 +76,7 @@ class AdminArticleMockMvcTest {
         .perform(
             put("/admin/articles/1")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.titre").value("Modifié"))
@@ -104,7 +105,8 @@ class AdminArticleMockMvcTest {
         .perform(
             get("/admin/articles/1/categories").header("Authorization", "Bearer " + bearerToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").exists());
   }
 
   @Test
@@ -113,7 +115,8 @@ class AdminArticleMockMvcTest {
         .perform(
             get("/admin/articles/1/commentaires").header("Authorization", "Bearer " + bearerToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").exists());
   }
 
   @Test
@@ -127,7 +130,7 @@ class AdminArticleMockMvcTest {
         .perform(
             put("/admin/articles/1/categories")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isNoContent());
   }
@@ -139,11 +142,11 @@ class AdminArticleMockMvcTest {
             .perform(
                 post("/admin/medias")
                     .header("Authorization", "Bearer " + bearerToken)
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .content(
                         """
-                        {"type":"image","url":"https://example.com/img.png"}
-                        """))
+                                                {"type":"image","url":"https://example.com/img.png"}
+                                                """))
             .andExpect(status().isCreated())
             .andReturn();
 
@@ -154,18 +157,20 @@ class AdminArticleMockMvcTest {
         .perform(
             post("/admin/articles/1/medias")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(
-                    """
-                        {"mediaId":%d}
+                    Objects.requireNonNull(
                         """
-                        .formatted(mediaId)))
+                                                {"mediaId":%d}
+                                                """
+                            .formatted(mediaId))))
         .andExpect(status().isCreated());
 
     mockMvc
         .perform(get("/articles/1/medias"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").exists());
   }
 
   @Test
@@ -175,11 +180,11 @@ class AdminArticleMockMvcTest {
             .perform(
                 post("/admin/medias")
                     .header("Authorization", "Bearer " + bearerToken)
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .content(
                         """
-                        {"type":"image","url":"https://example.com/dup.png"}
-                        """))
+                                                {"type":"image","url":"https://example.com/dup.png"}
+                                                """))
             .andExpect(status().isCreated())
             .andReturn();
 
@@ -196,16 +201,16 @@ class AdminArticleMockMvcTest {
         .perform(
             post("/admin/articles/1/medias")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(body)))
         .andExpect(status().isCreated());
 
     mockMvc
         .perform(
             post("/admin/articles/1/medias")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(body)))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Ce media est deja lie a cet article"));
   }

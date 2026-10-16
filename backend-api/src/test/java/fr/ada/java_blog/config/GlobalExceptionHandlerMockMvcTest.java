@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,11 +24,14 @@ class GlobalExceptionHandlerMockMvcTest {
   void register_donneesInvalides_retourne400AvecChamps() throws Exception {
     String body =
         """
-                {"pseudo":"","mail":"invalid","mdp":"short"}
-                """;
+        {"pseudo":"","mail":"invalid","mdp":"short"}
+        """;
 
     mockMvc
-        .perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/register")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Données invalides"))
         .andExpect(jsonPath("$.champs.pseudo").exists())
