@@ -1,6 +1,5 @@
 package fr.ada.java_blog.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -8,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ada.java_blog.util.JwtTestHelper;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,6 @@ class CommentaireControllerMockMvcTest {
         .perform(get("/articles/1/commentaires"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))))
         .andExpect(jsonPath("$[0].pseudo").value("alice_dev"));
   }
 
@@ -54,12 +53,14 @@ class CommentaireControllerMockMvcTest {
   void postCommentaire_sansToken_retourne401() throws Exception {
     String body =
         """
-                                {"contenu":"Via MockMvc","userId":1}
-                                """;
+        {"contenu":"Via MockMvc","userId":1}
+        """;
 
     mockMvc
         .perform(
-            post("/articles/1/commentaires").contentType(MediaType.APPLICATION_JSON).content(body))
+            post("/articles/1/commentaires")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isUnauthorized());
   }
 
@@ -67,14 +68,14 @@ class CommentaireControllerMockMvcTest {
   void postCommentaire_avecToken_retourne201() throws Exception {
     String body =
         """
-                                {"contenu":"Via MockMvc","userId":1}
-                                """;
+        {"contenu":"Via MockMvc","userId":1}
+        """;
 
     mockMvc
         .perform(
             post("/articles/1/commentaires")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.contenu").value("Via MockMvc"))
@@ -86,14 +87,14 @@ class CommentaireControllerMockMvcTest {
   void postCommentaire_articleInexistant_retourne404() throws Exception {
     String body =
         """
-                                {"contenu":"Orphelin","userId":1}
-                                """;
+        {"contenu":"Orphelin","userId":1}
+        """;
 
     mockMvc
         .perform(
             post("/articles/99999/commentaires")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isNotFound());
   }

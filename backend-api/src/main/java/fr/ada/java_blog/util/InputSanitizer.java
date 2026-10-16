@@ -1,6 +1,7 @@
 package fr.ada.java_blog.util;
 
 import java.util.regex.Pattern;
+import org.springframework.lang.Nullable;
 
 public final class InputSanitizer {
 
@@ -23,7 +24,7 @@ public final class InputSanitizer {
     return cleaned.trim();
   }
 
-  public static boolean looksLikeSqlInjection(String input) {
+  public static boolean looksLikeSqlInjection(@Nullable String input) {
     if (input == null || input.isBlank()) {
       return false;
     }

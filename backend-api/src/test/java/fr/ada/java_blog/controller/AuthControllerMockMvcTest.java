@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,7 +28,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/login")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.token").isNotEmpty())
         .andExpect(jsonPath("$.pseudo").value("alice_dev"))
@@ -46,7 +50,7 @@ class AuthControllerMockMvcTest {
         .perform(
             post("/auth/login")
                 .header("X-Login-Context", "admin")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isForbidden())
         .andExpect(jsonPath("$.message").value("Acces reserve aux administrateurs."));
@@ -63,7 +67,7 @@ class AuthControllerMockMvcTest {
         .perform(
             post("/auth/login")
                 .header("X-Login-Context", "admin")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.role").value("ADMIN"));
@@ -77,7 +81,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/login")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isUnauthorized());
   }
 
@@ -89,7 +96,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/register")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.token").isNotEmpty())
         .andExpect(jsonPath("$.pseudo").value("nouveau_visiteur"))
@@ -104,7 +114,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/register")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Un compte existe deja avec cette adresse mail"));
   }
@@ -117,7 +130,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/register")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Ce pseudo est deja utilise"));
   }
@@ -130,7 +146,10 @@ class AuthControllerMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/auth/register")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Ce pseudo est deja utilise"));
   }

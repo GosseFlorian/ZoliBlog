@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,10 @@ class AdminArticleSecurityMockMvcTest {
 
     MvcResult result =
         mockMvc
-            .perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
+            .perform(
+                post("/auth/login")
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(body))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -57,7 +61,7 @@ class AdminArticleSecurityMockMvcTest {
         mockMvc
             .perform(
                 post("/auth/register")
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .content(registerBody))
             .andExpect(status().isCreated())
             .andReturn();
@@ -74,7 +78,7 @@ class AdminArticleSecurityMockMvcTest {
         .perform(
             post("/admin/articles")
                 .header("Authorization", "Bearer " + userToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isForbidden());
   }
@@ -87,7 +91,10 @@ class AdminArticleSecurityMockMvcTest {
                 """;
 
     mockMvc
-        .perform(post("/admin/articles").contentType(MediaType.APPLICATION_JSON).content(body))
+        .perform(
+            post("/admin/articles")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(body))
         .andExpect(status().isUnauthorized());
   }
 
@@ -102,7 +109,7 @@ class AdminArticleSecurityMockMvcTest {
         .perform(
             post("/admin/articles")
                 .header("Authorization", "Bearer " + bearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(body))
         .andExpect(status().isCreated());
   }
@@ -117,7 +124,7 @@ class AdminArticleSecurityMockMvcTest {
         mockMvc
             .perform(
                 post("/admin/articles")
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .header("Authorization", "Bearer " + bearerToken)
                     .content(createBody))
             .andExpect(status().isCreated())

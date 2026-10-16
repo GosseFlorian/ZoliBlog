@@ -1,6 +1,5 @@
 package fr.ada.java_blog.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +24,7 @@ class ArticleControllerMockMvcTest {
         .perform(get("/articles/recents"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
+        .andExpect(jsonPath("$[0]").exists());
   }
 
   @Test
@@ -67,6 +66,7 @@ class ArticleControllerMockMvcTest {
     mockMvc
         .perform(get("/articles/1/categories"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").exists());
   }
 }
