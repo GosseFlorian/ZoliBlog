@@ -18,7 +18,11 @@ function ArticleCard({ article, onEdit, onDelete, onView }: ArticleCardProps) {
       <div className="article-card-inner">
         <div className="article-card-content">
           <div className="article-actions">
-            <button type="button" className="btn btn-secondary btn-small" onClick={() => onView(id)}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-small"
+              onClick={() => onView(id)}
+            >
               Voir
             </button>
             <button
