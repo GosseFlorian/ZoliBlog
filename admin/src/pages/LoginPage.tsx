@@ -26,10 +26,10 @@ function LoginPage() {
 
   return (
     <div className="admin-login-shell">
-      <div className="admin-login-brand">
-        <h1 className="admin-brand-title">Back-office</h1>
+      <h1 className="admin-brand admin-login-brand">
+        <span className="admin-brand-title">Back-office</span>
         <span className="admin-brand-subtitle">ZoliBlog</span>
-      </div>
+      </h1>
       <LoginForm onSubmit={login} errorMessage={loginError} isSubmitting={isLoggingIn} />
     </div>
   );
