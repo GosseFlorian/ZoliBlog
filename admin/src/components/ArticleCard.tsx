@@ -37,7 +37,7 @@ function ArticleCard({ article, onEdit, onDelete, onView }: ArticleCardProps) {
             </button>
           </div>
           <div className="article-card-head">
-            <h2>{titre}</h2>
+            <h3>{titre}</h3>
             <span className={`badge ${publie ? 'badge-success' : 'badge-draft'}`}>
               {statutLabel}
             </span>

@@ -97,7 +97,7 @@
   gap: var(--space-md);
 }
 
-.comment-form h3 {
+.comment-form h4 {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--font-size-lg);

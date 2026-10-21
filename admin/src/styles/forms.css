@@ -9,7 +9,7 @@
   background: var(--color-card);
 }
 
-.article-form h2 {
+.article-form h3 {
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
@@ -151,7 +151,7 @@
   margin-bottom: var(--space-xl);
 }
 
-.categorie-form h2 {
+.categorie-form h3 {
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);

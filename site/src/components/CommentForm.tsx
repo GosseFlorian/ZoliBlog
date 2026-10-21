@@ -36,7 +36,7 @@ function CommentForm({ onSubmit, isSubmitting, error }: CommentFormProps) {
 
   return (
     <form className="comment-form" onSubmit={handleSubmit}>
-      <h3>Laisser un commentaire</h3>
+      <h4>Laisser un commentaire</h4>
 
       {error && (
         <p className="error-message" role="alert">

@@ -22,7 +22,7 @@ function LoginPage() {
   return (
     <main className="auth-page">
       <div className="auth-card">
-        <h1>Connexion</h1>
+        <h2>Connexion</h2>
         <p className="login-hint">
           Compte démo : <strong>alice@example.com</strong> / <strong>demo1234</strong>
         </p>
