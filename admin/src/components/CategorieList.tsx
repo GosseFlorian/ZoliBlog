@@ -14,7 +14,6 @@ function CategorieList({ categories, onEdit, onDelete }: CategorieListProps) {
 
   return (
     <section className="article-list" aria-label="Liste des catégories">
-      <h2 className="sr-only">Catégories</h2>
       {categories.map((categorie) => (
         <CategorieCard
           key={categorie.id}

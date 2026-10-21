@@ -74,7 +74,7 @@ function ArticleForm({
       )}
 
       <form className="article-form admin-form" onSubmit={handleSubmit}>
-        <h2>{isEdit ? "Modifier l'article" : 'Nouvel article'}</h2>
+        <h3>{isEdit ? "Modifier l'article" : 'Nouvel article'}</h3>
 
         <label>
           Titre

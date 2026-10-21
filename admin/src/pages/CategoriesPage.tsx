@@ -21,7 +21,7 @@ function CategoriesListView() {
   return (
     <>
       <div className="page-header-row">
-        <h1>Catégories</h1>
+        <h2>Catégories</h2>
         <Link to="/categories/new" className="btn btn-primary btn-small">
           + Nouvelle catégorie
         </Link>

@@ -41,7 +41,7 @@ function CategorieForm({
       )}
 
       <form className="categorie-form admin-form" onSubmit={handleSubmit}>
-        <h2>{isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie'}</h2>
+        <h3>{isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie'}</h3>
 
         <label>
           Nom

@@ -17,7 +17,7 @@ function UsersPage() {
   return (
     <>
       <div className="page-header-row">
-        <h1>Utilisateurs</h1>
+        <h2>Utilisateurs</h2>
       </div>
 
       {isLoading && <LoadingMessage />}

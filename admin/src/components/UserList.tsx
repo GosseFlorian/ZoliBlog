@@ -13,7 +13,6 @@ function UserList({ users, onDelete }: UserListProps) {
 
   return (
     <section className="article-list" aria-label="Liste des utilisateurs">
-      <h2 className="sr-only">Utilisateurs</h2>
       {users.map((user) => (
         <UserCard key={user.id} user={user} onDelete={onDelete} />
       ))}

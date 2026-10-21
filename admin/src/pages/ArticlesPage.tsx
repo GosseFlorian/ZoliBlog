@@ -24,7 +24,7 @@ function ArticlesListView() {
   return (
     <>
       <div className="page-header-row">
-        <h1>Articles</h1>
+        <h2>Articles</h2>
         <Link to="/articles/new" className="btn btn-primary btn-small">
           + Nouvel article
         </Link>

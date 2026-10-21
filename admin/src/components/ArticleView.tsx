@@ -86,7 +86,7 @@ function ArticleView({ articleId, onBack, onSessionExpired }: ArticleViewProps) 
       </button>
 
       <article>
-        <h1>{article.titre}</h1>
+        <h3>{article.titre}</h3>
         <CategoryTags categories={article.categories} />
         <p className="article-date">
           Posté le {formatArticleDate(article.date)}{' '}
@@ -102,7 +102,7 @@ function ArticleView({ articleId, onBack, onSessionExpired }: ArticleViewProps) 
       </article>
 
       <section className="comments-section">
-        <h2>Commentaires ({comments.length})</h2>
+        <h4>Commentaires ({comments.length})</h4>
 
         {comments.length === 0 ? (
           <p className="empty-list">Aucun commentaire pour cet article.</p>

@@ -15,7 +15,6 @@ function ArticleList({ articles, onEdit, onDelete, onView }: ArticleListProps) {
 
   return (
     <section className="article-list" aria-label="Liste des articles">
-      <h2 className="sr-only">Articles</h2>
       {articles.map((article) => (
         <ArticleCard
           key={article.id}

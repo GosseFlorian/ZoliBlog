@@ -38,7 +38,7 @@ function RegisterPage() {
   return (
     <main className="auth-page">
       <div className="auth-card">
-        <h1>Créer un compte</h1>
+        <h2>Créer un compte</h2>
 
         {displayedError && (
           <p className="error-message" role="alert">
