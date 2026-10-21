@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 interface PageHeaderProps {
   pseudo?: string | null;
   onLogout?: () => void;
@@ -6,10 +8,12 @@ interface PageHeaderProps {
 function PageHeader({ pseudo, onLogout }: PageHeaderProps) {
   return (
     <header className="admin-top-bar">
-      <div className="admin-brand">
-        <h1 className="admin-brand-title">Back-office</h1>
-        <span className="admin-brand-subtitle">ZoliBlog</span>
-      </div>
+      <h1 className="admin-brand">
+        <Link to="/" className="admin-brand-link">
+          <span className="admin-brand-title">Back-office</span>
+          <span className="admin-brand-subtitle">ZoliBlog</span>
+        </Link>
+      </h1>
       {pseudo != null && onLogout && (
         <p className="header-auth">
           <span>

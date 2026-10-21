@@ -16,9 +16,11 @@ function App() {
     <div className="site">
       <ConfirmDialog />
       <header className="site-header">
-        <Link to="/" className="site-title">
-          ZoliBlog
-        </Link>
+        <h1 className="site-title-heading">
+          <Link to="/" className="site-title">
+            ZoliBlog
+          </Link>
+        </h1>
 
         <nav className="site-nav">
           {pseudo ? (
